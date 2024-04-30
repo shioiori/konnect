@@ -70,6 +70,7 @@
 <script>
 import axios from 'axios'
 import router from '../router/index.ts';
+import { ElMessage } from 'element-plus'
 
 export default {
     data() {
@@ -79,22 +80,39 @@ export default {
         }
     },
     mounted() {
-        var token = localStorage.getItem(import.meta.env.VITE_TOKEN_NAME);
-        if (token != null && token != '') {
-            router.push('/group');
-            return;
-        }
+        // var token = localStorage.getItem(import.meta.env.VITE_TOKEN_NAME);
+        // if (token != null && token != '') {
+        //     router.push('/group');
+        //     return;
+        // }
     },
     methods: {
         async login() {
-            var res = (await axios.post(import.meta.env.VITE_API + '/login', {
+            axios.post(import.meta.env.VITE_API + '/login', {
                 username: this.username,
                 password: this.password
-            })).data;
-            if (res.success) {
-                localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.accessToken);
-                router.push('/group');
-            }
+            }).then((res) => {
+                if (res.data.success) {
+                    ElMessage({
+                        message: "Đăng nhập thành công",
+                        type: 'success',
+                    });
+                    localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.data.accessToken);
+                    router.push('/group');
+                }
+                else {
+                    ElMessage({
+                        message: res.message,
+                        type: 'error',
+                    });
+                }
+            }).catch((e) => {
+                console.error(e.message)
+                ElMessage({
+                    message: e.message,
+                    type: 'error',
+                });
+            });
         }
     },
 }

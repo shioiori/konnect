@@ -1,29 +1,32 @@
 <template>
-    <div class="post p-4">
-        <div class="d-flex">
-            <div class="post-avatar">
-                <img class="img-responsive rounded-circle" src="https://i.imgur.com/hczKIze.jpg">
-            </div>
-            <div class="post-creator">
-                <div><h5 class="my-0">{{news.createdBy}}</h5></div>
-                <div>{{news.createdDate}}</div>
-            </div>
-        </div>
-        <div class="post-content my-3">
-            <div v-html="news.content"/>
-        </div>
-        <hr/>
-        <div>
-            <div>
-                <div class="f-flex">
-                    <icon-user /> 
-                    <span class="m-1">{{news.replyCount}} bình luận</span>
+    <div class="my-3">
+        <el-card shadow="hover">
+            <div class="d-flex">
+                <div class="post-avatar">
+                    <img class="img-responsive rounded-circle" src="https://i.imgur.com/hczKIze.jpg">
+                </div>
+                <div class="post-creator">
+                    <div>
+                        <h5 class="my-0">{{ posts.createdBy }}</h5>
+                    </div>
+                    <div>{{ posts.createdDate }}</div>
                 </div>
             </div>
-            <div class="list-comment">
-
+            <div class="post-content my-3">
+                <div v-html="posts.content" />
             </div>
-            <!-- <div class="reply">
+            <hr />
+            <div>
+                <div>
+                    <div class="f-flex">
+                        <icon-user />
+                        <span class="m-1">{{ posts.replyCount }} bình luận</span>
+                    </div>
+                </div>
+                <div class="list-comment">
+
+                </div>
+                <!-- <div class="reply">
                 <div>
                     <div>
                         <image></image>
@@ -32,7 +35,8 @@
                     <icon-send />
                 </div>
             </div> -->
-        </div>
+            </div>
+        </el-card>
     </div>
 </template>
 
@@ -48,32 +52,29 @@ export default {
         IconSend,
     },
     props: {
-        news: Object,
+        posts: Object,
     },
     mounted() {
-        console.log(this.news);
     },
 }
 </script>
 
 <style>
-
-.post{
+.post {
     border: 1px solid var(--Gray);
     border-radius: .5rem;
     margin: 2rem 0;
 }
 
-.post-avatar{
+.post-avatar {
     margin: auto 0;
 }
 
-.post-creator{
+.post-creator {
     margin: auto .5rem;
 }
 
-.post-avatar img{
+.post-avatar img {
     width: 48px;
 }
-
 </style>

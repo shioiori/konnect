@@ -2,40 +2,47 @@
   <div>
     <div>
       <div class="justify-content-end d-flex">
-        <button type="button" class="btn btn-blue" data-bs-toggle="modal" data-bs-target="#importModal"
-          @click="this.importAlert = ''">Import</button>
-        <button type="button" class="btn btn-pink" @click="synchronizeWithGoogleCalendar">Synchonize</button>
-        <button type="button" class="btn btn-blue" @click="updateAndRemind">Remind</button>
-        <button type="button" class="btn btn-red">Remove</button>
+        <el-button type="primary" plain @click="dialogImportVisible = true">Import timetable</el-button>
+        <el-button type="primary" plain @click="getDataFromGoogleCalendar">Update data from Calendar</el-button>
+        <el-button type="primary" plain @click="confirmSynchronizeCalendar">Synchronize with Calendar</el-button>
+        <el-button type="primary" plain @click="dialogRemindVisible = true">Remind me</el-button>
+        <el-button type="danger" plain @click="deleteTimetable">Remove</el-button>
       </div>
-      <div class="d-flex justify-content-end">
-        <i class="text-muted"><small>Đồng bộ sẽ chỉ 1 chiều. Nếu abc đồng bộ 2.</small></i>
+      <div class="mt-2 offset-4">
+        <p class="text-end"><i class="text-muted"><small>Nếu muốn hiển thị dữ liệu từ Google Calendar vào thời khoá biểu,
+              chọn Update
+              data from Calendar. Về vấn đề đồng bộ hoá, chọn Synchronize with Calendar và dữ liệu trong thời khoá biểu
+              của
+              bạn sẽ được update vào tài khoản Google Calendar.
+            </small></i></p>
       </div>
-      <!-- Modal -->
-      <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Import timetable</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-              </button>
-            </div>
-            <div class="modal-body text-center py-4">
-              <IconImport @click="$refs.file.click()" />
-              <h3>Select a file to import</h3>
-              <p>Using file export from qldt.utc.edu.vn or download template import <a>here</a></p>
-              <p class="text-danger" v-show="importAlert == '' ? false : true">{{ importAlert }}</p>
-              <div>
-                <input type="file" ref="file" @change="handleFileChange($event)" accept="image/*" capture hidden />
-                <button type="button" class="btn btn-modal btn-blue" @click="$refs.file.click()">
-                  <IconButtonImport /> Import
-                </button>
-                <button type="button" class="btn btn-modal btn-dismiss" data-bs-dismiss="modal">Close</button>
-              </div>
-            </div>
+      <el-dialog v-model="dialogImportVisible" title="Import timetable" width="720">
+        <div class="text-center py-4">
+          <IconImport @click="$refs.file.click()" />
+          <h5>Select a file to import</h5>
+          <p>Using file export from qldt.utc.edu.vn or download template import <a>here</a></p>
+          <div>
+            <input type="file" ref="file" @change="handleFileChange($event)" accept="image/*" capture hidden />
+            <el-button type="primary" @click="$refs.file.click()">Import</el-button>
+            <el-button type="info" plain @click="dialogImportVisible = false">Close</el-button>
           </div>
         </div>
-      </div>
+      </el-dialog>
+      <el-dialog v-model="dialogRemindVisible" title="Remind me" width="720">
+        <div class="py-4">
+          <p class="text-center">Please remind me before <el-input-number v-model="remindTime" /></p>
+          <p class="text-end"><i><small class="text-muted">Thông báo nhắc nhở sẽ chỉ có hiệu quả với những sự kiện được
+                cập nhật
+                sau khi chỉnh sửa thời gian và được đồng bộ với Google Calendar. Những sự kiện trước đó sẽ không
+                có hiệu quả. Tương tự với việc tắt nhắc nhở.
+              </small></i></p>
+          <div class="d-flex justify-content-end">
+            <el-button type="primary" @click="updateRemindTime">Save</el-button>
+            <el-button type="danger" @click="turnOffRemindTime">Turn off</el-button>
+            <el-button type="info" plain @click="dialogRemindVisible = false">Close</el-button>
+          </div>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -47,22 +54,29 @@ import IconImport from '../icons/import/IconImport.vue';
 import IconButtonImport from '../icons/import/IconButtonImport.vue';
 import { getHeaderConfig } from '../../utils/ApiHandler.js'
 import GoogleGapiHandler from '../../utils/GoogleGapiHandler.js'
-
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getEvent, convertEventFromGoogleCalendar, convertEventToGoogleCalendar } from '../../utils/EventHandler.js'
 
 export default {
   components: {
     IconImport,
     IconButtonImport
   },
+  props: {
+    events: Array,
+  },
   data() {
     return {
       fileUpload: undefined,
-      importAlert: '',
-      ggGapiHandler: undefined
+      ggGapiHandler: undefined,
+      dialogImportVisible: false,
+      dialogRemindVisible: false,
+      remindTime: -1,
     }
   },
-  mounted() {
+  async mounted() {
     this.ggGapiHandler = new GoogleGapiHandler();
+    this.remindTime = await this.getRemindTime();
   },
   methods: {
 
@@ -71,11 +85,20 @@ export default {
     async importTimetable() {
       var formData = new FormData();
       formData.append('image', this.fileUpload);
-      var res = (await axios.post(import.meta.env.VITE_API + '/import/timetable', {
+      var res = await axios.post(import.meta.env.VITE_API + '/import/timetable', {
         file: this.fileUpload
-      }, getHeaderConfig('multipart/form-data'))).data;
-      this.importAlert = 'Import success';
-      this.$emit('refreshCalendar');
+      }, getHeaderConfig('multipart/form-data')).then((data) => {
+        ElMessage({
+          message: 'Import success.',
+          type: 'success',
+        })
+        this.$emit('refreshCalendar');
+      }).catch(e => {
+        ElMessage({
+          message: e.message,
+          type: 'error',
+        });
+      });
     },
 
     handleFileChange(event) {
@@ -83,18 +106,13 @@ export default {
       if (this.fileUpload) {
         this.importTimetable();
       }
-      else {
-        console.log("error")
-      }
+      this.dialogImportVisible = false;
     },
 
-// synchronize with google
+    // get data from google
 
-    synchronizeWithGoogleCalendar() {
+    getDataFromGoogleCalendar() {
       this.handleAuthClick();
-    },
-    showSynchronizeAlert() {
-      //this.$swal('Hello Vue world!!!');
     },
     handleAuthClick() {
       this.ggGapiHandler.tokenClient.callback = async (resp) => {
@@ -129,42 +147,125 @@ export default {
       }
     },
 
+    // synchronize
+
+    confirmSynchronizeCalendar() {
+      ElMessageBox.confirm(
+        'Thời khoá biểu sẽ được cập nhật vào Google Calendar của bạn. Tiếp tục?',
+        'Warning',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
+        }
+      )
+        .then(() => {
+          gapi.client.load('calendar', 'V3', this.addEventToGoogleCalendar.bind(this));
+          this.synchronizeWithGoogleCalendar();
+          ElMessage({
+            message: "Đồng bộ hoá thành công",
+            type: 'success',
+          });
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: 'error',
+          });
+        })
+    },
+
+    addEventToGoogleCalendar() {
+      console.log(this.events)
+      this.events.forEach((appEvent) => {
+        let event = convertEventToGoogleCalendar(appEvent.start, appEvent.end, appEvent.title, appEvent.content, this.remindTime);
+        const request = gapi.client.calendar.events.insert({
+          'calendarId': 'primary',
+          'resource': event
+        })
+
+        request.execute(function (event) {
+          console.log('Event created: ' + event.htmlLink);
+        });
+      });
+    },
+
+    synchronizeWithGoogleCalendar() {
+      axios.post(import.meta.env.VITE_API + '/timetable/synchronize', getHeaderConfig())
+        .catch(e => {
+          console.error(e.message);
+        });
+    },
+
     // update to google and remind time
-    updateAndRemind(){
-      
+    async getRemindTime() {
+      var timetable = (await axios.get(import.meta.env.VITE_API + '/timetable', getHeaderConfig())).data;
+      return timetable.remindTime;
+    },
+
+    updateRemindTime() {
+      axios.post(import.meta.env.VITE_API + '/timetable/remind/' + this.remindTime, getHeaderConfig())
+        .then(() => {
+          ElMessage({
+            type: 'success',
+            message: 'Cập nhật thành công',
+          })
+        })
+        .catch(e => {
+          ElMessage({
+            type: 'error',
+            message: e.message,
+          })
+        });
+      this.dialogRemindVisible = false;
+    },
+
+    turnOffRemindTime() {
+      axios.post(import.meta.env.VITE_API + '/timetable/remind/-1', getHeaderConfig())
+        .then(() => {
+          ElMessage({
+            type: 'success',
+            message: 'Cập nhật thành công',
+          })
+        })
+        .catch(e => {
+          ElMessage({
+            type: 'error',
+            message: e.message,
+          })
+        });
+      this.dialogRemindVisible = false;
+      this.remindTime = undefined;
+    },
+
+    // delete timetable
+    deleteTimetable() {
+      ElMessageBox.confirm(
+        'Thời khoá biểu của bạn sẽ bị xoá vĩnh viễn. Tiếp tục?',
+        'Warning',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
+        }
+      ).then(() => {
+        axios.delete(import.meta.env.VITE_API + '/timetable', getHeaderConfig())
+          .then(() => {
+            ElMessage({
+              type: 'success',
+              message: 'Delete completed',
+            })
+          })
+          .catch(e => {
+            ElMessage({
+              type: 'error',
+              message: e.message,
+            });
+          })
+      })
     }
   }
 }
 </script>
 
-<style scoped>
-.btn {
-  margin: .5rem 0 .5rem .5rem;
-}
-
-.btn-pink {
-  background: var(--Pink);
-  color: var(--White);
-}
-
-.btn-red {
-  background: var(--Red);
-  color: var(--White);
-}
-
-.btn-blue {
-  color: var(--White);
-  background: var(--SkyBlue);
-}
-
-.btn-dismiss {
-  color: var(--DarkGray);
-  background: var(--White);
-  border: .5px solid var(--Gray);
-}
-
-.btn-modal {
-  padding: .375rem 2rem;
-
-}
-</style>
+<style scoped></style>

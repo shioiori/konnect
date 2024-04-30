@@ -1,23 +1,11 @@
 <template>
-  <div class="container-fluid">
-    <div class="row">
-      <div :class="['col-' + (this.isSidebarCollapse ? '1' : '2')]" style="padding: 0;">
-        <the-sidebar @toggle-sidebar="onSidebarCollapse" />
+  <div class="container">
+    <div class="content">
+      <div>
+        <bulletin-add-post @refresh-bulletin="getBulletinNews" />
       </div>
-      <div :class="['col-' + (this.isSidebarCollapse ? '11' : '10')]" style="padding: 0;">
-        <div>
-          <the-navbar @toggle-sidebar="onSidebarCollapse" />
-        </div>
-        <div class="container">
-          <div class="content">
-            <div>
-              <bulletin-add-post @refresh-bulletin="getBulletinNews" />
-            </div>
-            <div>
-              <bulletin-post v-for="(item, index) in news" v-bind:news="item" v-bind:key="index" />
-            </div>
-          </div>
-        </div>
+      <div>
+        <bulletin-post v-for="(item, index) in posts" v-bind:posts="item" v-bind:key="index" />
       </div>
     </div>
   </div>
@@ -26,8 +14,6 @@
 <script>
 import BulletinAddPost from '../components/bulletin/BulletinAddPost.vue'
 import BulletinPost from '../components/bulletin/BulletinPost.vue'
-import TheNavbar from '../components/layout/TheNavbar.vue'
-import TheSidebar from '../components/layout/TheSidebar.vue'
 
 import axios from 'axios'
 import router from '../router/index.ts'
@@ -37,13 +23,10 @@ export default {
   components: {
     BulletinAddPost,
     BulletinPost,
-    TheNavbar,
-    TheSidebar
   },
   data() {
     return {
-      news: [],
-      isSidebarCollapse: true,
+      posts: [],
     }
   },
   mounted() {
@@ -57,7 +40,7 @@ export default {
         )
       ).data
       if (res.success) {
-        this.news = res.news;
+        this.posts = res.posts;
       }
     },
     onSidebarCollapse() {

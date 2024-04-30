@@ -1,14 +1,33 @@
 <template>
     <div>
         <header class="header d-flex" id="header">
-            <div class="header_toggle" @click="$emit('toggleSidebar')"><i class="bi bi-list"></i></div>
-            <div class="dropdown">
-                <b class="mx-2">string</b>
-                <img class="dropdown-toggle img-responsive rounded-circle img-avatar" src="https://i.imgur.com/hczKIze.jpg"
-                    alt="dropdown image" data-bs-toggle="dropdown">
-                <ul class="dropdown-menu">
-                    <li class="px-2"><a @click="logout">Log Out</a></li>
-                </ul>
+            <div class="header_toggle d-flex" @click="$emit('toggleSidebar')">
+                <i class="bi bi-list"></i>
+                <div class="d-flex mx-2">
+                    <el-breadcrumb :separator-icon="ArrowRight" style="vertical-align: middle; display: flex;">
+                        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+                        <el-breadcrumb-item>promotion management</el-breadcrumb-item>
+                        <el-breadcrumb-item>promotion list</el-breadcrumb-item>
+                        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+                    </el-breadcrumb>
+                </div>
+            </div>
+            <div>
+                <b class="mx-2" style="margin: auto">string</b>
+                <el-dropdown>
+                    <span class="el-dropdown-link">
+                        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                    </span>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item>Action 1</el-dropdown-item>
+                            <el-dropdown-item>Action 2</el-dropdown-item>
+                            <el-dropdown-item>Action 3</el-dropdown-item>
+                            <el-dropdown-item disabled>Action 4</el-dropdown-item>
+                            <el-dropdown-item divided @click="logout">Log out</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </div>
         </header>
     </div>
@@ -16,10 +35,13 @@
 
 <script>
 import router from '../../router/index.ts';
+import { ArrowRight } from '@element-plus/icons-vue'
 
 export default {
     data() {
-        return {}
+        return {
+            ArrowRight
+        }
     },
     methods: {
         // toggleSidebar() {

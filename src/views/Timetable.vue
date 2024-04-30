@@ -1,26 +1,14 @@
 <template>
-    <div class="container-fluid">
-        <div class="row">
-            <div :class="['col-' + (this.isSidebarCollapse ? '1' : '2')]" style="padding: 0;">
-                <the-sidebar @toggle-sidebar="onSidebarCollapse" />
+    <div class="container">
+        <div class="content">
+            <div>
+                <TimetableButton @refresh-calendar="getEventsInDatabase" @synchronize-calendar="synchronizeCalendar"
+                    :events="events" />
             </div>
-            <div :class="['col-' + (this.isSidebarCollapse ? '11' : '10')]" style="padding: 0;">
-                <div>
-                    <the-navbar @toggle-sidebar="onSidebarCollapse" />
-                </div>
-                <div class="container">
-                    <div class="content">
-                        <div>
-                            <TimetableButton @refresh-calendar="getEventsInDatabase" 
-                            @synchronize-calendar="synchronizeCalendar"/>
-                        </div>
-                        <div>
-                            <vue-cal :selected-date="currentDate" :time-from="0 * 60" :time-to="23 * 60"
-                                :disable-views="['years']" :events="events">
-                            </vue-cal>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <vue-cal :selected-date="currentDate" :time-from="0 * 60" :time-to="23 * 60" :disable-views="['years']"
+                    :events="events">
+                </vue-cal>
             </div>
         </div>
     </div>
@@ -33,16 +21,12 @@ import axios from 'axios'
 import { getHeaderConfig } from '../utils/ApiHandler.js'
 import { getTime, getDateOnly, dateTimeToJSDate, getStartDateInRange } from '../utils/DateConverter.js'
 import { getEvent, convertEventFromGoogleCalendar, convertEventToGoogleCalendar } from '../utils/EventHandler.js'
-import TheNavbar from '../components/layout/TheNavbar.vue'
-import TheSidebar from '../components/layout/TheSidebar.vue'
 import TimetableButton from '../components/timetable/TimetableButton.vue'
 
 export default {
     components: {
         VueCal,
         TimetableButton,
-        TheNavbar,
-        TheSidebar
     },
     data() {
         return {
@@ -59,7 +43,6 @@ export default {
                     class: 'health'
                 },
             ],
-            isSidebarCollapse: true,
         }
     },
     created() {
@@ -86,7 +69,7 @@ export default {
                 }
             });
         },
-        synchronizeCalendar(ggEvents){
+        synchronizeCalendar(ggEvents) {
             ggEvents.forEach(e => {
                 let ev = convertEventFromGoogleCalendar(e);
                 this.events.push(ev);

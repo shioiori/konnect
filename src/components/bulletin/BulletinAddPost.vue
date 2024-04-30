@@ -12,9 +12,9 @@
                     </button>
                 </div> -->
                 <div class="d-flex justify-content-end pt-2">
-                    <button type="button" class="btn btn-blue" @click="uploadNews">
+                    <el-button type="primary" @click="uploadNews">
                         <icon-button-send /> Post
-                    </button>
+                    </el-button>
                 </div>
             </div>
         </div>

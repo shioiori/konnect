@@ -15,6 +15,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.3.1",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@element-plus/icons-vue": "^2.3.1",
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
@@ -23,6 +24,7 @@
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "element-plus": "^2.7.2",
     "mitt": "^3.0.1",
     "vue": "^3.4.21",
     "vue-cal": "^4.8.1",

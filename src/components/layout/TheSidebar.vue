@@ -1,12 +1,46 @@
 <template>
-  <div :class="['l-navbar', this.isOpen ? 'show' : '']" id="nav-bar">
-    <div class="d-flex flex-column flex-shrink-0 px-1 py-2 bg-body-tertiary" style="height: 100vh">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-        <img src="../../assets/logo.png" style="width: 100%;">
-        <span class="fs-4">&nbsp;</span>
-      </a>
-      <hr>
-      <ul class="nav nav-pills flex-column mb-auto">
+  <el-container>
+    <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
+      <el-menu-item index="0">
+        <img style="width: 100%" src="../../assets/logo.png" />
+      </el-menu-item>
+      <el-menu-item index="1">
+        <el-icon>
+          <document />
+        </el-icon>
+        <template #title><router-link to="/">Bulletin</router-link></template>
+      </el-menu-item>
+      <el-menu-item index="2">
+        <el-icon>
+          <document />
+        </el-icon>
+        <template #title><router-link to="/timetable">Timetable</router-link></template>
+      </el-menu-item>
+      <el-menu-item index="3">
+        <el-icon>
+          <document />
+        </el-icon>
+        <template #title><router-link to="/storage">Storage</router-link></template>
+      </el-menu-item>
+      <el-menu-item index="4">
+        <el-icon>
+          <setting />
+        </el-icon>
+        <template #title><router-link to="/chat">Chat</router-link></template>
+      </el-menu-item>
+      <el-menu-item index="5">
+        <el-icon>
+          <setting />
+        </el-icon>
+        <template #title><router-link to="/group">Group</router-link></template>
+      </el-menu-item>
+      <el-menu-item>
+        <el-icon @click="this.isCollapse = !this.isCollapse">
+          <Expand />
+        </el-icon>
+      </el-menu-item>
+    </el-menu>
+    <!-- <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <router-link to="/" class="nav-link link-body-emphasis">
             <icon-bulletin />
@@ -35,9 +69,8 @@
       <hr>
       <div class="header_toggle px-3 fs-4" @click="$emit('toggleSidebar')">
         <i class="bi bi-list" color="black"></i>
-      </div>
-    </div>
-  </div>
+      </div> -->
+  </el-container>
 </template>
 
 <script>
@@ -56,7 +89,7 @@ export default {
   },
   data() {
     return {
-      isOpen: false
+      isCollapse: false
     }
   },
   mounted() {

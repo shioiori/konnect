@@ -12,6 +12,7 @@
 import axios from 'axios'
 import { getHeaderConfig } from '../utils/ApiHandler.js'
 import router from '../router/index.ts';
+import { ElMessage } from 'element-plus'
 
 export default {
   data() {
@@ -25,23 +26,26 @@ export default {
   },
   methods: {
     async loginWithGroup() {
-      var res = (await axios.post(import.meta.env.VITE_API + '/login/' + this.groupId, {
+      axios.post(import.meta.env.VITE_API + '/login/' + this.groupId, {
         groupId: this.groupId
-      }, getHeaderConfig())).data;
-      console.log(res)
-      if (res.success) {
-        localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.accessToken);
+      }, getHeaderConfig()).then((res) => {
+        ElMessage({
+          message: "Chào mừng quay trở lại",
+          type: 'success',
+        });
+        localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.data.accessToken);
         router.push('/');
-      }
-      else {
-        console.log(res)
-      }
-    },
-    async getGroupByUser() {
-      var res = await axios.get(import.meta.env.VITE_API + '/group', getHeaderConfig()).catch(e => {
+      }).catch((err) => {
+        localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, '');
         router.push('/login');
       });
-      this.groups = res.data.groups;
+    },
+    async getGroupByUser() {
+      axios.get(import.meta.env.VITE_API + '/group', getHeaderConfig()).then((res) => {
+        this.groups = res.data.groups;
+      }).catch(e => {
+        router.push('/login');
+      });
     }
   },
 }
