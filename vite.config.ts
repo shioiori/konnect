@@ -8,7 +8,15 @@ import VueDevTools from 'vite-plugin-vue-devtools'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: tagName => {
+            return tagName === 'vue-advanced-chat' || tagName === 'emoji-picker'
+          }
+        }
+      }
+    }),
     vueJsx(),
     VueDevTools(),
   ],
@@ -16,5 +24,5 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
 })
