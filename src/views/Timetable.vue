@@ -3,11 +3,12 @@
         <div class="content">
             <div>
                 <TimetableButton @refresh-calendar="getEventsInDatabase" @synchronize-calendar="synchronizeCalendar"
-                    :events="events" />
+                    :events="events" ref="timetableButton" />
             </div>
             <div>
                 <vue-cal :selected-date="currentDate" :time-from="0 * 60" :time-to="23 * 60" :disable-views="['years']"
-                    :events="events">
+                    :events="events"
+                    :on-event-click="$refs.timetableButton.dialogEventVisible = true">
                 </vue-cal>
             </div>
         </div>
@@ -52,6 +53,10 @@ export default {
         async getEventsInDatabase() {
             var res = (await axios.get(import.meta.env.VITE_API + '/timetable', getHeaderConfig())).data;
             if (res.events.length == 0) {
+                return;
+            }
+            if (res.isSynchronized) {
+                this.$refs.timetableButton.listUpcomingEvents();
                 return;
             }
             this.currentDate = dateTimeToJSDate(res.from);

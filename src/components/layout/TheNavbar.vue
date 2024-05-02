@@ -20,11 +20,11 @@
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item>Action 1</el-dropdown-item>
-                            <el-dropdown-item>Action 2</el-dropdown-item>
-                            <el-dropdown-item>Action 3</el-dropdown-item>
-                            <el-dropdown-item disabled>Action 4</el-dropdown-item>
-                            <el-dropdown-item divided @click="logout">Log out</el-dropdown-item>
+                            <el-dropdown-item><router-link to="/change-password">Đổi mật khẩu</router-link></el-dropdown-item>
+                            <el-dropdown-item><router-link to="/remove-group">Rời nhóm</router-link></el-dropdown-item>
+                            <el-dropdown-item>
+                                <router-link to="/delete-accout">Xoá tài khoản</router-link></el-dropdown-item>
+                            <el-dropdown-item divided @click="logout">Đăng xuất</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
@@ -36,11 +36,13 @@
 <script>
 import router from '../../router/index.ts';
 import { ArrowRight } from '@element-plus/icons-vue'
+import { RouterLink, RouterView } from 'vue-router'
 
 export default {
     data() {
         return {
-            ArrowRight
+            ArrowRight,
+            RouterLink
         }
     },
     methods: {

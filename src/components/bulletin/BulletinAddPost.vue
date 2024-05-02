@@ -56,8 +56,8 @@ export default {
             editor: ClassicEditor,
             editorData: '',
             editorConfig: {
-                placeholder: 'Have something new? Send it to all~'
-            }
+                placeholder: 'Have something new? Send it to all~',
+            },
         }
     },
 }

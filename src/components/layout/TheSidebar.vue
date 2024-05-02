@@ -32,7 +32,7 @@
         <el-icon>
           <setting />
         </el-icon>
-        <template #title><router-link to="/group">Group</router-link></template>
+        <template #title><router-link to="/group-manager">Group</router-link></template>
       </el-menu-item>
       <el-menu-item>
         <el-icon @click="this.isCollapse = !this.isCollapse">

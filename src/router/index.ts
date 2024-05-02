@@ -8,6 +8,7 @@ import Timetable from '../views/Timetable.vue'
 import Chat from '../views/Chat.vue'
 import UserInfomation from '../views/UserInfomation.vue'
 import MainLayout from '../layouts/MainLayout.vue'
+import GroupManager from '../views/GroupManager.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,11 @@ const router = createRouter({
           path: 'user-infomation',
           name: 'user-infomation',
           component: UserInfomation
+        },
+        {
+          path: 'group-manager',
+          name: 'group-manager',
+          component: GroupManager
         }
       ]
     },

@@ -2,6 +2,7 @@
   <div>
     <div>
       <div class="justify-content-end d-flex">
+        <el-button type="primary" plain @click="dialogEventVisible = true">Add event</el-button>
         <el-button type="primary" plain @click="dialogImportVisible = true">Import timetable</el-button>
         <el-button type="primary" plain @click="getDataFromGoogleCalendar">Update data from Calendar</el-button>
         <el-button type="primary" plain @click="confirmSynchronizeCalendar">Synchronize with Calendar</el-button>
@@ -20,7 +21,9 @@
         <div class="text-center py-4">
           <IconImport @click="$refs.file.click()" />
           <h5>Select a file to import</h5>
-          <p>Using file export from qldt.utc.edu.vn or download template import <a>here</a></p>
+          <p>Using file export from qldt.utc.edu.vn or download template import
+            <el-link type="primary" href="../../assets/template/Import timetable template.xlsx" download>here</el-link>
+          </p>
           <div>
             <input type="file" ref="file" @change="handleFileChange($event)" accept="image/*" capture hidden />
             <el-button type="primary" @click="$refs.file.click()">Import</el-button>
@@ -43,6 +46,42 @@
           </div>
         </div>
       </el-dialog>
+      <el-dialog v-model="dialogEventVisible" title="Add event" width="720">
+        <div class="py-4">
+          <el-form :model="event">
+            <el-form-item label="Tiêu đề" prop="title" required>
+              <el-input v-model="event.title" />
+            </el-form-item>
+            <el-form-item label="Thời gian" required>
+              <el-col :span="11">
+                <el-form-item prop="start">
+                  <el-time-picker v-model="event.start" label="Pick a time" placeholder="Pick a time"
+                    style="width: 100%" />
+                </el-form-item>
+              </el-col>
+              <el-col class="text-center" :span="2">
+                <span class="text-gray-500">-</span>
+              </el-col>
+              <el-col :span="11">
+                <el-form-item prop="end">
+                  <el-time-picker v-model="event.end" label="Pick a time" placeholder="Pick a time" style="width: 100%" />
+                </el-form-item>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Nội dung" prop="content">
+              <el-input v-model="event.content" type="textarea" />
+            </el-form-item>
+            <div class="d-flex justify-content-end">
+              <el-form-item>
+                <el-button type="primary" @click="addEvent">
+                  Create
+                </el-button>
+                <el-button type="info" @click="dialogEventVisible = false">Cancel</el-button>
+              </el-form-item>
+            </div>
+          </el-form>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -56,6 +95,7 @@ import { getHeaderConfig } from '../../utils/ApiHandler.js'
 import GoogleGapiHandler from '../../utils/GoogleGapiHandler.js'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getEvent, convertEventFromGoogleCalendar, convertEventToGoogleCalendar } from '../../utils/EventHandler.js'
+import { reactive } from 'vue'
 
 export default {
   components: {
@@ -71,7 +111,15 @@ export default {
       ggGapiHandler: undefined,
       dialogImportVisible: false,
       dialogRemindVisible: false,
+      dialogEventVisible: false,
       remindTime: -1,
+      event: reactive({
+        title: '',
+        content: '',
+        start: '',
+        end: '',
+        isSynchronize: '',
+      })
     }
   },
   async mounted() {
@@ -79,15 +127,18 @@ export default {
     this.remindTime = await this.getRemindTime();
   },
   methods: {
+    addEvent() {
+
+    },
 
     // import timetable
 
-    async importTimetable() {
+    importTimetable() {
       var formData = new FormData();
       formData.append('image', this.fileUpload);
-      var res = await axios.post(import.meta.env.VITE_API + '/import/timetable', {
+      axios.post(import.meta.env.VITE_API + '/import/timetable', {
         file: this.fileUpload
-      }, getHeaderConfig('multipart/form-data')).then((data) => {
+      }, getHeaderConfig('multipart/form-data')).then((res) => {
         ElMessage({
           message: 'Import success.',
           type: 'success',
@@ -127,6 +178,7 @@ export default {
         this.ggGapiHandler.tokenClient.requestAccessToken({ prompt: '' });
       }
     },
+
     async listUpcomingEvents() {
       let response;
       try {
