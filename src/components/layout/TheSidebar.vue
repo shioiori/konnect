@@ -28,7 +28,7 @@
         </el-icon>
         <template #title><router-link to="/chat">Chat</router-link></template>
       </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item index="5" v-if="user != undefined && user.roleName != 'User'">
         <el-icon>
           <setting />
         </el-icon>
@@ -74,35 +74,39 @@
 </template>
 
 <script>
-import IconBulletin from '../icons/IconBulletin.vue';
-import IconChat from '../icons/IconChat.vue';
-import IconStorage from '../icons/IconStorage.vue';
-import IconTimetable from '../icons/IconTimetable.vue';
-import { RouterLink, RouterView } from 'vue-router'
+import IconBulletin from "../icons/IconBulletin.vue";
+import IconChat from "../icons/IconChat.vue";
+import IconStorage from "../icons/IconStorage.vue";
+import IconTimetable from "../icons/IconTimetable.vue";
+import { RouterLink, RouterView } from "vue-router";
 
 export default {
   components: {
     IconBulletin,
     IconChat,
     IconStorage,
-    IconTimetable
+    IconTimetable,
   },
   data() {
     return {
-      isCollapse: false
-    }
+      isCollapse: false,
+    };
+  },
+  props: {
+    user: Object,
   },
   mounted() {
     // this.emitter.on('toggle-sidebar', () => {
     //   this.isOpen = !this.isOpen
     // })
+    console.log(this.user);
   },
   methods: {
     toggleSidebar() {
-      this.isOpen = !this.isOpen
-    }
-  }
-}
+      this.isOpen = !this.isOpen;
+    },
+  },
+};
 </script>
 
 <style scoped>
