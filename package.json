@@ -28,6 +28,7 @@
     "element-plus": "^2.7.2",
     "mitt": "^3.0.1",
     "vue": "^3.4.21",
+    "vue-advanced-chat": "^2.1.0",
     "vue-cal": "^4.8.1",
     "vue-gapi": "^2.1.2",
     "vue-router": "^4.3.0",
