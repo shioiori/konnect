@@ -16,7 +16,8 @@
           :time-to="23 * 60"
           :disable-views="['years']"
           :events="events"
-          :on-event-click="openEventDialog"
+          editable-events
+          @cell-dblclick="openEventDialog($event)"
         >
         </vue-cal>
       </div>
@@ -110,8 +111,10 @@ export default {
       this.currentDate = new Date();
       console.log(this.events);
     },
-    openEventDialog() {
+    openEventDialog(event) {
+      console.log(event);
       this.$refs.timetableButton.dialogEventVisible = true;
+      this.$refs.timetableButton.setDefaultEventParam(event);
     },
   },
 };

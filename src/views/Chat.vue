@@ -1,14 +1,40 @@
 <template>
   <div>
-    <vue-advanced-chat
-      :current-user-id="currentUserId"
-      :rooms="JSON.stringify(rooms)"
-      :rooms-loaded="true"
-      :messages="JSON.stringify(messages)"
-      :messages-loaded="messagesLoaded"
-      @send-message="sendMessage($event.detail[0])"
-      @fetch-messages="fetchMessages($event.detail[0])"
-    />
+    <div>
+      <el-row>
+        <el-col :span="3">
+          <el-menu
+            class="el-menu-vertical-demo"
+            :collapse="isCollapse"
+            v-for="(item, index) in users"
+          >
+            <el-menu-item
+              index="index"
+              @click="getChat(item.userName)"
+              v-if="item.userName != currentUser"
+            >
+              <template #title>
+                <el-icon>
+                  <el-avatar :size="36" :src="item.avatar" />
+                </el-icon>
+                <span>{{ item.userName }}</span>
+              </template>
+            </el-menu-item>
+          </el-menu>
+        </el-col>
+        <el-col :span="21">
+          <vue-advanced-chat
+            :current-user-id="currentUser"
+            :rooms="JSON.stringify(rooms)"
+            :rooms-loaded="true"
+            :messages="JSON.stringify(messages)"
+            :messages-loaded="messagesLoaded"
+            @send-message="sendMessage($event.detail[0])"
+            @fetch-messages="fetchMessages($event.detail[0])"
+          />
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -24,7 +50,7 @@ register();
 export default {
   data() {
     return {
-      currentUserId: undefined,
+      currentUser: undefined,
       rooms: [
         {
           roomId: "1",
@@ -38,26 +64,33 @@ export default {
       ],
       messages: [],
       messagesLoaded: false,
+      users: [],
+      isCollapsed: false,
     };
   },
+  props: {
+    user: Object,
+  },
   mounted() {
+    console.log(getHeaderConfig());
+    this.currentUser = this.user.userName;
     axios
-      .get(import.meta.env.VITE_API + "/user", getHeaderConfig())
+      .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
       .then((res) => {
-        this.currentUserId = res.data.id;
+        this.users = res.data;
       })
       .catch((err) => {
         ElMessage({
-          message: "Không tìm thấy thông tin đăng nhập của người dùng",
+          message: err.message,
           type: "error",
         });
-        router.push("/login");
       });
 
     axios
       .get(import.meta.env.VITE_API + "/chat/search", getHeaderConfig())
       .then((res) => {
         this.rooms = res.data;
+        console.log(this.rooms);
       })
       .catch((err) => {
         ElMessage({
@@ -82,7 +115,7 @@ export default {
       axios
         .get(import.meta.env.VITE_API + "/chat", getHeaderConfig())
         .then((res) => {
-          return res.messages;
+          return res.data.messages;
         })
         .catch((e) => {
           ElMessage({
@@ -103,12 +136,28 @@ export default {
           date: new Date().toDateString(),
         },
       ];
-      axios.post(import.meta.env.VITE_API + "/chat", {}, getHeaderConfig()).catch((e) => {
-        ElMessage({
-          type: "error",
-          message: e.message,
+      axios
+        .post(import.meta.env.VITE_API + "/message", {}, getHeaderConfig())
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
         });
-      });
+    },
+    getChat(username) {
+      let param = `users=${this.currentUser}&users=${username}`;
+      axios
+        .get(import.meta.env.VITE_API + "/chat?" + param, {}, getHeaderConfig())
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
+        });
     },
   },
 };

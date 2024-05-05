@@ -7,7 +7,7 @@
       <div>
         <bulletin-post
           v-for="(item, index) in posts"
-          v-bind:posts="item"
+          v-bind:post="item"
           v-bind:key="index"
         />
       </div>

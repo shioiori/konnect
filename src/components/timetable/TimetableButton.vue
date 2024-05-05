@@ -105,7 +105,7 @@
               </el-col>
               <el-col :span="11">
                 <el-form-item prop="to">
-                  <el-time-picker
+                  <el-date-picker
                     v-model="event.to"
                     label="Đến"
                     placeholder="Pick a time"
@@ -171,6 +171,7 @@ import {
   convertEventToGoogleCalendar,
 } from "../../utils/EventHandler.js";
 import { reactive } from "vue";
+import { getDateOnly } from "../../utils/DateConverter.js";
 
 export default {
   components: {
@@ -191,11 +192,11 @@ export default {
       event: reactive({
         title: "",
         content: "",
-        from: "",
-        to: "",
-        start: "",
-        end: "",
-        isSynchronize: "",
+        from: new Date(),
+        to: new Date(),
+        start: new Date(),
+        end: new Date(),
+        isSynchronize: false,
       }),
     };
   },
@@ -204,8 +205,35 @@ export default {
     this.remindTime = await this.getRemindTime();
   },
   methods: {
-    addEvent() {},
-
+    addEvent() {
+      axios
+        .post(
+          import.meta.env.VITE_API + "/timetable/event",
+          {
+            file: this.fileUpload,
+          },
+          getHeaderConfig("multipart/form-data")
+        )
+        .then((res) => {
+          ElMessage({
+            message: res.message,
+            type: res.type,
+          });
+          this.$emit("refreshCalendar");
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: "error",
+          });
+        });
+    },
+    setDefaultEventParam(event) {
+      this.event.from = event;
+      this.event.to = event;
+      this.event.start = event;
+      this.event.end = event;
+    },
     // import timetable
 
     importTimetable() {
@@ -404,6 +432,7 @@ export default {
               type: "success",
               message: "Delete completed",
             });
+            this.$emit("refreshCalendar");
           })
           .catch((e) => {
             ElMessage({

@@ -10,10 +10,21 @@
     </div>
     <div>
       <el-table :data="users" stripe style="width: 100%">
-        <el-table-column prop="name" label="Name" />
-        <el-table-column prop="email" label="Upload date" />
-        <el-table-column prop="tel" label="By" />
-        <el-table-column prop="role" label="" />
+        <el-table-column prop="userName" label="Username" />
+        <el-table-column prop="displayName" label="Display name" />
+        <el-table-column prop="email" label="Email" />
+        <el-table-column prop="phone" label="Tel" />
+        <el-table-column prop="roleName" label="Role" />
+        <el-table-column fixed="right" label="Operations" width="120">
+          <template #default>
+            <el-button link type="warning" @click="editUser">
+              <el-icon><Edit /></el-icon>
+            </el-button>
+            <el-button link type="danger" @click="removeUser"
+              ><el-icon><Delete /></el-icon
+            ></el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-dialog v-model="dialogUserVisible" title="Import users" width="720">
@@ -85,7 +96,25 @@ export default {
     });
   },
   methods: {
-    deleteGroup() {},
+    deleteGroup() {
+      ElMessageBox.confirm("Nhóm này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      })
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "Delete completed",
+          });
+        })
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
+        });
+    },
     importUserToGroup() {
       var formData = new FormData();
       formData.append("image", this.fileUpload);

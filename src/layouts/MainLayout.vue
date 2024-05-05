@@ -10,7 +10,7 @@
             <TheNavbar :user="user" />
           </el-header>
           <el-main>
-            <RouterView />
+            <RouterView :user="user" />
           </el-main>
         </el-col>
       </el-row>
@@ -25,6 +25,7 @@ import TheSidebar from "../components/layout/TheSidebar.vue";
 import axios from "axios";
 import router from "../router/index.ts";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {
