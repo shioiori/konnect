@@ -2,8 +2,19 @@
   <div>
     <div>
       <div class="justify-content-end d-flex">
-        <el-button type="primary" plain @click="dialogUserVisible = true"
+        <button-manager-invite class="mx-2" />
+        <el-button type="primary" plain @click="dialogImportVisible = true"
           >Import user</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          @click="
+            dialogAddVisible = true;
+            action = 'add';
+            clearDialog();
+          "
+          >Add user</el-button
         >
         <el-button type="danger" plain @click="deleteGroup">Delete group</el-button>
       </div>
@@ -17,17 +28,20 @@
         <el-table-column prop="roleName" label="Role" />
         <el-table-column fixed="right" label="Operations" width="120">
           <template #default>
-            <el-button link type="warning" @click="editUser">
-              <el-icon><Edit /></el-icon>
+            <el-button link type="warning" @click="bindUserToDialog(userName)">
+              <el-icon>
+                <Edit />
+              </el-icon>
             </el-button>
-            <el-button link type="danger" @click="removeUser"
-              ><el-icon><Delete /></el-icon
+            <el-button link type="danger" @click="removeUser(index, userName)">
+              <el-icon>
+                <Delete /> </el-icon
             ></el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog v-model="dialogUserVisible" title="Import users" width="720">
+    <el-dialog v-model="dialogImportVisible" title="Import users" width="720">
       <div class="text-center py-4">
         <IconImport @click="$refs.file.click()" />
         <h5>Select a file to import</h5>
@@ -50,10 +64,37 @@
             hidden
           />
           <el-button type="primary" @click="$refs.file.click()">Import</el-button>
-          <el-button type="info" plain @click="dialogUserVisible = false"
+          <el-button type="info" plain @click="dialogImportVisible = false"
             >Close</el-button
           >
         </div>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="dialogAddVisible" title="User" width="720">
+      <div class="py-4">
+        <el-form :model="event">
+          <el-form-item label="Username" prop="username" required v-if="action == 'add'">
+            <el-input v-model="user.username" />
+          </el-form-item>
+          <el-form-item label="Password" prop="password" required v-if="action == 'add'">
+            <el-input v-model="user.password" type="password" show-password />
+          </el-form-item>
+          <el-form-item label="Name" prop="name" required>
+            <el-input v-model="user.name" />
+          </el-form-item>
+          <el-form-item label="Email" prop="email" required>
+            <el-input v-model="user.email" />
+          </el-form-item>
+          <el-form-item label="Phone" prop="phone" required>
+            <el-input v-model="user.phone" />
+          </el-form-item>
+          <div class="d-flex justify-content-end">
+            <el-form-item>
+              <el-button type="primary" @click="addUser"> Save </el-button>
+              <el-button type="info" @click="dialogAddVisible = false">Cancel</el-button>
+            </el-form-item>
+          </div>
+        </el-form>
       </div>
     </el-dialog>
   </div>
@@ -66,17 +107,30 @@ import IconImport from "../components/icons/import/IconImport.vue";
 import IconButtonImport from "../components/icons/import/IconButtonImport.vue";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { reactive } from "vue";
+import ButtonManagerInvite from "../components/manager/ButtonManagerInvite.vue";
 
 export default {
   components: {
     IconImport,
     IconButtonImport,
+    ButtonManagerInvite,
   },
   data() {
     return {
-      dialogUserVisible: false,
+      dialogImportVisible: false,
+      dialogAddVisible: false,
       users: [],
       fileUpload: undefined,
+      user: reactive({
+        username: "",
+        password: "",
+        name: "",
+        email: "",
+        phone: "",
+        avatar: "",
+      }),
+      action: "add",
     };
   },
   mounted() {
@@ -129,17 +183,10 @@ export default {
         .then((res) => {
           console.log(res);
           this.users = res.data;
-          if (res.data.success) {
-            ElMessage({
-              message: "Import success.",
-              type: "success",
-            });
-          } else {
-            ElMessage({
-              message: res.data.message,
-              type: "error",
-            });
-          }
+          ElMessage({
+            message: res.data.message,
+            type: res.data.type,
+          });
         })
         .catch((e) => {
           ElMessage({
@@ -154,6 +201,83 @@ export default {
         this.importUserToGroup();
       }
       this.dialogImportVisible = false;
+    },
+    bindUserToDialog(username) {
+      this.dialogAddVisible = true;
+      this.action = "edit";
+      var currentUser = this.users.find((x) => x.username == username);
+      this.user = {
+        name: currentUser.displayName,
+        email: currentUser.email,
+        phone: currentUser.password,
+      };
+      console.log(this.users.find((x) => x.username == username));
+    },
+    clearDialog() {
+      this.user = {
+        username: "",
+        password: "",
+        name: "",
+        email: "",
+        phone: "",
+        avatar: "",
+      };
+    },
+    editUser(index, username) {
+      axios
+        .post(import.meta.env.VITE_API + "/user/" + username, {}, getHeaderConfig())
+        .then((res) => {
+          ElMessage({
+            message: res.data.message,
+            type: res.data.type,
+          });
+          this.users[index] = res.data;
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: "error",
+          });
+        });
+    },
+    removeUser(username) {
+      ElMessageBox.confirm("Người dùng này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      }).then(() => {
+        axios
+          .delete(import.meta.env.VITE_API + "/user/" + username, {}, getHeaderConfig())
+          .then((res) => {
+            ElMessage({
+              message: res.data.message,
+              type: res.data.type,
+            });
+          })
+          .catch((e) => {
+            ElMessage({
+              message: e.message,
+              type: "error",
+            });
+          });
+      });
+    },
+    addUser() {
+      axios
+        .post(import.meta.env.VITE_API + "/user", {}, getHeaderConfig())
+        .then((res) => {
+          ElMessage({
+            message: res.data.message,
+            type: res.data.type,
+          });
+          this.users.push(res.data);
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: "error",
+          });
+        });
     },
   },
 };

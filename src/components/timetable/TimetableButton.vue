@@ -5,6 +5,9 @@
         <el-button type="primary" plain @click="dialogEventVisible = true"
           >Add event</el-button
         >
+        <el-button type="primary" plain @click="dialogEventVisible = true"
+          >Add loop event</el-button
+        >
         <el-button type="primary" plain @click="dialogImportVisible = true"
           >Import timetable</el-button
         >
@@ -68,9 +71,11 @@
           <p class="text-end">
             <i
               ><small class="text-muted"
-                >Thông báo nhắc nhở sẽ chỉ có hiệu quả với những sự kiện được cập nhật sau
+                >Thông báo hẹn giờ sẽ chỉ có hiệu quả với những sự kiện được cập nhật sau
                 khi chỉnh sửa thời gian và được đồng bộ với Google Calendar. Những sự kiện
-                trước đó sẽ không có hiệu quả. Tương tự với việc tắt nhắc nhở.
+                trước đó sẽ không có hiệu quả. Tương tự với việc tắt hẹn giờ. <br />Bật
+                hẹn giờ đồng nghĩa với việc bật đồng bộ. Tuy nhiên, tắt hẹn giờ sẽ không
+                tắt chế độ đồng bộ.
               </small></i
             >
           </p>
@@ -89,13 +94,14 @@
             <el-form-item label="Tiêu đề" prop="title" required>
               <el-input v-model="event.title" />
             </el-form-item>
-            <el-form-item label="Thời gian">
+            <el-form-item label="Từ" required>
               <el-col :span="11">
-                <el-form-item prop="from">
+                <el-form-item prop="date1">
                   <el-date-picker
                     v-model="event.from"
-                    label="Từ"
-                    placeholder="Pick a time"
+                    type="date"
+                    aria-label="Pick a date"
+                    placeholder="Pick a date"
                     style="width: 100%"
                   />
                 </el-form-item>
@@ -104,23 +110,24 @@
                 <span class="text-gray-500">-</span>
               </el-col>
               <el-col :span="11">
-                <el-form-item prop="to">
-                  <el-date-picker
-                    v-model="event.to"
-                    label="Đến"
+                <el-form-item prop="date2">
+                  <el-time-picker
+                    v-model="event.fromTime"
+                    aria-label="Pick a time"
                     placeholder="Pick a time"
                     style="width: 100%"
                   />
                 </el-form-item>
               </el-col>
             </el-form-item>
-            <el-form-item label="Trong khoảng" required>
+            <el-form-item label="Activity time" required>
               <el-col :span="11">
-                <el-form-item prop="start">
-                  <el-time-picker
-                    v-model="event.start"
-                    label="Pick a time"
-                    placeholder="Pick a time"
+                <el-form-item prop="date1">
+                  <el-date-picker
+                    v-model="event.to"
+                    type="date"
+                    aria-label="Pick a date"
+                    placeholder="Pick a date"
                     style="width: 100%"
                   />
                 </el-form-item>
@@ -129,10 +136,10 @@
                 <span class="text-gray-500">-</span>
               </el-col>
               <el-col :span="11">
-                <el-form-item prop="end">
+                <el-form-item prop="date2">
                   <el-time-picker
-                    v-model="event.end"
-                    label="Pick a time"
+                    v-model="event.toTime"
+                    aria-label="Pick a time"
                     placeholder="Pick a time"
                     style="width: 100%"
                   />
@@ -140,7 +147,11 @@
               </el-col>
             </el-form-item>
             <el-form-item label="Nội dung" prop="content">
-              <el-input v-model="event.content" type="textarea" />
+              <el-input v-model="event.description" type="textarea" />
+            </el-form-item>
+
+            <el-form-item label="Địa điểm" prop="location">
+              <el-input v-model="event.location" type="textarea" />
             </el-form-item>
             <div class="d-flex justify-content-end">
               <el-form-item>
@@ -171,7 +182,7 @@ import {
   convertEventToGoogleCalendar,
 } from "../../utils/EventHandler.js";
 import { reactive } from "vue";
-import { getDateOnly } from "../../utils/DateConverter.js";
+import { getDateOnly, getTimeOnly, getTime } from "../../utils/DateConverter.js";
 
 export default {
   components: {
@@ -180,6 +191,7 @@ export default {
   },
   props: {
     events: Array,
+    timetable: Object,
   },
   data() {
     return {
@@ -188,45 +200,63 @@ export default {
       dialogImportVisible: false,
       dialogRemindVisible: false,
       dialogEventVisible: false,
-      remindTime: -1,
       event: reactive({
         title: "",
-        content: "",
+        description: "",
         from: new Date(),
         to: new Date(),
-        start: new Date(),
-        end: new Date(),
-        isSynchronize: false,
+        fromTime: "",
+        toTime: "",
+        location: "",
       }),
+      remindTime: -1,
+      askForRequest: false,
     };
   },
   async mounted() {
     this.ggGapiHandler = new GoogleGapiHandler();
-    this.remindTime = await this.getRemindTime();
+    this.remindTime = this.timetable.remindTime;
+    console.log(this.timetable);
   },
   methods: {
     addEvent() {
-      axios
-        .post(
-          import.meta.env.VITE_API + "/timetable/event",
-          {
-            file: this.fileUpload,
-          },
-          getHeaderConfig("multipart/form-data")
-        )
-        .then((res) => {
-          ElMessage({
-            message: res.message,
-            type: res.type,
+      console.log(this.event);
+      let data = {
+        title: this.event.title,
+        description: this.event.description,
+        location: this.event.location,
+        start: getDateOnly(this.event.from) + " " + getTimeOnly(this.event.fromTime),
+        end: getDateOnly(this.event.to) + " " + getTimeOnly(this.event.to),
+      };
+      console.log(data);
+      if (this.timetable.isSynchronize) {
+        if (!this.askForRequest) {
+          this.handleAuthClick();
+        }
+        this.addEventToGoogleCalendar(data);
+      } else {
+        axios
+          .post(
+            import.meta.env.VITE_API + "/timetable/event",
+            {
+              file: this.fileUpload,
+            },
+            getHeaderConfig("multipart/form-data")
+          )
+          .then((res) => {
+            ElMessage({
+              message: res.message,
+              type: res.type,
+            });
+            this.$emit("refreshCalendar");
+          })
+          .catch((e) => {
+            ElMessage({
+              message: e.message,
+              type: "error",
+            });
           });
-          this.$emit("refreshCalendar");
-        })
-        .catch((e) => {
-          ElMessage({
-            message: e.message,
-            type: "error",
-          });
-        });
+      }
     },
     setDefaultEventParam(event) {
       this.event.from = event;
@@ -274,30 +304,33 @@ export default {
 
     getDataFromGoogleCalendar() {
       this.handleAuthClick();
+      gapi.client.load("calendar", "V3", this.listEvents.bind(this));
+      this.listEvents();
     },
     handleAuthClick() {
+      if (this.askForRequest) {
+        return;
+      }
       this.ggGapiHandler.tokenClient.callback = async (resp) => {
         if (resp.error !== undefined) {
           throw resp;
         }
-        gapi.client.load("calendar", "V3", this.listUpcomingEvents.bind(this));
       };
       if (gapi.client.getToken() === null) {
         this.ggGapiHandler.tokenClient.requestAccessToken({ prompt: "consent" });
       } else {
         this.ggGapiHandler.tokenClient.requestAccessToken({ prompt: "" });
       }
+      this.askForRequest = true;
     },
 
-    async listUpcomingEvents() {
+    async listEvents() {
       let response;
       try {
         const request = {
           calendarId: "primary",
-          timeMin: new Date().toISOString(),
           showDeleted: false,
           singleEvents: true,
-          maxResults: 10,
           orderBy: "startTime",
         };
         response = await gapi.client.calendar.events.list(request);
@@ -340,21 +373,25 @@ export default {
     addEventToGoogleCalendar() {
       console.log(this.events);
       this.events.forEach((appEvent) => {
-        let event = convertEventToGoogleCalendar(
-          appEvent.start,
-          appEvent.end,
-          appEvent.title,
-          appEvent.content,
-          this.remindTime
-        );
-        const request = gapi.client.calendar.events.insert({
-          calendarId: "primary",
-          resource: event,
-        });
+        this.addEventToGoogleCalendar(appEvent);
+      });
+    },
 
-        request.execute(function (event) {
-          console.log("Event created: " + event.htmlLink);
-        });
+    addEventToGoogleCalendar(appEvent) {
+      let event = convertEventToGoogleCalendar(
+        appEvent.start,
+        appEvent.end,
+        appEvent.title,
+        appEvent.content,
+        this.timetable.remindTime
+      );
+      const request = gapi.client.calendar.events.insert({
+        calendarId: "primary",
+        resource: event,
+      });
+
+      request.execute(function (event) {
+        console.log("Event created: " + event.htmlLink);
       });
     },
 
@@ -366,18 +403,11 @@ export default {
         });
     },
 
-    // update to google and remind time
-    async getRemindTime() {
-      var timetable = (
-        await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
-      ).data;
-      return timetable.remindTime;
-    },
-
     updateRemindTime() {
       axios
         .post(
           import.meta.env.VITE_API + "/timetable/remind/" + this.remindTime,
+          {},
           getHeaderConfig()
         )
         .then(() => {
@@ -397,7 +427,7 @@ export default {
 
     turnOffRemindTime() {
       axios
-        .post(import.meta.env.VITE_API + "/timetable/remind/-1", getHeaderConfig())
+        .post(import.meta.env.VITE_API + "/timetable/remind/-1", {}, getHeaderConfig())
         .then(() => {
           ElMessage({
             type: "success",
@@ -411,7 +441,7 @@ export default {
           });
         });
       this.dialogRemindVisible = false;
-      this.remindTime = undefined;
+      this.timetable.remindTime = undefined;
     },
 
     // delete timetable

@@ -6,6 +6,7 @@
           @refresh-calendar="getEventsInDatabase"
           @synchronize-calendar="synchronizeCalendar"
           :events="events"
+          :timetable="timetable"
           ref="timetableButton"
         />
       </div>
@@ -63,9 +64,10 @@ export default {
           class: "health",
         },
       ],
+      timetable: undefined,
     };
   },
-  created() {
+  mounted() {
     this.getEventsInDatabase();
   },
   methods: {
@@ -73,16 +75,17 @@ export default {
       var res = (
         await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
       ).data;
-      if (res.events.length == 0) {
+      this.timetable = res;
+
+      console.log(this.timetable);
+      if (this.timetable.isSynchronize) {
+        this.$refs.timetableButton.getDataFromGoogleCalendar();
+        console.log(1111);
         return;
       }
-      if (res.isSynchronized) {
-        this.$refs.timetableButton.listUpcomingEvents();
-        return;
-      }
-      this.currentDate = dateTimeToJSDate(res.from);
+      //this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
-      res.events.forEach((event) => {
+      this.timetable.events.forEach((event) => {
         var startDate = dateTimeToJSDate(event.from);
         var endDate = dateTimeToJSDate(event.to);
         var date = getStartDateInRange(startDate, endDate, event.day);

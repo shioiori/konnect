@@ -127,19 +127,12 @@ export default {
         })
         .then((res) => {
           console.log(res);
-          if (res.data.success) {
-            ElMessage({
-              message: "Đăng nhập thành công",
-              type: "success",
-            });
-            localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.data.accessToken);
-            router.push("/group");
-          } else {
-            ElMessage({
-              message: res.data.message,
-              type: "error",
-            });
-          }
+          ElMessage({
+            message: res.data.message,
+            type: res.data.type,
+          });
+          localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.data.accessToken);
+          router.push("/group");
         })
         .catch((e) => {
           console.error(e.message);

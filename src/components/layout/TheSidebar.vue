@@ -18,21 +18,21 @@
       </el-menu-item>
       <el-menu-item index="3">
         <el-icon>
-          <document />
-        </el-icon>
-        <template #title><router-link to="/storage">Storage</router-link></template>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon>
           <setting />
         </el-icon>
         <template #title><router-link to="/chat">Chat</router-link></template>
+      </el-menu-item>
+      <el-menu-item index="4">
+        <el-icon>
+          <document />
+        </el-icon>
+        <template #title><router-link to="/storage">AI assistant</router-link></template>
       </el-menu-item>
       <el-menu-item index="5" v-if="user != undefined && user.roleName != 'User'">
         <el-icon>
           <setting />
         </el-icon>
-        <template #title><router-link to="/group-manager">Group</router-link></template>
+        <template #title><router-link to="/group-manager">Manager</router-link></template>
       </el-menu-item>
       <el-menu-item>
         <el-icon @click="this.isCollapse = !this.isCollapse">

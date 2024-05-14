@@ -21,36 +21,36 @@
       <hr />
       <div>
         <div>
-          <div class="f-flex">
-            <icon-user />
-            <span class="m-1">{{ post.replyCount }} bình luận</span>
+          <div class="d-flex">
+            <i class="bi bi-people h4"></i>
+            <span class="m-1">{{ post.comments.length }} bình luận</span>
           </div>
         </div>
-        <div class="list-comment"></div>
-        <!-- <div class="reply">
-                <div>
-                    <div>
-                        <image></image>
-                    </div>
-                    <input type="text" />
-                    <icon-send />
-                </div>
-            </div> -->
+        <div class="lastest-comment my-2" v-if="post.comments.length > 0">
+          <bulletin-post-comment :comment="post.comments[0]" />
+        </div>
+        <bulletin-post-reply @add-comment="addComment" />
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="1280" align-center>
+    <el-dialog
+      v-model="dialogVisible"
+      :width="images.length > 0 ? 1280 : 720"
+      align-center
+    >
       <div class="row dialog">
-        <div class="col-md-9">
+        <div class="col-9" v-if="images.length > 0">
           <div class="block text-center" m="t-4">
-            <el-carousel trigger="click" height="720px">
+            <el-carousel height="720px">
               <el-carousel-item v-for="item in images" :key="item">
-                <el-image :src="item" fit="scale-down"></el-image>
+                <div>
+                  <img :src="item" style="height: inherit" />
+                </div>
               </el-carousel-item>
             </el-carousel>
           </div>
         </div>
-        <div class="col-md-3">
+        <div :class="'col-' + (images.length > 0 ? 3 : 12)">
           <div class="d-flex">
             <div class="post-avatar">
               <img
@@ -65,27 +65,25 @@
               <div>{{ post.createdDate }}</div>
             </div>
           </div>
-          <div class="post-content my-3" ref="htmlContent">
+          <div class="post-content my-3 dialog" ref="htmlContent">
             <div v-html="content" />
           </div>
           <hr />
           <div>
             <div>
-              <div class="f-flex">
+              <div class="d-flex">
                 <icon-user />
-                <span class="m-1">{{ post.replyCount }} bình luận</span>
+                <span class="m-1">{{ post.comments.length }} bình luận</span>
               </div>
             </div>
-            <div class="list-comment"></div>
-            <div class="reply">
-              <div>
-                <div>
-                  <image></image>
-                </div>
-                <input type="text" v-model="comment" />
-                <icon-send @click="addComment" />
-              </div>
+            <div class="list-comment my-3">
+              <bulletin-post-comment
+                v-for="(item, index) in post.comments"
+                v-bind:comment="item"
+                v-bind:key="index"
+              />
             </div>
+            <bulletin-post-reply @add-comment="addComment" />
           </div>
         </div>
       </div>
@@ -96,63 +94,58 @@
 <script>
 import BulletinPostComment from "./BulletinPostComment.vue";
 import IconUser from "../icons/bulletin/IconUser.vue";
-import IconSend from "../icons/bulletin/IconSend.vue";
-
+import BulletinPostReply from "./BulletinPostReply.vue";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
-
+import { dateTimeToFormatDate } from "../../utils/DateConverter.js";
 export default {
   components: {
     BulletinPostComment,
+    BulletinPostReply,
     IconUser,
-    IconSend,
   },
   data() {
     return {
       dialogVisible: false,
       images: [],
       content: [],
-      comments: [],
-      comment: "",
     };
   },
   props: {
     post: Object,
   },
   mounted() {
-    this.comments = this.post.comments;
+    //console.log(this.post);
+    this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
   },
   methods: {
     openDialog() {
-      let htmlImages = this.$refs.htmlContent.getElementsByTagName("img");
       this.images = [];
+      const htmlImages = this.$refs.htmlContent.getElementsByTagName("img");
       this.content = "";
-      console.log(htmlImages.length);
+      this.dialogVisible = true;
       if (htmlImages.length > 0) {
-        this.dialogVisible = true;
         for (var i = 0; i < htmlImages.length; i++) {
           this.images.push(htmlImages[i].src);
         }
+      } else {
       }
-      //bug
-      let clone = this.$refs.htmlContent.outerHTML.toString();
-      this.content = clone.replace(/<img[^>]*>/g, "");
-      console.log(this.content);
+      this.content = this.$refs.htmlContent.outerHTML;
     },
 
-    addComment() {
+    addComment(comment) {
       axios
         .post(
-          import.meta.env.VITE_API + "/bulletin/comment",
+          import.meta.env.VITE_API + "/bulletin/" + this.post.id + "/comment",
           {
-            content: this.comment,
-            id: this.post.id,
+            content: comment,
           },
           getHeaderConfig()
         )
         .then((res) => {
-          this.comment = "";
-          this.comment.push(res.data);
+          console.log(res.data);
+          console.log(this.post.comments[0]);
+          this.post.comments.push(res.data.comment);
         });
     },
   },
@@ -205,5 +198,9 @@ img {
 
 .dialog img {
   max-height: none;
+}
+
+.post-content.dialog img {
+  display: none;
 }
 </style>

@@ -1,28 +1,51 @@
 <template>
-    <div>
-        <div>
-            <div>
-                <image></image>
-            </div>
-            <div>
-                <div>Sinh viên A</div>
-                <div>27/04/2024</div>
-            </div>
+  <div class="comment">
+    <div class="d-flex">
+      <div class="post-comment-avatar">
+        <img
+          class="img-responsive rounded-circle"
+          src="https://i.imgur.com/hczKIze.jpg"
+          style="width: 40px; margin-right: 0.5rem"
+        />
+      </div>
+      <div style="width: 100%">
+        <div class="post-comment">
+          <div>
+            <b class="my-0">{{ comment.displayName }}</b>
+          </div>
+          <div>{{ comment.content }}</div>
         </div>
-        <div>
-            <div>
-                Hôm đấy tớ full ca cả ngày với môn khác, trùng lịch không học được.
-                Hay lớp trưởng bảo thầy đổi sang thứ 5 hoặc thứ 6 đi, hoặc hỏi thầy ngày nào rảnh để các bạn trong lớp
-                nghiên cứu
-            </div>
+        <div class="post-time">
+          <small class="text-muted">{{ comment.createdDate }}</small>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-export default {
+import { getRelativeTime } from "../../utils/DateConverter.js";
 
-}
+export default {
+  props: {
+    comment: Object,
+  },
+  mounted() {
+    console.log(this.comment.createdDate);
+    this.comment.createdDate = getRelativeTime(this.comment.createdDate);
+  },
+};
 </script>
 
-<style></style>
+<style>
+.post-comment {
+  border-radius: 4px;
+  border: 1px solid var(--Gray);
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.comment {
+  margin: 0.5rem 0;
+}
+</style>
