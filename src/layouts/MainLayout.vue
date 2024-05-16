@@ -46,6 +46,8 @@ export default {
         });
         router.push("/login");
       });
+
+    console.log(this.user);
   },
   data() {
     return {

@@ -3,14 +3,11 @@
     <el-card shadow="hover" @click="openDialog">
       <div class="d-flex">
         <div class="post-avatar">
-          <img
-            class="img-responsive rounded-circle"
-            src="https://i.imgur.com/hczKIze.jpg"
-          />
+          <img class="img-responsive rounded-circle" :src="post.user.avatar" />
         </div>
         <div class="post-creator">
           <div>
-            <h5 class="my-0">{{ post.createdBy }}</h5>
+            <h5 class="my-0">{{ post.user.displayName }}</h5>
           </div>
           <div>{{ post.createdDate }}</div>
         </div>
@@ -53,14 +50,11 @@
         <div :class="'col-' + (images.length > 0 ? 3 : 12)">
           <div class="d-flex">
             <div class="post-avatar">
-              <img
-                class="img-responsive rounded-circle"
-                src="https://i.imgur.com/hczKIze.jpg"
-              />
+              <img class="img-responsive rounded-circle" :src="post.user.avatar" />
             </div>
             <div class="post-creator">
               <div>
-                <h5 class="my-0">{{ post.createdBy }}</h5>
+                <h5 class="my-0">{{ post.user.displayName }}</h5>
               </div>
               <div>{{ post.createdDate }}</div>
             </div>
@@ -81,9 +75,10 @@
                 v-for="(item, index) in post.comments"
                 v-bind:comment="item"
                 v-bind:key="index"
+                v-bind:user="user"
               />
             </div>
-            <bulletin-post-reply @add-comment="addComment" />
+            <bulletin-post-reply :user="post.user" @add-comment="addComment" />
           </div>
         </div>
       </div>
@@ -115,7 +110,6 @@ export default {
     post: Object,
   },
   mounted() {
-    //console.log(this.post);
     this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
   },
   methods: {

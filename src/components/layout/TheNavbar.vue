@@ -8,10 +8,13 @@
             :separator-icon="ArrowRight"
             style="vertical-align: middle; display: flex"
           >
-            <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-            <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-            <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-            <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(path, index) in breadcrumb" :to="path">{{
+              path == ""
+                ? index == 0
+                  ? "Homepage"
+                  : "Bulletin"
+                : path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ")
+            }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
       </div>
@@ -53,16 +56,29 @@
 import router from "../../router/index.ts";
 import { ArrowRight } from "@element-plus/icons-vue";
 import { RouterLink, RouterView } from "vue-router";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
 export default {
   data() {
     return {
       ArrowRight,
       RouterLink,
+      breadcrumb: [],
     };
   },
   props: {
     user: Object,
+  },
+  created() {
+    const route = useRoute();
+    watch(
+      route,
+      (to) => {
+        this.breadcrumb = location.pathname.split("/");
+      },
+      { flush: "pre", immediate: true, deep: true }
+    );
   },
   methods: {
     // toggleSidebar() {

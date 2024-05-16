@@ -25,17 +25,28 @@
         <el-table-column prop="displayName" label="Display name" />
         <el-table-column prop="email" label="Email" />
         <el-table-column prop="phone" label="Tel" />
-        <el-table-column prop="roleName" label="Role" />
+        <el-table-column prop="roleName" label="Role">
+          <template #default="scope">
+            <el-tag type="warning" disable-transitions>{{ scope.row.roleName }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="Operations" width="120">
-          <template #default>
-            <el-button link type="warning" @click="bindUserToDialog(userName)">
+          <template #default="scope">
+            <el-button
+              link
+              type="warning"
+              @click="bindUserToDialog(userName, scope.$index)"
+            >
               <el-icon>
                 <Edit />
               </el-icon>
             </el-button>
-            <el-button link type="danger" @click="removeUser(index, userName)">
-              <el-icon>
-                <Delete /> </el-icon
+            <el-button
+              link
+              type="danger"
+              @click="removeUser(scope.$index, scope.row.userName)"
+            >
+              <el-icon> <Delete /> </el-icon
             ></el-button>
           </template>
         </el-table-column>
@@ -73,24 +84,36 @@
     <el-dialog v-model="dialogAddVisible" title="User" width="720">
       <div class="py-4">
         <el-form :model="event">
-          <el-form-item label="Username" prop="username" required v-if="action == 'add'">
-            <el-input v-model="user.username" />
+          <el-form-item prop="avatar" v-if="user.avatar">
+            <el-image :src="user.avatar">
+              <template #error>
+                <div class="image-slot">
+                  <el-icon><icon-picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
           </el-form-item>
-          <el-form-item label="Password" prop="password" required v-if="action == 'add'">
-            <el-input v-model="user.password" type="password" show-password />
+          <el-form-item label="Username" prop="userName" required v-if="action == 'add'">
+            <el-input v-model="user.userName" />
           </el-form-item>
-          <el-form-item label="Name" prop="name" required>
-            <el-input v-model="user.name" />
+          <el-form-item label="Name" prop="displayName" required>
+            <el-input v-model="user.displayName" />
           </el-form-item>
           <el-form-item label="Email" prop="email" required>
             <el-input v-model="user.email" />
           </el-form-item>
-          <el-form-item label="Phone" prop="phone" required>
-            <el-input v-model="user.phone" />
+          <el-form-item label="Phone" prop="phoneNumber" required>
+            <el-input v-model="user.phoneNumber" />
           </el-form-item>
+          <div class="text-end pb-3" v-if="action == 'add'">
+            <i class="text-muted"
+              ><span class="text-danger">* </span>Lưu ý: Mật khẩu sẽ được đặt giống với
+              username</i
+            >
+          </div>
           <div class="d-flex justify-content-end">
             <el-form-item>
-              <el-button type="primary" @click="addUser"> Save </el-button>
+              <el-button type="primary" @click="saveUser()"> Save </el-button>
               <el-button type="info" @click="dialogAddVisible = false">Cancel</el-button>
             </el-form-item>
           </div>
@@ -109,6 +132,7 @@ import { getHeaderConfig } from "../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive } from "vue";
 import ButtonManagerInvite from "../components/manager/ButtonManagerInvite.vue";
+import { Picture as IconPicture } from "@element-plus/icons-vue";
 
 export default {
   components: {
@@ -123,30 +147,19 @@ export default {
       users: [],
       fileUpload: undefined,
       user: reactive({
-        username: "",
-        password: "",
-        name: "",
+        userName: "",
+        displayName: "",
         email: "",
-        phone: "",
+        phoneNumber: "",
         avatar: "",
       }),
       action: "add",
+      currentIndex: 0,
     };
   },
   mounted() {
-    axios
-      .get(import.meta.env.VITE_API + "/user", getHeaderConfig())
-      .then((res) => {})
-      .catch((err) => {
-        ElMessage({
-          message: "Không tìm thấy thông tin đăng nhập của người dùng",
-          type: "error",
-        });
-        router.push("/login");
-      });
-
     axios.get(import.meta.env.VITE_API + "/user/group", getHeaderConfig()).then((res) => {
-      this.users = res.data;
+      this.users = res.data.users;
     });
   },
   methods: {
@@ -202,36 +215,43 @@ export default {
       }
       this.dialogImportVisible = false;
     },
-    bindUserToDialog(username) {
+    bindUserToDialog(username, index) {
       this.dialogAddVisible = true;
       this.action = "edit";
       var currentUser = this.users.find((x) => x.username == username);
       this.user = {
-        name: currentUser.displayName,
+        displayName: currentUser.displayName,
         email: currentUser.email,
-        phone: currentUser.password,
+        phoneNumber: currentUser.phoneNumber,
+        avatar: currentUser.avatar,
       };
-      console.log(this.users.find((x) => x.username == username));
+      this.currentIndex = index;
     },
     clearDialog() {
       this.user = {
-        username: "",
-        password: "",
-        name: "",
+        userName: "",
+        displayName: "",
         email: "",
-        phone: "",
+        phoneNumber: "",
         avatar: "",
       };
+      this.index = 0;
     },
-    editUser(index, username) {
+    editUser() {
       axios
-        .post(import.meta.env.VITE_API + "/user/" + username, {}, getHeaderConfig())
+        .post(
+          import.meta.env.VITE_API + "/user/" + this.users[this.currentIndex].userName,
+          this.user,
+          getHeaderConfig()
+        )
         .then((res) => {
           ElMessage({
             message: res.data.message,
             type: res.data.type,
           });
-          this.users[index] = res.data;
+          this.users[this.currentIndex] = this.user;
+          this.dialogAddVisible = false;
+          console.log(this.users);
         })
         .catch((e) => {
           ElMessage({
@@ -240,19 +260,22 @@ export default {
           });
         });
     },
-    removeUser(username) {
+    removeUser(index, username) {
       ElMessageBox.confirm("Người dùng này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
         confirmButtonText: "Yes",
         cancelButtonText: "Cancel",
         type: "warning",
       }).then(() => {
+        console.log(index);
+        console.log(username);
         axios
-          .delete(import.meta.env.VITE_API + "/user/" + username, {}, getHeaderConfig())
+          .delete(import.meta.env.VITE_API + "/user/" + username, getHeaderConfig())
           .then((res) => {
             ElMessage({
               message: res.data.message,
               type: res.data.type,
             });
+            this.users.splice(index, 1);
           })
           .catch((e) => {
             ElMessage({
@@ -264,13 +287,14 @@ export default {
     },
     addUser() {
       axios
-        .post(import.meta.env.VITE_API + "/user", {}, getHeaderConfig())
+        .post(import.meta.env.VITE_API + "/user", this.user, getHeaderConfig())
         .then((res) => {
           ElMessage({
             message: res.data.message,
             type: res.data.type,
           });
-          this.users.push(res.data);
+          this.users.push(res.data.user);
+          this.dialogAddVisible = false;
         })
         .catch((e) => {
           ElMessage({
@@ -278,6 +302,13 @@ export default {
             type: "error",
           });
         });
+    },
+    saveUser() {
+      if (this.action == "add") {
+        this.addUser();
+      } else {
+        this.editUser();
+      }
     },
   },
 };

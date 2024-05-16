@@ -4,14 +4,14 @@
       <div class="post-comment-avatar">
         <img
           class="img-responsive rounded-circle"
-          src="https://i.imgur.com/hczKIze.jpg"
+          :src="comment.user.avatar"
           style="width: 40px; margin-right: 0.5rem"
         />
       </div>
       <div style="width: 100%">
         <div class="post-comment">
           <div>
-            <b class="my-0">{{ comment.displayName }}</b>
+            <h6 class="my-0">{{ comment.user.displayName }}</h6>
           </div>
           <div>{{ comment.content }}</div>
         </div>
@@ -31,7 +31,6 @@ export default {
     comment: Object,
   },
   mounted() {
-    console.log(this.comment.createdDate);
     this.comment.createdDate = getRelativeTime(this.comment.createdDate);
   },
 };

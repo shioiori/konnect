@@ -3,7 +3,7 @@
     <div>
       <div class="d-flex">
         <img
-          src="https://i.imgur.com/hczKIze.jpg"
+          :src="avatar"
           class="img-responsive rounded-circle"
           style="width: 40px; height: 40px; margin-right: 0.5rem"
         />
@@ -24,7 +24,17 @@ export default {
   data() {
     return {
       comment: "",
+      avatar: "",
     };
+  },
+  props: {
+    user: Object,
+  },
+  mounted() {
+    this.avatar =
+      this.user != undefined
+        ? this.user.avatar
+        : "../../../src/assets/images/avatar_default.png";
   },
   methods: {
     addComment() {
