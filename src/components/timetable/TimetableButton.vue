@@ -35,21 +35,12 @@ import TimetableSynchronizeWithCalendarButton from "./TimetableSynchronizeWithCa
 import TimetableRemindButton from "./TimetableRemindButton.vue";
 import TimetableDeleteButton from "./TimetableDeleteButton.vue";
 
-
-import axios from "axios";
-import router from "../../router/index.ts";
 import IconImport from "../icons/import/IconImport.vue";
 import IconButtonImport from "../icons/import/IconButtonImport.vue";
-import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import GoogleGapiHandler from "../../utils/GoogleGapiHandler.js";
-import { ElMessage, ElMessageBox } from "element-plus";
 import {
-  getEvent,
-  convertEventFromGoogleCalendar,
   convertEventToGoogleCalendar,
 } from "../../utils/EventHandler.js";
-import { reactive } from "vue";
-import { getDateOnly, getTimeOnly, getTime } from "../../utils/DateConverter.js";
 
 export default {
   components: {
