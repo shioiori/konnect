@@ -1,10 +1,12 @@
-# class-management-support-client
+# konnect
 
 ### Function available
-- [ ] Popup detail post with comment
+- [x] Popup detail post with comment
 - [ ] Real time notification
 - [x] Synchronize with Google Calendar
 - [x] Import timetable by Excel
 - [x] Import users to group by Excel
 - [ ] Chat between user
-- [ ] Synchronize with Google Driver
+- [ ] AI assistant
+- [x] Group user manager
+- [ ] To do list
