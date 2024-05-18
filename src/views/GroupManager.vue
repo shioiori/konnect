@@ -32,22 +32,25 @@
         </el-table-column>
         <el-table-column fixed="right" label="Operations" width="120">
           <template #default="scope">
-            <el-button
-              link
-              type="warning"
-              @click="bindUserToDialog(userName, scope.$index)"
-            >
-              <el-icon>
-                <Edit />
-              </el-icon>
-            </el-button>
-            <el-button
-              link
-              type="danger"
-              @click="removeUser(scope.$index, scope.row.userName)"
-            >
-              <el-icon> <Delete /> </el-icon
-            ></el-button>
+            <div class="d-flex">
+              <button-change-role :user="scope.row" />
+              <el-button
+                link
+                type="warning"
+                @click="bindUserToDialog(userName, scope.$index)"
+              >
+                <el-icon>
+                  <Edit />
+                </el-icon>
+              </el-button>
+              <el-button
+                link
+                type="danger"
+                @click="removeUser(scope.$index, scope.row.userName)"
+              >
+                <el-icon> <Delete /> </el-icon
+              ></el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -83,7 +86,7 @@
     </el-dialog>
     <el-dialog v-model="dialogAddVisible" title="User" width="720">
       <div class="py-4">
-        <el-form :model="event">
+        <el-form :model="event" label-position="right" label-width="auto">
           <el-form-item prop="avatar" v-if="user.avatar">
             <el-image :src="user.avatar">
               <template #error>
@@ -93,16 +96,16 @@
               </template>
             </el-image>
           </el-form-item>
-          <el-form-item label="Username" prop="userName" required v-if="action == 'add'">
+          <el-form-item label="Username" prop="userName" v-if="action == 'add'">
             <el-input v-model="user.userName" />
           </el-form-item>
-          <el-form-item label="Name" prop="displayName" required>
+          <el-form-item label="Name" prop="displayName">
             <el-input v-model="user.displayName" />
           </el-form-item>
-          <el-form-item label="Email" prop="email" required>
+          <el-form-item label="Email" prop="email">
             <el-input v-model="user.email" />
           </el-form-item>
-          <el-form-item label="Phone" prop="phoneNumber" required>
+          <el-form-item label="Phone" prop="phoneNumber">
             <el-input v-model="user.phoneNumber" />
           </el-form-item>
           <div class="text-end pb-3" v-if="action == 'add'">
@@ -133,12 +136,13 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive } from "vue";
 import ButtonManagerInvite from "../components/manager/ButtonManagerInvite.vue";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
-
+import ButtonChangeRole from "../components/manager/ButtonChangeRole.vue";
 export default {
   components: {
     IconImport,
     IconButtonImport,
     ButtonManagerInvite,
+    ButtonChangeRole,
   },
   data() {
     return {

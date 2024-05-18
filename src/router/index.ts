@@ -40,7 +40,7 @@ const router = createRouter({
           component: Bulletin
         },
         {
-          path: 'user-infomation',
+          path: 'user',
           name: 'user-infomation',
           component: UserInfomation
         },
