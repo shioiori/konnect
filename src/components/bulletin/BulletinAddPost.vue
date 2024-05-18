@@ -83,7 +83,7 @@ export default {
 
 <style>
 .blt-add button svg {
-  height: 1.175rem;
+  height: 1rem;
   vertical-align: -0.2rem;
 }
 

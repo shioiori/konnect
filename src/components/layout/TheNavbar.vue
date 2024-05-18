@@ -31,19 +31,27 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
-                ><router-link to="/change-password"
-                  >Đổi mật khẩu</router-link
+                ><router-link to="/user" style="color: #000; text-decoration: none"
+                  ><el-text
+                    ><el-icon><User /></el-icon>Trang cá nhân</el-text
+                  ></router-link
                 ></el-dropdown-item
               >
-              <el-dropdown-item
-                ><router-link to="/remove-group">Rời nhóm</router-link></el-dropdown-item
-              >
-              <el-dropdown-item>
-                <router-link to="/delete-accout"
-                  >Xoá tài khoản</router-link
+              <el-dropdown-item @click="outGroup"
+                ><el-text type="danger"
+                  ><el-icon><Guide /></el-icon>Rời nhóm</el-text
                 ></el-dropdown-item
               >
-              <el-dropdown-item divided @click="logout">Đăng xuất</el-dropdown-item>
+              <el-dropdown-item @click="deleteAccount">
+                <el-text type="danger"
+                  ><el-icon><Delete /></el-icon>Xoá tài khoản</el-text
+                ></el-dropdown-item
+              >
+              <el-dropdown-item divided @click="logout"
+                ><el-text type="info"
+                  ><el-icon><SwitchButton /></el-icon>Đăng xuất</el-text
+                ></el-dropdown-item
+              >
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -58,6 +66,9 @@ import { ArrowRight } from "@element-plus/icons-vue";
 import { RouterLink, RouterView } from "vue-router";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
+import axios from "axios";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 export default {
   data() {
@@ -87,6 +98,60 @@ export default {
     logout() {
       localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, "");
       router.push("/login");
+    },
+    outGroup() {
+      ElMessageBox.confirm("Bạn sẽ rời khỏi nhóm vĩnh viễn. Tiếp tục?", "Warning", {
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      })
+        .then(() => {
+          axios
+            .delete(import.meta.env.VITE_API + "/group/out", getHeaderConfig())
+            .then((res) => {
+              ElMessage({
+                type: res.data.type,
+                message: res.data.message,
+              });
+            });
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: "error",
+          });
+        });
+    },
+    deleteAccount() {
+      ElMessageBox.confirm(
+        "Tài khoản sẽ không thể khôi phục được nữa. Tiếp tục?",
+        "Warning",
+        {
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          axios
+            .delete(
+              import.meta.env.VITE_API + "/user/" + this.user.userName,
+              getHeaderConfig()
+            )
+            .then((res) => {
+              ElMessage({
+                type: res.data.type,
+                message: res.data.message,
+              });
+              this.logout();
+            });
+        })
+        .catch((e) => {
+          ElMessage({
+            message: e.message,
+            type: "error",
+          });
+        });
     },
   },
 };

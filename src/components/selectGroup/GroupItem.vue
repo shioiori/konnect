@@ -1,35 +1,31 @@
 <template>
-  <el-card shadow="hover" @click="loginWithGroup">
-    <template #header :style="'background-color: ' + color">{{ group.name }}</template>
+  <el-card shadow="hover" @click="loginWithGroup" class="group-item">
+    <template #header>
+      <span ref="groupTitle">
+        {{ group.name }}
+      </span>
+    </template>
   </el-card>
 </template>
 
 <script>
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
+import { getRandomColor } from "../../utils/RandomHandler.js";
 import router from "../../router/index.ts";
 
 export default {
   data() {
-    return {
-      color: "#ffffff",
-    };
+    return {};
   },
   props: {
     group: Object,
   },
-  created() {
-    this.color = this.getRandomColor();
+  mounted() {
+    this.$refs.groupTitle.closest("div").style.background = getRandomColor();
+    console.log(this.$refs.groupTitle.closest("div").style);
   },
   methods: {
-    getRandomColor() {
-      var letters = "0123456789ABCDEF";
-      var color = "#";
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    },
     async loginWithGroup() {
       axios
         .post(import.meta.env.VITE_API + "/login/" + this.group.id, getHeaderConfig())
@@ -50,4 +46,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.group-item span {
+  color: var(--White);
+  mix-blend-mode: difference;
+}
+</style>

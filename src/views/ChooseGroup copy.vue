@@ -1,16 +1,10 @@
 <template>
-  <div class="container">
+  <div>
     <h1>Your group</h1>
-    <div>
-      <el-row :gutter="20"
-        ><el-col :span="8">
-          <group-item
-            v-for="item in groups"
-            :group="item"
-            @click="loginWithGroup(item.id)"
-          /> </el-col
-      ></el-row>
-    </div>
+    <select v-model="groupId" class="form-select">
+      <option v-for="item in groups" :value="item.id">{{ item.name }}</option>
+    </select>
+    <button class="btn btn-primary" @click="loginWithGroup">Go</button>
   </div>
 </template>
 
@@ -19,15 +13,11 @@ import axios from "axios";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
 import router from "../router/index.ts";
 import { ElMessage } from "element-plus";
-import GroupButtonJoinByCode from "../components/selectGroup/GroupButtonJoinByCode.vue";
-import GroupItem from "../components/selectGroup/GroupItem.vue";
+
 export default {
-  components: {
-    GroupButtonJoinByCode,
-    GroupItem,
-  },
   data() {
     return {
+      groupId: "",
       groups: [],
     };
   },
@@ -35,12 +25,12 @@ export default {
     this.getGroupByUser();
   },
   methods: {
-    async loginWithGroup(id) {
+    async loginWithGroup() {
       axios
         .post(
-          import.meta.env.VITE_API + "/login/" + id,
+          import.meta.env.VITE_API + "/login/" + this.groupId,
           {
-            groupId: id,
+            groupId: this.groupId,
           },
           getHeaderConfig()
         )
