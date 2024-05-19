@@ -14,6 +14,7 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import LoadScript from "vue-plugin-load-script";
 
 const emitter = mitt()
 const app = createApp(App)
@@ -22,6 +23,7 @@ app.config.globalProperties.emitter = emitter
 app.use(router)
 app.use(CKEditor)
 app.use(ElementPlus)
+app.use(LoadScript);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }

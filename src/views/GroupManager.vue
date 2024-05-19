@@ -253,9 +253,10 @@ export default {
             message: res.data.message,
             type: res.data.type,
           });
-          this.users[this.currentIndex] = this.user;
+          this.users[this.currentIndex].displayName = this.user.displayName;
+          this.users[this.currentIndex].email = this.user.email;
+          this.users[this.currentIndex].phoneNumber = this.user.phoneNumber;
           this.dialogAddVisible = false;
-          console.log(this.users);
         })
         .catch((e) => {
           ElMessage({

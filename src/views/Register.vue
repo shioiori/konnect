@@ -10,107 +10,66 @@
           />
         </div>
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-          <form>
-            <div class="divider d-flex align-items-center my-4">
-              <h3 class="text-center fw-bold mx-3 mb-0">Register</h3>
-            </div>
-            <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3"
-                >Username<i class="text-danger">*</i></label
-              >
-              <input
-                type="text"
-                v-model="username"
-                id="form3Example3"
-                class="form-control"
-                placeholder="Enter username"
-              />
-            </div>
+          <div class="divider d-flex align-items-center my-4">
+            <h3 class="text-center mx-3 mb-0 display-6">Register</h3>
+          </div>
+          <el-form :model="user" label-width="auto" class="demo-dynamic">
+            <el-form-item prop="userName" label="Username" required>
+              <el-input v-model="user.userName" />
+            </el-form-item>
+            <el-form-item prop="password" label="Mật khẩu" required>
+              <el-input type="password" v-model="user.password" />
+            </el-form-item>
+            <el-form-item prop="displayName" label="Tên hiển thị" required>
+              <el-input v-model="user.displayName" required />
+            </el-form-item>
+            <el-form-item
+              prop="email"
+              label="Email"
+              :rules="[
+                {
+                  required: true,
+                  message: 'Xin hãy nhập địa chỉ email',
+                  trigger: 'blur',
+                },
+                {
+                  type: 'email',
+                  message: 'Hãy nhập đúng địa chỉ email',
+                  trigger: ['blur', 'change'],
+                },
+              ]"
+            >
+              <el-input v-model="user.email" />
+            </el-form-item>
+            <el-form-item prop="phoneNumber" label="Số điện thoại">
+              <el-input v-model="user.phoneNumber" />
+            </el-form-item>
 
-            <div data-mdb-input-init class="form-outline mb-3">
-              <label class="form-label" for="form3Example4"
-                >Password<i class="text-danger">*</i></label
-              >
-              <input
-                type="password"
-                v-model="password"
-                id="form3Example4"
-                class="form-control"
-                placeholder="Enter password"
-              />
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3"
-                >Name<i class="text-danger">*</i></label
-              >
-              <input
-                type="text"
-                v-model="name"
-                id="form3Example3"
-                class="form-control"
-                placeholder="Enter phone"
-              />
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3"
-                >Email<i class="text-danger">*</i></label
-              >
-              <input
-                type="email"
-                v-model="email"
-                id="form3Example3"
-                class="form-control"
-                placeholder="Enter email"
-              />
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3"
-                >Phone<i class="text-danger">*</i></label
-              >
-              <input
-                type="text"
-                v-model="phone"
-                id="form3Example3"
-                class="form-control"
-                placeholder="Enter phone"
-              />
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3">Group key</label>
-              <input
-                type="text"
-                v-model="groupId"
-                id="form3Example3"
-                class="form-control"
-                placeholder="Enter key of group"
-              />
-              <small class="text-muted"
+            <el-form-item prop="groupId" label="Mã mời">
+              <el-input v-model="user.groupId" />
+              <small class="text-muted text-end"
                 ><i
-                  >If you don't have any group key, a new group with be created</i
+                  >Nếu bạn không có mã mời, một group mới của riêng bạn sẽ được tạo</i
                 ></small
               >
-            </div>
-            <div class="text-center text-lg-start mt-4 pt-2">
-              <button
-                type="button"
-                data-mdb-button-init
-                data-mdb-ripple-init
-                class="btn btn-primary"
-                style="padding-left: 2.5rem; padding-right: 2.5rem"
-                @click="register"
-              >
-                Register
-              </button>
-              <p class="small fw-bold mt-2 pt-1 mb-0">
-                Have an account?
-                <a href="/login" class="link-danger link-underline-opacity-0">Login</a>
-              </p>
-            </div>
-          </form>
+            </el-form-item>
+          </el-form>
+          <div class="text-end">
+            <el-button
+              type="primary"
+              style="padding-left: 2.5rem; padding-right: 2.5rem"
+              @click="register"
+              v-loading.fullscreen.lock="fullscreenLoading"
+            >
+              Đăng ký
+            </el-button>
+          </div>
+          <div class="mt-2 text-end">
+            <el-text tag="b">
+              Có tài khoản?
+              <el-link type="primary" href="/login">Đăng nhập</el-link>
+            </el-text>
+          </div>
         </div>
       </div>
     </div>
@@ -127,11 +86,12 @@
 import axios from "axios";
 import router from "../router/index.ts";
 import { ElMessage } from "element-plus";
+import { reactive } from "vue";
 
 export default {
   data() {
     return {
-      user: {
+      user: reactive({
         userName: null,
         password: null,
         displayName: null,
@@ -139,28 +99,19 @@ export default {
         phoneNumber: null,
         groupId: null,
         avatar: "",
-      },
+      }),
+      fullScreenLoading: false,
     };
-  },
-  mounted() {
-    var token = localStorage.getItem(import.meta.env.VITE_TOKEN_NAME);
-    if (token != null && token != "") {
-      router.push("/group");
-      return;
-    }
   },
   methods: {
     async register() {
+      this.fullScreenLoading = true;
+      let url = import.meta.env.VITE_API + "/register";
+      if (this.user.groupId) {
+        url += "?groupId=" + this.user.groupId;
+      }
       axios
-        .post(import.meta.env.VITE_API + "/register", {
-          userName: this.userName,
-          password: this.password,
-          displayName: this.displayName,
-          email: this.email,
-          phoneNumber: this.phoneNumber,
-          groupId: this.groupId,
-          avatar: this.avatar,
-        })
+        .post(url, this.user)
         .then((res) => {
           ElMessage({
             type: res.data.type,
@@ -173,6 +124,9 @@ export default {
             type: "error",
             message: e.message,
           });
+        })
+        .finally(() => {
+          this.fullScreenLoading = false;
         });
     },
   },

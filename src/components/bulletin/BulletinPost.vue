@@ -111,6 +111,9 @@ export default {
   },
   mounted() {
     this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
+    if (!this.post.user.avatar) {
+      this.post.user.avatar = "../../src/assets/images/avatar_default.png";
+    }
   },
   methods: {
     openDialog() {

@@ -1,5 +1,5 @@
 <template>
-  <section class="vh-100">
+  <section class="vh-100" v-loading.fullscreen.lock="fullscreenLoading">
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -29,6 +29,9 @@
               <p class="text-center fw-bold mx-3 mb-0">or</p>
             </div> -->
 
+            <div class="divider d-flex align-items-center my-4">
+              <h3 class="text-center mx-3 mb-0 display-6">Login</h3>
+            </div>
             <!-- Email input -->
             <div data-mdb-input-init class="form-outline mb-4">
               <label class="form-label" for="form3Example3">Username</label>
@@ -38,7 +41,12 @@
             <!-- Password input -->
             <div data-mdb-input-init class="form-outline mb-3">
               <label class="form-label" for="form3Example4">Password</label>
-              <el-input type="password" v-model="password" show-password />
+              <el-input
+                type="password"
+                v-model="password"
+                show-password
+                @keydown.enter="login"
+              />
             </div>
 
             <div class="d-flex justify-content-between align-items-center">
@@ -63,10 +71,12 @@
               >
                 Đăng nhập
               </el-button>
-              <p class="small fw-bold mt-2 pt-1 mb-0">
+            </div>
+            <div class="mt-2 pt-1 mb-0">
+              <el-text tag="b">
                 Chưa có tài khoản?
                 <el-link href="/register" type="primary">Đăng ký</el-link>
-              </p>
+              </el-text>
             </div>
           </form>
         </div>
@@ -92,17 +102,12 @@ export default {
     return {
       username: null,
       password: null,
+      fullScreenLoading: false,
     };
-  },
-  mounted() {
-    // var token = localStorage.getItem(import.meta.env.VITE_TOKEN_NAME);
-    // if (token != null && token != '') {
-    //     router.push('/group');
-    //     return;
-    // }
   },
   methods: {
     async login() {
+      this.fullScreenLoading = true;
       axios
         .post(import.meta.env.VITE_API + "/login", {
           username: this.username,
@@ -123,6 +128,9 @@ export default {
             message: e.message,
             type: "error",
           });
+        })
+        .finally(() => {
+          this.fullScreenLoading = false;
         });
     },
     forgotPassword() {
@@ -136,6 +144,7 @@ export default {
           inputErrorMessage: "Xin hãy nhập email",
         }
       ).then(({ value }) => {
+        this.fullScreenLoading = true;
         axios
           .post(import.meta.env.VITE_API + "/password/forgot?email=" + value, {})
           .then((res) => {
@@ -149,6 +158,9 @@ export default {
               message: e.message,
               type: "error",
             });
+          })
+          .finally(() => {
+            this.fullScreenLoading = false;
           });
       });
     },

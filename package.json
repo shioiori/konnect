@@ -33,6 +33,7 @@
     "vue-advanced-chat": "^2.1.0",
     "vue-cal": "^4.8.1",
     "vue-gapi": "^2.1.2",
+    "vue-plugin-load-script": "^2.1.1",
     "vue-router": "^4.3.0",
     "vue-sweetalert2": "^5.0.5"
   },

@@ -1,46 +1,47 @@
 <template>
-  <el-container>
-    <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
-      <el-menu-item index="0">
-        <img style="width: 100%" src="../../assets/logo.png" />
-      </el-menu-item>
-      <el-menu-item index="1">
-        <el-icon>
-          <document />
-        </el-icon>
-        <template #title><router-link to="/">Bulletin</router-link></template>
-      </el-menu-item>
-      <el-menu-item index="2">
-        <el-icon>
-          <document />
-        </el-icon>
-        <template #title><router-link to="/timetable">Timetable</router-link></template>
-      </el-menu-item>
-      <el-menu-item index="3">
-        <el-icon>
-          <setting />
-        </el-icon>
-        <template #title><router-link to="/chat">Chat</router-link></template>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon>
-          <document />
-        </el-icon>
-        <template #title><router-link to="/storage">AI assistant</router-link></template>
-      </el-menu-item>
-      <el-menu-item index="5" v-if="user != undefined && user.roleName != 'User'">
-        <el-icon>
-          <setting />
-        </el-icon>
-        <template #title><router-link to="/group-manager">Manager</router-link></template>
-      </el-menu-item>
-      <el-menu-item>
+  <div class="sidebar-container">
+    <el-container style="height: 100vh">
+      <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
+        <el-menu-item class="menu-item" index="0">
+          <img style="width: 100%" src="../../assets/logo.png" />
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="1">
+          <i class="bi bi-newspaper"></i>
+          <template #title><router-link to="/">Bulletin</router-link></template>
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="2">
+          <i class="bi bi-calendar3"></i>
+          <template #title><router-link to="/timetable">Timetable</router-link></template>
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="3">
+          <i class="bi bi-chat-text"></i>
+          <template #title><router-link to="/chat">Chat</router-link></template>
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="4">
+          <i class="bi bi-list-task"></i>
+          <template #title><router-link to="/todo">To do list</router-link></template>
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="4">
+          <i class="bi bi-robot"></i>
+          <template #title><router-link to="/ai">AI assistant</router-link></template>
+        </el-menu-item>
+        <el-menu-item
+          class="menu-item"
+          index="5"
+          v-if="user != undefined && user.roleName != 'User'"
+        >
+          <i class="bi bi-gear"></i>
+          <template #title
+            ><router-link to="/group-manager">Manager</router-link></template
+          >
+        </el-menu-item>
+        <!-- <el-menu-item class="menu-item">
         <el-icon @click="this.isCollapse = !this.isCollapse">
           <Expand />
         </el-icon>
-      </el-menu-item>
-    </el-menu>
-    <!-- <ul class="nav nav-pills flex-column mb-auto">
+      </el-menu-item> -->
+      </el-menu>
+      <!-- <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <router-link to="/" class="nav-link link-body-emphasis">
             <icon-bulletin />
@@ -70,7 +71,8 @@
       <div class="header_toggle px-3 fs-4" @click="$emit('toggleSidebar')">
         <i class="bi bi-list" color="black"></i>
       </div> -->
-  </el-container>
+    </el-container>
+  </div>
 </template>
 
 <script>
@@ -79,6 +81,7 @@ import IconChat from "../icons/IconChat.vue";
 import IconStorage from "../icons/IconStorage.vue";
 import IconTimetable from "../icons/IconTimetable.vue";
 import { RouterLink, RouterView } from "vue-router";
+import router from "../../router/index.ts";
 
 export default {
   components: {
@@ -127,5 +130,16 @@ export default {
 .col-1 .header_toggle,
 .col-1 .nav-link {
   text-align: center;
+}
+.sidebar-container .menu-item {
+  padding-left: 2rem;
+}
+.menu-item a {
+  text-decoration: none;
+}
+
+.sidebar-container i {
+  transform: scale(1.5);
+  margin-right: 1rem;
 }
 </style>

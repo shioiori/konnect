@@ -2,7 +2,7 @@
   <div class="container">
     <div class="content">
       <div>
-        <TimetableButton
+        <timetable-button
           @refresh-calendar="getEventsInDatabase"
           @synchronize-calendar="synchronizeCalendar"
           :events="events"
@@ -79,8 +79,7 @@ export default {
 
       console.log(this.timetable);
       if (this.timetable.isSynchronize) {
-        this.$refs.timetableButton.getDataFromGoogleCalendar();
-        console.log(1111);
+        //this.loadEvent();
         return;
       }
       //this.currentDate = dateTimeToJSDate(res.from);
@@ -107,6 +106,8 @@ export default {
       });
     },
     synchronizeCalendar(ggEvents) {
+      console.log(ggEvents);
+      if (!ggEvents) return;
       ggEvents.forEach((e) => {
         let ev = convertEventFromGoogleCalendar(e);
         this.events.push(ev);

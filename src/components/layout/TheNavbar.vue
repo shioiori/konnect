@@ -18,10 +18,11 @@
           </el-breadcrumb>
         </div>
       </div>
-      <div>
-        <b class="mx-2" style="margin: auto" v-if="user != undefined">{{
-          user.displayName
-        }}</b>
+      <div class="d-flex">
+        <div class="navbar-bell">
+          <navbar-notification />
+        </div>
+        <b class="mx-2" style="margin: auto" v-if="user">{{ user.displayName }}</b>
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar
@@ -33,23 +34,23 @@
               <el-dropdown-item
                 ><router-link to="/user" style="color: #000; text-decoration: none"
                   ><el-text
-                    ><el-icon><User /></el-icon>Trang cá nhân</el-text
+                    ><el-icon> <User /> </el-icon>Trang cá nhân</el-text
                   ></router-link
                 ></el-dropdown-item
               >
               <el-dropdown-item @click="outGroup"
                 ><el-text type="danger"
-                  ><el-icon><Guide /></el-icon>Rời nhóm</el-text
+                  ><el-icon> <Guide /> </el-icon>Rời nhóm</el-text
                 ></el-dropdown-item
               >
               <el-dropdown-item @click="deleteAccount">
                 <el-text type="danger"
-                  ><el-icon><Delete /></el-icon>Xoá tài khoản</el-text
+                  ><el-icon> <Delete /> </el-icon>Xoá tài khoản</el-text
                 ></el-dropdown-item
               >
               <el-dropdown-item divided @click="logout"
                 ><el-text type="info"
-                  ><el-icon><SwitchButton /></el-icon>Đăng xuất</el-text
+                  ><el-icon> <SwitchButton /> </el-icon>Đăng xuất</el-text
                 ></el-dropdown-item
               >
             </el-dropdown-menu>
@@ -70,7 +71,12 @@ import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 
+import NavbarNotification from "./NavbarNotification.vue";
+
 export default {
+  components: {
+    NavbarNotification,
+  },
   data() {
     return {
       ArrowRight,
@@ -170,5 +176,11 @@ export default {
 
 .img-avatar {
   width: 2rem;
+}
+
+.navbar-bell {
+  display: flex;
+  align-items: center;
+  transform: scale(1.25);
 }
 </style>
