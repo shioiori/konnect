@@ -1,26 +1,20 @@
 <template>
-    <div>
-        <el-button
-                link
-                type="danger"
-                @click="removeUser(scope.$index, scope.row.userName)"
-              >
-                <el-icon> <Delete /> </el-icon
-              ></el-button>
-    </div>
+  <div>
+    <el-button link type="danger" @click="removeUser(scope.$index, scope.row.userName)">
+      <el-icon> <Delete /> </el-icon
+    ></el-button>
+  </div>
 </template>
 <script>
-
 import axios from "axios";
-import { getHeaderConfig } from "../utils/ApiHandler.js";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 export default {
-    props: {
-        user: Object,
-        index: Number
-    },
-    methods: {
-        
+  props: {
+    user: Object,
+    index: Number,
+  },
+  methods: {
     removeUser(index, username) {
       ElMessageBox.confirm("Người dùng này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
         confirmButtonText: "Yes",
@@ -46,9 +40,7 @@ export default {
           });
       });
     },
-    }
-}
+  },
+};
 </script>
-<style lang="">
-    
-</style>
+<style lang=""></style>

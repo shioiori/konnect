@@ -12,6 +12,8 @@
 
 <script>
 import ChatListContactSearch from "./ChatListContactSearch.vue";
+import axios from "axios";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
 
 export default {
   components: {
@@ -20,11 +22,33 @@ export default {
   data() {
     return {
       chats: [],
+      currentData: undefined,
     };
   },
+  mounted() {},
   methods: {
     openChat(index) {},
-    getSearchChat(searchName) {},
+    getSearchChat(searchName) {
+      axios
+        .post(
+          import.meta.env.VITE_CHAT_API +
+            `/chat?groupId=${this.currentData.groupId}&userId=${this.currentData.userId}`,
+          {
+            content: comment,
+          },
+          getHeaderConfig()
+        )
+        .then((res) => {
+          console.log(res.data);
+          console.log(this.post.comments[0]);
+          this.post.comments.push(res.data.comment);
+        });
+    },
+    getUsers() {
+      axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
+        this.currentData = res.data;
+      });
+    },
   },
 };
 </script>

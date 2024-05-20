@@ -3,9 +3,11 @@
     <div>
       <div class="justify-content-end d-flex">
         <button-manager-invite />
-        <button-import-user @get-users="getUsers"/>
+        <button-import-user @get-users="getUsers" />
         <div>
-          <el-button type="primary" plain @click="updateAction('add')">Add user</el-button>
+          <el-button type="primary" plain @click="updateAction('add')"
+            >Add user</el-button
+          >
         </div>
         <button-delete-group />
       </div>
@@ -25,7 +27,11 @@
           <template #default="scope">
             <div class="d-flex">
               <button-change-role :user="scope.row" />
-              <button-edit-user :user="scope.row" :index="scope.$index" @add-user="addUser"/>
+              <button-edit-user
+                :user="scope.row"
+                :index="scope.$index"
+                @add-user="addUser"
+              />
               <button-delete-user :user="scope.row" :index="scope.$index" />
             </div>
           </template>
@@ -54,13 +60,12 @@ export default {
   components: {
     IconImport,
     IconButtonImport,
-    ButtonManagerInvite,
     ButtonChangeRole,
     ButtonEditUser,
     ButtonDeleteUser,
     ButtonImportUser,
     ButtonInviteUser,
-    ButtonDeleteGroup
+    ButtonDeleteGroup,
   },
   data() {
     return {
@@ -73,16 +78,18 @@ export default {
   },
   methods: {
     getUsers() {
-      axios.get(import.meta.env.VITE_API + "/user/group", getHeaderConfig()).then((res) => {
-        this.users = res.data.users;
-      });
+      axios
+        .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
+        .then((res) => {
+          this.users = res.data.users;
+        });
     },
     updateAction(act) {
       this.action = act;
     },
-    addUser(user){
+    addUser(user) {
       this.users.push(user);
-    }
+    },
   },
 };
 </script>

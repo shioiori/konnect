@@ -1,10 +1,13 @@
 <template>
   <div class="chat">
     <el-row style="height: inherit">
+      <el-col :span="2">
+        <chat-list-user />
+      </el-col>
       <el-col :span="4">
         <chat-list-contact />
       </el-col>
-      <el-col :span="20">
+      <el-col :span="18">
         <chat-content />
       </el-col>
     </el-row>
@@ -14,10 +17,13 @@
 <script>
 import ChatContent from "../components/chat/ChatContent.vue";
 import ChatListContact from "../components/chat/ChatListContact.vue";
+import ChatListUser from "../components/chat/ChatListUser.vue";
+
 export default {
   components: {
     ChatContent,
     ChatListContact,
+    ChatListUser,
   },
 };
 </script>

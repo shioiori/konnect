@@ -18,7 +18,10 @@
           </div>
         </el-dropdown-item>
         <el-dropdown-item
-          ><el-link type="primary" @click="dialogVisible = true"
+          ><el-link
+            type="primary"
+            @click="dialogVisible = true"
+            v-if="notifications.length > 0"
             >Xem thêm</el-link
           ></el-dropdown-item
         >

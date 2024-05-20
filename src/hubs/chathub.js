@@ -10,7 +10,7 @@ const connection = new HubConnectionBuilder()
                         .configureLogging(LogLevel.Information)
                         .build();
 
-const addToGroup = connection.on("AddToGroup", (message) => {
+const addToGroup = connection.on("AddToChat", (message) => {
     console.log(message);
 });
 
@@ -31,15 +31,6 @@ async function onConnectionAsync() {
 
 function onDisconnectionAsync(){
 
-}
-
-function onConnectedNetwork(user_id){
-    connection.invoke("OnConnectedNetwork", user_id).catch(function (err) {
-        return console.error(err.toString());
-    });
-    return connection.on("OnConnected", (connection_id) => {
-        return connection_id;
-    });
 }
 
 async function SendAll(message){
