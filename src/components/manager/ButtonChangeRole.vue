@@ -30,6 +30,8 @@
 
 <script>
 import axios from "axios";
+import { ElMessage } from "element-plus";
+
 export default {
   props: {
     user: Object,
@@ -51,7 +53,22 @@ export default {
     };
   },
   methods: {
-    changeRole() {},
+    changeRole() {
+      axios.post(import.meta.env.VITE_API + "/user/group", {}, getHeaderConfig())
+      .then((res) => {
+        ElMessage({
+          message: res.data.message,
+          type: res.data.type,
+        });
+        this.user.roleName = this.role;
+      })
+      .catch((e) => {
+        ElMessage({
+          type: "error",
+          message: e.message,
+        });
+      });
+    },
   },
 };
 </script>
