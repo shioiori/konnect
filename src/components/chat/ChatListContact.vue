@@ -2,9 +2,10 @@
   <div>
     <chat-list-contact-search @search-chat="getSearchChat" />
     <el-menu class="el-menu-vertical-demo">
-      <el-menu-item v-for="(chat, index) in chats" @click="openChat(index)">
-        <el-icon><img /></el-icon>
-        <span>Navigator Four</span>
+      <el-menu-item v-for="(chat, index) in chats" @click="openChat(chat)">
+        <el-icon><el-avatar :src="chat.avatar" /></el-icon>
+        <span>{{ chat.name }}</span>
+        <div v-if="chat.messages.length > 0">{{ chat.messagses[0].text }}</div>
       </el-menu-item>
     </el-menu>
   </div>
@@ -25,28 +26,31 @@ export default {
       currentData: undefined,
     };
   },
-  mounted() {},
+  mounted() {
+    this.getUser();
+    this.emitter.on("insertChat", () => {
+      this.getSearchChat();
+    });
+  },
   methods: {
-    openChat(index) {},
+    openChat(chat) {
+      this.emitter.emit("openChat", chat);
+    },
     getSearchChat(searchName) {
+      if (searchName == undefined) searchName = "";
       axios
-        .post(
+        .get(
           import.meta.env.VITE_CHAT_API +
-            `/chat?groupId=${this.currentData.groupId}&userId=${this.currentData.userId}`,
-          {
-            content: comment,
-          },
-          getHeaderConfig()
+            `/chat?groupId=${this.currentData.groupId}&userId=${this.currentData.userId}&name=${searchName}`
         )
         .then((res) => {
-          console.log(res.data);
-          console.log(this.post.comments[0]);
-          this.post.comments.push(res.data.comment);
+          this.chats = res.data;
         });
     },
-    getUsers() {
+    getUser() {
       axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
         this.currentData = res.data;
+        this.getSearchChat();
       });
     },
   },

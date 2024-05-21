@@ -1,9 +1,7 @@
 <template>
   <div class="chat">
     <el-row style="height: inherit">
-      <el-col :span="2">
-        <chat-list-user />
-      </el-col>
+      <el-col :span="2"> <chat-list-user /> </el-col>
       <el-col :span="4">
         <chat-list-contact />
       </el-col>

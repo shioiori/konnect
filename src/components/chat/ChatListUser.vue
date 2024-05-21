@@ -42,7 +42,19 @@ export default {
         .get(import.meta.env.VITE_API + "/chat/user/data?name=" + name, getHeaderConfig())
         .then((res) => {
           console.log(res.data);
-          axios.post(import.meta.env.VITE_CHAT_API + "/chat", res.data).then((res) => {});
+          axios
+            .get(import.meta.env.VITE_CHAT_API + "/chat/exist", res.data.users)
+            .then((res) => {
+              if (!res.data) {
+                axios
+                  .post(import.meta.env.VITE_CHAT_API + "/chat", res.data)
+                  .then((res) => {
+                    this.emitter.emit("insertChat");
+                  });
+              } else {
+                this.emitter.emit("insertChat");
+              }
+            });
         });
     },
   },
