@@ -28,15 +28,15 @@ import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 
-import CKEditor from "@ckeditor/ckeditor5-vue";
-import Editor from "ckeditor5-custom-build/build/ckeditor";
+// import CKEditor from "@ckeditor/ckeditor5-vue";
+// import Editor from "ckeditor5-custom-build/build/ckeditor";
 
 export default {
   components: {
     IconAddImage,
     IconAddUser,
     IconButtonSend,
-    Editor,
+    //Editor,
   },
   methods: {
     async uploadNews() {

@@ -78,10 +78,11 @@ export default {
       this.timetable = res;
 
       console.log(this.timetable);
-      if (this.timetable.isSynchronize) {
-        //this.loadEvent();
-        return;
-      }
+      // if (this.timetable.isSynchronize) {
+      //   //this.loadEvent();
+      //   return;
+      // }
+      return;
       //this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
       this.timetable.events.forEach((event) => {

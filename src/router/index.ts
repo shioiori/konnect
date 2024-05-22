@@ -14,7 +14,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/a',
       name: 'public',
       component: MainLayout,
       redirect: '/',
@@ -24,11 +24,11 @@ const router = createRouter({
           name: 'storage',
           component: Storage
         },
-        {
-          path: 'timetable',
-          name: 'timetable',
-          component: Timetable
-        },
+        // {
+        //   path: 'timetable',
+        //   name: 'timetable',
+        //   component: Timetable
+        // },
         {
           path: 'chat',
           name: 'chat',
@@ -65,7 +65,12 @@ const router = createRouter({
       path: '/group',
       name: 'choose-group',
       component: ChooseGroup
-    }
+    },
+    {
+      path: '/timetable',
+      name: 'timetable',
+      component: Timetable
+    },
   ]
 })
 
