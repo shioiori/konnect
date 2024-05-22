@@ -15,6 +15,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import LoadScript from "vue-plugin-load-script";
+import hub from './hubs/chathub.js';
 
 const emitter = mitt()
 const app = createApp(App)
@@ -24,6 +25,7 @@ app.use(router)
 app.use(CKEditor)
 app.use(ElementPlus)
 app.use(LoadScript);
+app.use(hub);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }

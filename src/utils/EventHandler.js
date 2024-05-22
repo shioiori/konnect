@@ -4,7 +4,8 @@ export function convertEventFromGoogleCalendar(event) {
     end: convertDate(event.end.dateTime),
     title: event.summary,
     content: event.location,
-    class: 'gg-event'
+    class: 'gg-event',
+    category: 'Google'
   }
 }
 
@@ -18,19 +19,20 @@ function convertDate(inputDatetime) {
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
-export function getEvent(start, end, title, content, cssClass) {
+export function getEvent(start, end, title, content, type) {
   return {
     start: start,
     end: end,
     title: title,
     content: content,
-    class: cssClass
+    class: type.toLowerCase(),
+    type: type
   }
 }
 
 export function convertEventToGoogleCalendar(start, end, title, content, remind) {
   let reminder
-  if (remind != -1) {
+  if (remind != -1 || remind != undefined) {
     reminder = {
       useDefault: false,
       overrides: [

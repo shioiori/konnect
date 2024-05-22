@@ -1,72 +1,60 @@
-import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr'
-import constants from '@/constants';
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 
-import mitt from 'mitt';
+import mitt from 'mitt'
 
-const emitter = mitt();
+const emitter = mitt()
 
 const connection = new HubConnectionBuilder()
-                        .withUrl(constants.BASE_URL + '/chat-hub')
-                        .configureLogging(LogLevel.Information)
-                        .build();
+  .withUrl(import.meta.env.VITE_CHAT_API + '/chat-hub')
+  .configureLogging(LogLevel.Information)
+  .build()
 
-const addToGroup = connection.on("AddToChat", (message) => {
-    console.log(message);
-});
-
-const receiveMessage = connection.on("ReceiveMessage", (message) => {
-    console.log("received message")
-    emitter.emit("sendMessage", JSON.parse(message));
-    //hub.connection.off("ReceiveMessage");
-});
 
 async function onConnectionAsync() {
-    try {
-        await connection.start();
-        console.log("SignalR Connected.");
-    } catch (err) {
-        console.log(err);
-    }
+  try {
+    await connection.start()
+    console.log('SignalR Connected.')
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-function onDisconnectionAsync(){
+function onDisconnectionAsync() {}
 
+async function SendAll(message) {
+  connection.invoke('SendAll', message).catch(function (err) {
+    return console.error(err.toString())
+  })
 }
 
-async function SendAll(message){
-    connection.invoke("SendAll", message).catch(function (err) {
-        return console.error(err.toString());
-    });
+async function SendMessage(chatId, message) {
+  console.log(chatId)
+  console.log(message)
+
+  connection.invoke('SendMessage', chatId, JSON.stringify(message)).catch(function (err) {
+    return console.error(err.toString())
+  })
 }
 
-async function SendMessage(message){
-    connection.invoke("SendGroup", message).catch(function (err) {
-        return console.error(err.toString());
-    });
+async function AddToChat(chat_id) {
+  connection.invoke('AddToChat', chat_id).catch(function (err) {
+    return console.error(err.toString())
+  })
 }
 
-async function AddToGroup(chat_id, user_id){
-    connection.invoke("AddToGroup", chat_id, user_id).catch(function (err) {
-        return console.error(err.toString());
-    });
+async function RemoveFromChat(chat_id, user_id) {
+  connection.invoke('RemoveFromChat', chat_id, user_id).catch(function (err) {
+    return console.error(err.toString())
+  })
 }
-
-async function RemoveFromGroup(chat_id, user_id){
-    connection.invoke("RemoveFromGroup", chat_id, user_id).catch(function (err) {
-        return console.error(err.toString());
-    });
-}
-
 
 export default {
-    onConnectionAsync,
-    onDisconnectionAsync,
-    onConnectedNetwork,
-    SendMessage,
-    SendAll,
-    AddToGroup,
-    RemoveFromGroup,
-    addToGroup,
-    receiveMessage,
-    emitter
+  onConnectionAsync,
+  onDisconnectionAsync,
+  SendMessage,
+  SendAll,
+  AddToChat,
+  RemoveFromChat,
+  emitter,
+  connection
 }

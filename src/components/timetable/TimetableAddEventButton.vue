@@ -85,15 +85,13 @@ export default {
         axios
           .post(
             import.meta.env.VITE_API + "/timetable/event",
-            {
-              file: this.fileUpload,
-            },
-            getHeaderConfig("multipart/form-data")
+            this.event,
+            getHeaderConfig()
           )
           .then((res) => {
             ElMessage({
-              message: res.message,
-              type: res.type,
+              message: res.data.message,
+              type: res.data.type,
             });
             this.$emit("refreshCalendar");
           })

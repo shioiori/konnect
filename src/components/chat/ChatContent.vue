@@ -10,13 +10,14 @@
         v-bind:message="message"
       />
     </div>
-    <chat-content-input />
+    <chat-content-input :chat="chat" @receive-message="receiveMessage" />
   </div>
 </template>
 
 <script>
 import ChatContentInput from "./ChatContentInput.vue";
 import ChatContentMessage from "./ChatContentMessage.vue";
+import hub from "../../hubs/chathub.js";
 
 export default {
   components: {
@@ -25,16 +26,35 @@ export default {
   },
   data() {
     return {
-      chat: {},
+      chat: undefined,
     };
   },
   props: {
-    currentUser: Object,
+    user: Object,
   },
-  methods: {},
+  watch: {
+    user(oldValue, newValue) {
+      console.log(newValue);
+    },
+  },
+  methods: {
+    receiveMessage(message) {
+      this.chat.messages.push(message);
+    },
+  },
   mounted() {
-    this.emitter.on("openChat", (chat) => {
-      this.chat = chat;
+    this.emitter.on("openChat", (newChat) => {
+      if (this.chat) {
+        hub.RemoveFromChat(this.chat.id, this.user.userId);
+      }
+      this.chat = newChat;
+
+      console.log(newChat);
+      hub.AddToChat(this.chat.id);
+    });
+    hub.emitter.on("ReceiveMessage", (message) => {
+      console.log(message);
+      this.chat.messages.push(message);
     });
   },
 };

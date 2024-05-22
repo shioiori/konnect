@@ -5,7 +5,7 @@
       <el-menu-item v-for="(chat, index) in chats" @click="openChat(chat)">
         <el-icon><el-avatar :src="chat.avatar" /></el-icon>
         <span>{{ chat.name }}</span>
-        <div v-if="chat.messages.length > 0">{{ chat.messagses[0].text }}</div>
+        <div v-if="chat.messages.length > 0">{{ chat.messages[0].text }}</div>
       </el-menu-item>
     </el-menu>
   </div>

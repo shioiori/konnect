@@ -1,6 +1,10 @@
 <template>
   <div v-if="message">
-    <el-card style="width: 480px" shadow="never">{{ message.content }}</el-card>
+    <div class="d-flex">
+      <el-card class="p-0" shadow="never">
+        {{ message.text }}
+      </el-card>
+    </div>
     <small class="text-muted">{{ message.createdDate }}</small>
   </div>
 </template>
@@ -13,7 +17,8 @@ export default {
     message: Object,
   },
   mounted() {
-    this.message.createdDate = dateTimeToFormatDate(this.post.createdDate);
+    console.log(this.message);
+    this.message.createdDate = dateTimeToFormatDate(this.createdDate);
   },
   methods: {},
 };

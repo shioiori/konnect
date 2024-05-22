@@ -4,25 +4,21 @@ export function getTime(shiftCode) {
       return {
         start: '7:00',
         end: '9:30',
-        cssClass: 'shift1'
       }
     case 2:
       return {
         start: '9:30',
         end: '12:00',
-        cssClass: 'shift2'
       }
     case 3:
       return {
         start: '13:00',
         end: '15:30',
-        cssClass: 'shift3'
       }
     case 4:
       return {
         start: '15:30',
         end: '18:00',
-        cssClass: 'shift4'
       }
   }
 }
@@ -41,12 +37,14 @@ export function getTimeOnly(date) {
   )
 }
 
-export function getFormattedDate(date) {
+export function getFormattedDate(date, special) {
+  if (!special) special = '/'
+  date = new Date(date)
   return (
     date.getUTCFullYear() +
-    '/' +
+    special +
     ('0' + (date.getUTCMonth() + 1)).slice(-2) +
-    '/' +
+    special +
     ('0' + date.getUTCDate()).slice(-2) +
     ' ' +
     ('0' + date.getUTCHours()).slice(-2) +
@@ -86,7 +84,7 @@ export function getStartDateInRange(from, to, day) {
 // time convert
 
 export function getRelativeTime(date) {
-  var cloneDate = date.toString();
+  var cloneDate = date.toString()
   const now = new Date()
   date = new Date(date)
   const timeDifference = now - date
@@ -110,7 +108,7 @@ export function getRelativeTime(date) {
     const months = Math.floor(secondsDifference / (86400 * 30))
     return `${months} tháng trước`
   } else {
-    return cloneDate;
+    return cloneDate
   }
 }
 

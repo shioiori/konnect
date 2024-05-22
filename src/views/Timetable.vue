@@ -11,12 +11,15 @@
         />
       </div>
       <div>
+        <timetable-bar :timetable="timetable" @filter-event="filterEvent" />
+      </div>
+      <div>
         <vue-cal
           :selected-date="currentDate"
           :time-from="0 * 60"
           :time-to="23 * 60"
           :disable-views="['years']"
-          :events="events"
+          :events="showEvents"
           editable-events
           @cell-dblclick="openEventDialog($event)"
         >
@@ -36,6 +39,7 @@ import {
   getDateOnly,
   dateTimeToJSDate,
   getStartDateInRange,
+  getFormattedDate,
 } from "../utils/DateConverter.js";
 import {
   getEvent,
@@ -43,11 +47,13 @@ import {
   convertEventToGoogleCalendar,
 } from "../utils/EventHandler.js";
 import TimetableButton from "../components/timetable/TimetableButton.vue";
+import TimetableBar from "../components/timetable/TimetableBar.vue";
 
 export default {
   components: {
     VueCal,
     TimetableButton,
+    TimetableBar,
   },
   data() {
     return {
@@ -64,6 +70,7 @@ export default {
           class: "health",
         },
       ],
+      showEvents: [],
       timetable: undefined,
     };
   },
@@ -83,33 +90,37 @@ export default {
       this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
       this.timetable.events.forEach((event) => {
-        var startDate = dateTimeToJSDate(event.from);
-        var endDate = dateTimeToJSDate(event.to);
+        console.log(event);
+        var startDate = getFormattedDate(event.from, "-");
+        var endDate = getFormattedDate(event.to, "-");
         var date = getStartDateInRange(startDate, endDate, event.day);
-        while (new Date(date) <= new Date(endDate)) {
-          let timeRange = getTime(event.code);
-          let startDate = getDateOnly(date) + " " + timeRange.start;
-          let endDate = getDateOnly(date) + " " + timeRange.end;
+        if (event.isLoopPerDay) {
+          while (new Date(date) <= new Date(endDate)) {
+            let timeRange = getTime(event.code);
+            let startDate = getDateOnly(date) + " " + timeRange.start;
+            let endDate = getDateOnly(date) + " " + timeRange.end;
+            this.events.push(
+              getEvent(startDate, endDate, event.title, event.location, event.category)
+            );
+            date.setDate(date.getDate() + 7);
+          }
+        } else {
           this.events.push(
-            getEvent(
-              startDate,
-              endDate,
-              event.subjectClass,
-              event.location,
-              timeRange.cssClass
-            )
+            getEvent(startDate, endDate, event.title, event.location, event.category)
           );
-          date.setDate(date.getDate() + 7);
         }
       });
+      this.showEvents = [...this.events];
+      console.log(this.showEvents);
     },
     synchronizeCalendar(ggEvents) {
       console.log(ggEvents);
       if (!ggEvents) return;
       ggEvents.forEach((e) => {
         let ev = convertEventFromGoogleCalendar(e);
-        this.events.push(ev);
+        this.events.push({ ...ev, category: "Google" });
       });
+      this.showEvents = [...this.events];
       this.currentDate = new Date();
     },
     openEventDialog(event) {
@@ -117,6 +128,9 @@ export default {
       console.log(event);
       this.$refs.timetableButton.dialogEventVisible = true;
       this.$refs.timetableButton.setDefaultEventParam(event);
+    },
+    filterEvent(categories) {
+      this.showEvents = this.events.filter((obj) => categories.includes(obj.category));
     },
   },
 };
@@ -130,28 +144,27 @@ export default {
   padding: 4px;
 }
 
-.shift1 {
+.shift1,
+.google {
   background-color: #f0fff1;
   color: #81d58b;
 }
 
-.shift2 {
+.shift2,
+.user {
   background-color: #f0f6ff;
   color: #689bee;
 }
 
-.shift3 {
+.shift3,
+.timetable {
   background-color: #fcf0ff;
   color: #d168ee;
 }
 
-.shift4 {
+.shift4,
+.unclassify {
   background-color: #ffeee2;
   color: #ee6868;
-}
-
-.gg-event {
-  background-color: #fdffe2;
-  color: #cdcc6a;
 }
 </style>
