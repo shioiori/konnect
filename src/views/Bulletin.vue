@@ -2,7 +2,7 @@
   <div class="container">
     <div class="content">
       <div>
-        <!-- <bulletin-add-post @refresh-bulletin="getBulletinNews" /> -->
+        <bulletin-add-post @refresh-bulletin="getBulletinNews" />
       </div>
       <div>
         <bulletin-post
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-//import BulletinAddPost from "../components/bulletin/BulletinAddPost.vue";
+import BulletinAddPost from "../components/bulletin/BulletinAddPost.vue";
 import BulletinPost from "../components/bulletin/BulletinPost.vue";
 
 import axios from "axios";
@@ -25,7 +25,7 @@ import { getHeaderConfig } from "../utils/ApiHandler.js";
 
 export default {
   components: {
-    //BulletinAddPost,
+    BulletinAddPost,
     BulletinPost,
   },
   data() {

@@ -116,8 +116,7 @@ export default {
           appEvent.end,
           appEvent.title,
           appEvent.content,
-          //this.timetable.remindTime
-          5
+          this.timetable.remindTime
         );
         console.log(event)
         const request = gapi.client.calendar.events.insert({

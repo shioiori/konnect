@@ -68,7 +68,7 @@ export default {
     };
   },
   mounted() {
-    //this.getEventsInDatabase();
+    this.getEventsInDatabase();
   },
   methods: {
     async getEventsInDatabase() {
@@ -76,13 +76,11 @@ export default {
         await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
       ).data;
       this.timetable = res;
-
-      console.log(this.timetable);
-      // if (this.timetable.isSynchronize) {
-      //   //this.loadEvent();
-      //   return;
-      // }
-      //this.currentDate = dateTimeToJSDate(res.from);
+      if (this.timetable.isSynchronize) {
+        this.$refs.timetableButton.listEvents();
+        return;
+      }
+      this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
       this.timetable.events.forEach((event) => {
         var startDate = dateTimeToJSDate(event.from);
@@ -113,12 +111,12 @@ export default {
         this.events.push(ev);
       });
       this.currentDate = new Date();
-      console.log(this.events);
     },
     openEventDialog(event) {
-      // console.log(event);
-      // this.$refs.timetableButton.dialogEventVisible = true;
-      // this.$refs.timetableButton.setDefaultEventParam(event);
+      //wrong
+      console.log(event);
+      this.$refs.timetableButton.dialogEventVisible = true;
+      this.$refs.timetableButton.setDefaultEventParam(event);
     },
   },
 };
