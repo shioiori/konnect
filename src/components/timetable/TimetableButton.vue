@@ -2,13 +2,14 @@
   <div>
     <div>
       <div class="ttb-button justify-content-end d-flex">
-        <button @click="handleAuthClick" ref="authorizeButton">Authorize</button>
+        <!-- <button @click="handleAuthClick" ref="authorizeButton">Authorize</button> -->
         <timetable-add-event-button
           :timetable="timetable"
           @add-event-to-google-calendar="addEventToGoogleCalendar"
           @refresh-calendar="refreshCalendar"
         />
-        <timetable-add-loop-event-button />
+        <timetable-add-loop-event-button ></timetable-add-loop-event-button>
+        
         <timetable-import-button @refresh-calendar="refreshCalendar" />
         <timetable-update-data-from-calendar-button
           ref="updateDataFromGoogleCalendarButton"
@@ -47,7 +48,7 @@ import TimetableRemindButton from "./TimetableRemindButton.vue";
 import TimetableDeleteButton from "./TimetableDeleteButton.vue";
 
 import { ElMessage } from "element-plus";
-import GoogleGapiHandler from "../../utils/GoogleGapiHandler.js";
+import * from "../../utils/GoogleGapiHandler.js";
 import { convertEventToGoogleCalendar } from "../../utils/EventHandler.js";
 
 import { loadScript } from "vue-plugin-load-script";
@@ -70,7 +71,6 @@ export default {
   },
   data() {
     return {
-      ggGapiHandler: undefined,
       loadScript: false,
       authorize: false,
     };
@@ -81,13 +81,19 @@ export default {
     });
   },
   methods: {
-    async loadGapiScript() {
-      await loadScript("https://apis.google.com/js/api.js");
-      await loadScript("https://accounts.google.com/gsi/client");
-      this.ggGapiHandler = new GoogleGapiHandler();
-      this.ggGapiHandler.gapiLoaded();
-      this.ggGapiHandler.gisLoaded();
-      await this.ggGapiHandler.initializeGapiClient();
+    loadGapiScript() {
+      loadScript("https://apis.google.com/js/api.js").then(() => {
+        gapiLoaded();
+      });
+      loadScript("https://accounts.google.com/gsi/client").then(() => {
+        gisLoaded();
+        var enable = handleAuthClick();
+        while (!enable){
+          setTimeout(1000 * 10, () => {
+            enable = handleAuthClick()
+          });
+        }
+      });
     },
     refreshCalendar() {
       this.$emit("refreshCalendar");
@@ -159,29 +165,6 @@ export default {
             type: "error",
           });
       }
-    },
-
-    handleAuthClick() {
-      // if (!this.ggGapiHandler.gapiInited || !this.ggGapiHandler.gisInited) {
-      //   ElMessage({
-      //     message: "cant",
-      //     type: "error",
-      //   });
-      //   setTimeout(this.handleAuthClick, 5000);
-      //   return;
-      // }
-      this.ggGapiHandler.tokenClient.callback = async (resp) => {
-        if (resp.error !== undefined) {
-          throw resp;
-        }
-      };
-      if (gapi.client.getToken() === null) {
-        this.ggGapiHandler.tokenClient.requestAccessToken({ prompt: "consent" });
-      } else {
-        this.ggGapiHandler.tokenClient.requestAccessToken({ prompt: "" });
-      }
-
-      this.loadScript = true;
     },
   },
 };

@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import GoogleGapiHandler from "../../utils/GoogleGapiHandler.js";
 import { ElMessage } from "element-plus";
 
 export default {
