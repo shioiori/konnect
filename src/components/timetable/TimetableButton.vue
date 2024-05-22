@@ -3,35 +3,23 @@
     <div>
       <div class="ttb-button justify-content-end d-flex">
         <!-- <button @click="handleAuthClick" ref="authorizeButton">Authorize</button> -->
-        <timetable-add-event-button
-          :timetable="timetable"
-          @add-event-to-google-calendar="addEventToGoogleCalendar"
-          @refresh-calendar="refreshCalendar"
-        />
-        <timetable-add-loop-event-button ></timetable-add-loop-event-button>
-        
+        <timetable-add-event-button :timetable="timetable" @add-event-to-google-calendar="addEventToGoogleCalendar"
+          @refresh-calendar="refreshCalendar" />
+        <timetable-add-loop-event-button />
         <timetable-import-button @refresh-calendar="refreshCalendar" />
-        <timetable-update-data-from-calendar-button
-          ref="updateDataFromGoogleCalendarButton"
-          @synchronize-calendar="synchronizeCalendar"
-          @list-events="listEvents"
-        />
-        <timetable-synchronize-with-calendar-button
-          @add-events-to-google-calendar="addEventsToGoogleCalendar"
-        />
+        <timetable-update-data-from-calendar-button ref="updateDataFromGoogleCalendarButton"
+          @list-events="listEvents" />
+        <timetable-synchronize-with-calendar-button @add-events-to-google-calendar="addEventsToGoogleCalendar" />
         <timetable-remind-button :timetable="timetable" />
         <timetable-delete-button @refresh-calendar="refreshCalendar" />
       </div>
       <div class="mt-2 offset-4">
         <p class="text-end">
-          <i class="text-muted"
-            ><small
-              >Nếu muốn hiển thị dữ liệu từ Google Calendar vào thời khoá biểu, chọn
+          <i class="text-muted"><small>Nếu muốn hiển thị dữ liệu từ Google Calendar vào thời khoá biểu, chọn
               Update data from Calendar. Về vấn đề đồng bộ hoá, chọn Synchronize with
               Calendar và dữ liệu trong thời khoá biểu của bạn sẽ được update vào tài
               khoản Google Calendar.
-            </small></i
-          >
+            </small></i>
         </p>
       </div>
     </div>
@@ -48,7 +36,7 @@ import TimetableRemindButton from "./TimetableRemindButton.vue";
 import TimetableDeleteButton from "./TimetableDeleteButton.vue";
 
 import { ElMessage } from "element-plus";
-import * from "../../utils/GoogleGapiHandler.js";
+import {gapiLoaded, gisLoaded, handleAuthClick} from "../../utils/GoogleGapiHandler.js";
 import { convertEventToGoogleCalendar } from "../../utils/EventHandler.js";
 
 import { loadScript } from "vue-plugin-load-script";
@@ -67,7 +55,13 @@ export default {
     timetable: Object,
   },
   watch: {
-    timetable(oldValue, newValue) {},
+    timetable(oldValue, newValue) { },
+    authorize(oldValue, newValue){
+      console.log(newValue);
+
+        // enable button
+        this.listEvents();
+    },
   },
   data() {
     return {
@@ -75,10 +69,11 @@ export default {
       authorize: false,
     };
   },
-  created() {
-    this.loadGapiScript().then(() => {
-      //this.handleAuthClick();
-    });
+  mounted() {
+    this.loadGapiScript();
+    setTimeout(() => {
+      this.authorize = handleAuthClick();
+    }, 1000);
   },
   methods: {
     loadGapiScript() {
@@ -87,23 +82,18 @@ export default {
       });
       loadScript("https://accounts.google.com/gsi/client").then(() => {
         gisLoaded();
-        var enable = handleAuthClick();
-        while (!enable){
-          setTimeout(1000 * 10, () => {
-            enable = handleAuthClick()
-          });
-        }
       });
     },
     refreshCalendar() {
       this.$emit("refreshCalendar");
     },
-    synchronizeCalendar() {
-      this.$emit("synchronizeCalendar");
-    },
-    getDataFromGoogleCalendar() {
-      this.listEvents();
-    },
+    // getDataFromGoogleCalendar() {
+    //   if (this.authorize){
+    //     setTimeout(this.listEvents(), 1000);
+    //     return;
+    //   }
+    //   this.listEvents();
+    // },
     addEventsToGoogleCalendar(error) {
       console.log(this.events);
       try {
@@ -121,14 +111,15 @@ export default {
     },
     addEventToGoogleCalendar(appEvent, error) {
       try {
-        gapi.client.load("calendar", "V3", this.addEventToGoogleCalendar);
         let event = convertEventToGoogleCalendar(
           appEvent.start,
           appEvent.end,
           appEvent.title,
           appEvent.content,
-          this.timetable.remindTime
+          //this.timetable.remindTime
+          5
         );
+        console.log(event)
         const request = gapi.client.calendar.events.insert({
           calendarId: "primary",
           resource: event,
@@ -142,7 +133,9 @@ export default {
           console.log(e);
           return;
         }
-        this.addEventToGoogleCalendar(appEvent, e);
+        else {        
+          gapi.client.load("calendar", "V3", this.addEventToGoogleCalendar(appEvent, e));
+        }
       }
     },
     async listEvents(error) {
@@ -155,15 +148,18 @@ export default {
           orderBy: "startTime",
         };
         response = await gapi.client.calendar.events.list(request);
-        this.synchronizeCalendar();
+        console.log(response.result.items);
+        this.$emit("synchronizeCalendar", response.result.items);
       } catch (err) {
-        gapi.client.load("calendar", "V3", this.listEvents.bind(this));
-        this.listEvents(err);
-        if (error)
+        if (error){
           ElMessage({
             message: err.message,
             type: "error",
           });
+        }
+        else {
+          gapi.client.load("calendar", "V3", this.listEvents(err));
+        }
       }
     },
   },

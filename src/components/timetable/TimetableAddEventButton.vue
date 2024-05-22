@@ -80,6 +80,8 @@ export default {
   methods: {
     addEvent() {
       console.log(this.event);
+      this.$emit("addEventToGoogleCalendar", this.event);
+      return;
       if (this.timetable.isSynchronize) {
         this.$emit("addEventToGoogleCalendar", this.event);
       } else {

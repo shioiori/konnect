@@ -68,7 +68,7 @@ export default {
     };
   },
   mounted() {
-    this.getEventsInDatabase();
+    //this.getEventsInDatabase();
   },
   methods: {
     async getEventsInDatabase() {
@@ -82,7 +82,6 @@ export default {
       //   //this.loadEvent();
       //   return;
       // }
-      return;
       //this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
       this.timetable.events.forEach((event) => {
@@ -117,9 +116,9 @@ export default {
       console.log(this.events);
     },
     openEventDialog(event) {
-      console.log(event);
-      this.$refs.timetableButton.dialogEventVisible = true;
-      this.$refs.timetableButton.setDefaultEventParam(event);
+      // console.log(event);
+      // this.$refs.timetableButton.dialogEventVisible = true;
+      // this.$refs.timetableButton.setDefaultEventParam(event);
     },
   },
 };

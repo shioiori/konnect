@@ -19,7 +19,7 @@ export default {
     events: Array,
   },
   methods: {
-    getDataFromGoogleCalendar(error) {
+    getDataFromGoogleCalendar() {
       this.$emit("listEvents");
     },
   },
