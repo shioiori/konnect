@@ -30,17 +30,17 @@
             </div> -->
 
             <div class="divider d-flex align-items-center my-4">
-              <h3 class="text-center mx-3 mb-0 display-6">Login</h3>
+              <h3 class="text-center mx-3 mb-0 display-6">Đăng nhập</h3>
             </div>
             <!-- Email input -->
             <div data-mdb-input-init class="form-outline mb-4">
-              <label class="form-label" for="form3Example3">Username</label>
+              <label class="form-label" for="form3Example3">Tên đăng nhập</label>
               <el-input v-model="username" />
             </div>
 
             <!-- Password input -->
             <div data-mdb-input-init class="form-outline mb-3">
-              <label class="form-label" for="form3Example4">Password</label>
+              <label class="form-label" for="form3Example4">Mật khẩu</label>
               <el-input
                 type="password"
                 v-model="password"

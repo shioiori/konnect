@@ -2,6 +2,9 @@
   <div class="container">
     <h1>Your group</h1>
     <div>
+      <div class="text-end my-2">
+        <el-button type="primary" plain>Add group</el-button>
+      </div>
       <el-row :gutter="20"
         ><el-col :span="8">
           <group-item

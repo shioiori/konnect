@@ -11,7 +11,7 @@
         </div>
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
           <div class="divider d-flex align-items-center my-4">
-            <h3 class="text-center mx-3 mb-0 display-6">Register</h3>
+            <h3 class="text-center mx-3 mb-0 display-6">Đăng ký</h3>
           </div>
           <el-form :model="user" label-width="auto" class="demo-dynamic">
             <el-form-item prop="userName" label="Username" required>

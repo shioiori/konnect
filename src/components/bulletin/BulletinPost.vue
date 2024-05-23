@@ -1,8 +1,8 @@
 <template>
-  <div class="my-3">
+  <div class="my-3" v-if="post">
     <el-card shadow="hover" @click="openDialog">
       <div class="d-flex">
-        <div class="post-avatar">
+        <div class="post-avatar" v-if="post.user">
           <img class="img-responsive rounded-circle" :src="post.user.avatar" />
         </div>
         <div class="post-creator">
@@ -110,6 +110,7 @@ export default {
     post: Object,
   },
   mounted() {
+    console.log(this.post);
     this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
     if (!this.post.user.avatar) {
       this.post.user.avatar = "../../src/assets/images/avatar_default.png";

@@ -17,11 +17,11 @@
           <i class="bi bi-chat-text"></i>
           <template #title><router-link to="/chat">Chat</router-link></template>
         </el-menu-item>
-        <el-menu-item class="menu-item" index="4">
+        <el-menu-item class="menu-item" index="4" hidden>
           <i class="bi bi-list-task"></i>
           <template #title><router-link to="/todo">To do list</router-link></template>
         </el-menu-item>
-        <el-menu-item class="menu-item" index="4">
+        <el-menu-item class="menu-item" index="4" hidden>
           <i class="bi bi-robot"></i>
           <template #title><router-link to="/ai">AI assistant</router-link></template>
         </el-menu-item>
