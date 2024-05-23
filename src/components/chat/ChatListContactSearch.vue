@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2">
+  <div class="px-2 chat-search">
     <el-input
       v-model="search"
       placeholder="Find chat..."
@@ -25,4 +25,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.chat-search {
+  vertical-align: middle;
+  justify-content: center;
+  display: flex;
+}
+</style>

@@ -132,3 +132,27 @@ function isSameMonth(date) {
   const now = new Date()
   return date.getMonth() === now.getMonth() && isSameYear(date)
 }
+
+export function getRelativeChatTime(dateString){
+  const parts = dateString.split(' ');
+  const dateParts = parts[0].split('/');
+  const timePart = parts[1];
+  const inputDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+  const today = new Date();
+  
+  const inputYear = inputDate.getFullYear();
+  const inputMonth = inputDate.getMonth();
+  const inputDay = inputDate.getDate();
+  
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth();
+  const todayDay = today.getDate();
+
+  if (inputYear === todayYear && inputMonth === todayMonth && inputDay === todayDay) {
+      return timePart;
+  } else if (inputYear === todayYear) {
+      return `${dateParts[0]}/${dateParts[1]}`;
+  } else {
+      return `${dateParts[2]}/${dateParts[1]}`;
+  }
+}

@@ -16,11 +16,15 @@ export default {
   },
   methods: {
     removeUser() {
-      ElMessageBox.confirm("Người dùng này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
-        confirmButtonText: "Yes",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      }).then(() => {
+      ElMessageBox.confirm(
+        "Bạn có chắc muốn xoá người dùng này ra khỏi nhóm?",
+        "Warning",
+        {
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      ).then(() => {
         console.log(this.index);
         console.log(this.user);
         axios

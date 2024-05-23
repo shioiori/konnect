@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import { dateTimeToFormatDate } from "../../utils/DateConverter.js";
+import { dateTimeToFormatDate, getRelativeChatTime } from "../../utils/DateConverter.js";
 
 export default {
   props: {
     message: Object,
   },
   mounted() {
-    console.log(this.message);
-    this.message.createdDate = dateTimeToFormatDate(this.createdDate);
+    let dateFormat = dateTimeToFormatDate(this.message.createdDate);
+    this.message.createdDate = getRelativeChatTime(dateFormat);
   },
   methods: {},
 };

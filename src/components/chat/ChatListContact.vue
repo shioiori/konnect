@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <chat-list-contact-search @search-chat="getSearchChat" />
-    <el-menu class="el-menu-vertical-demo">
+  <div style="height: inherit">
+    <el-menu class="el-menu-vertical-demo" style="height: inherit">
+      <el-menu-item>
+        <chat-list-contact-search @search-chat="getSearchChat" />
+      </el-menu-item>
       <el-menu-item v-for="(chat, index) in chats" @click="openChat(chat)">
         <el-icon><el-avatar :src="chat.avatar" /></el-icon>
         <span>{{ chat.name }}</span>

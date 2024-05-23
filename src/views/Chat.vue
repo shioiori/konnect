@@ -1,11 +1,11 @@
 <template>
-  <div class="chat">
+  <div class="chat" style="width: 100%">
     <el-row style="height: inherit">
-      <el-col :span="2"> <chat-list-user /> </el-col>
-      <el-col :span="4">
+      <el-col :span="2" style="height: inherit"> <chat-list-user /> </el-col>
+      <el-col :span="6" style="height: inherit">
         <chat-list-contact :user="user" />
       </el-col>
-      <el-col :span="18">
+      <el-col :span="48">
         <chat-content :user="user" />
       </el-col>
     </el-row>

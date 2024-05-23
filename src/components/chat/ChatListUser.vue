@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-menu class="el-menu-vertical-demo" collapse>
+  <div style="height: inherit">
+    <el-menu class="el-menu-vertical-demo" collapse style="height: inherit">
       <el-menu-item v-for="(user, index) in users" class="px-3">
         <el-tooltip :content="user.displayName" placement="right" effect="light">
           <img
@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       users: [],
+      addChatRequest: undefined,
     };
   },
   mounted() {
@@ -41,13 +42,17 @@ export default {
       axios
         .get(import.meta.env.VITE_API + "/chat/user/data?name=" + name, getHeaderConfig())
         .then((res) => {
-          console.log(res.data);
+          this.addChatRequest = res.data;
           axios
-            .get(import.meta.env.VITE_CHAT_API + "/chat/exist", res.data.users)
+            .get(
+              import.meta.env.VITE_CHAT_API +
+                "/chat/exist?json=" +
+                JSON.stringify(res.data.users)
+            )
             .then((res) => {
               if (!res.data) {
                 axios
-                  .post(import.meta.env.VITE_CHAT_API + "/chat", res.data)
+                  .post(import.meta.env.VITE_CHAT_API + "/chat", this.addChatRequest)
                   .then((res) => {
                     this.emitter.emit("insertChat");
                   });
@@ -61,4 +66,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.chat-user-bar {
+  border-right: 1px solid var(--Gray);
+}
+
+.chat-contact-bar {
+  border-right: 1px solid var(--Gray);
+}
+</style>
