@@ -31,7 +31,9 @@ export function isUserInteractionEnable() {
   return gapiInited && gisInited;
 }
 
-export function handleAuthClick() {
+export function handleAuthClick(callback) {
+  
+  console.log('222')
   if (!isUserInteractionEnable()) return false;
   console.log('onload')
   if (gapi.auth2.getAuthInstance() && gapi.auth2.getAuthInstance().isSignedIn.get()) return true;
@@ -49,6 +51,7 @@ export function handleAuthClick() {
     tokenClient.requestAccessToken({ prompt: '' })
   }
   console.log('popup')
+  callback();
   return true;
 }
 

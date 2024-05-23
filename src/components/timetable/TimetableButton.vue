@@ -8,11 +8,12 @@
           @add-event-to-google-calendar="addEventToGoogleCalendar"
           @refresh-calendar="refreshCalendar"
         />
-        <timetable-add-loop-event-button />
+        <!-- <timetable-add-loop-event-button /> -->
         <timetable-import-button @refresh-calendar="refreshCalendar" />
         <timetable-update-data-from-calendar-button
           ref="updateDataFromGoogleCalendarButton"
           @list-events="listEvents"
+          v-if="timetable && !timetable.isSynchronize"
         />
         <!-- <timetable-synchronize-with-calendar-button
           @add-events-to-google-calendar="addEventsToGoogleCalendar"
@@ -65,15 +66,11 @@ export default {
   },
   watch: {
     timetable(oldValue, newValue) {
+      console.log(oldValue);
       console.log(newValue);
-      if (newValue && newValue.isSynchronize) {
-        setTimeout(() => {
-          this.authorize = handleAuthClick();
-        }, 1000);
+      if (oldValue && oldValue.isSynchronize) {
+        this.handleAuthorize();
       }
-    },
-    authorize(oldValue, newValue) {
-      this.listEvents();
     },
   },
   data() {
@@ -84,8 +81,16 @@ export default {
   },
   mounted() {
     this.loadGapiScript();
+    this.emitter.on("handleAuthorize", () => {
+      this.handleAuthorize();
+    });
   },
   methods: {
+    handleAuthorize() {
+      setTimeout(() => {
+        handleAuthClick(this.listEvents());
+      }, 1000);
+    },
     loadGapiScript() {
       loadScript("https://apis.google.com/js/api.js").then(() => {
         gapiLoaded();
@@ -97,13 +102,6 @@ export default {
     refreshCalendar() {
       this.$emit("refreshCalendar");
     },
-    // getDataFromGoogleCalendar() {
-    //   if (this.authorize){
-    //     setTimeout(this.listEvents(), 1000);
-    //     return;
-    //   }
-    //   this.listEvents();
-    // },
     addEventsToGoogleCalendar(error) {
       console.log(this.events);
       try {
@@ -147,7 +145,12 @@ export default {
       }
     },
     async listEvents(error) {
+      console.log("listEvents");
       let response;
+      if (this.timetable && !this.timetable.isSynchronize) {
+        handleAuthClick(this.listEvents());
+        return;
+      }
       try {
         const request = {
           calendarId: "primary",
@@ -156,8 +159,12 @@ export default {
           orderBy: "startTime",
         };
         response = await gapi.client.calendar.events.list(request);
-        console.log(response.result.items);
         this.$emit("synchronizeCalendar", response.result.items);
+        console.log(response.result.items);
+        ElMessage({
+          type: "success",
+          message: "Đọc dữ liệu từ Google Calendar thành công",
+        });
       } catch (err) {
         if (error) {
           ElMessage({

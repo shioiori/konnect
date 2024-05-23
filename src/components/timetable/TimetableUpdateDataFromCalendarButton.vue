@@ -11,9 +11,7 @@ import { ElMessage } from "element-plus";
 
 export default {
   data() {
-    return {
-      askForRequest: false,
-    };
+    return {};
   },
   props: {
     events: Array,

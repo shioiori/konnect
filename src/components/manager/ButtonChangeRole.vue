@@ -20,7 +20,7 @@
         <div class="d-flex justify-content-end">
           <el-form-item>
             <el-button type="primary" @click="changeRole()"> Save </el-button>
-            <el-button type="info" @click="dialogAddVisible = false">Cancel</el-button>
+            <el-button type="info" @click="dialogVisible = false">Cancel</el-button>
           </el-form-item>
         </div>
       </div>
@@ -31,6 +31,7 @@
 <script>
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
 
 export default {
   props: {
@@ -54,20 +55,26 @@ export default {
   },
   methods: {
     changeRole() {
-      axios.post(import.meta.env.VITE_API + "/user/group", {}, getHeaderConfig())
-      .then((res) => {
-        ElMessage({
-          message: res.data.message,
-          type: res.data.type,
+      axios
+        .post(
+          import.meta.env.VITE_API + "/user/" + this.user.userName + "/" + this.role,
+          {},
+          getHeaderConfig()
+        )
+        .then((res) => {
+          ElMessage({
+            message: res.data.message,
+            type: res.data.type,
+          });
+          this.user.roleName = this.role;
+          this.dialogVisible = false;
+        })
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
         });
-        this.user.roleName = this.role;
-      })
-      .catch((e) => {
-        ElMessage({
-          type: "error",
-          message: e.message,
-        });
-      });
     },
   },
 };

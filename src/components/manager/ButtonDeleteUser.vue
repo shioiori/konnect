@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button link type="danger" @click="removeUser(scope.$index, scope.row.userName)">
+    <el-button link type="danger" @click="removeUser">
       <el-icon> <Delete /> </el-icon
     ></el-button>
   </div>
@@ -15,22 +15,25 @@ export default {
     index: Number,
   },
   methods: {
-    removeUser(index, username) {
+    removeUser() {
       ElMessageBox.confirm("Người dùng này sẽ bị xoá vĩnh viễn. Tiếp tục?", "Warning", {
         confirmButtonText: "Yes",
         cancelButtonText: "Cancel",
         type: "warning",
       }).then(() => {
-        console.log(index);
-        console.log(username);
+        console.log(this.index);
+        console.log(this.user);
         axios
-          .delete(import.meta.env.VITE_API + "/user/" + username, getHeaderConfig())
+          .delete(
+            import.meta.env.VITE_API + "/user/" + this.user.userName + "/kick",
+            getHeaderConfig()
+          )
           .then((res) => {
             ElMessage({
               message: res.data.message,
               type: res.data.type,
             });
-            this.users.splice(index, 1);
+            this.$emit("removeUser", this.index);
           })
           .catch((e) => {
             ElMessage({

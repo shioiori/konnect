@@ -85,7 +85,7 @@ export default {
     changePassword() {
       axios
         .post(
-          import.meta.env.VITE_API + "/password/change",
+          import.meta.env.VITE_API + "/user/password/change",
           this.passwordConfirmation,
           getHeaderConfig()
         )
@@ -94,6 +94,8 @@ export default {
             type: res.data.type,
             message: res.data.message,
           });
+          this.dialogVisible = false;
+          this.resetForm();
         })
         .catch((e) => {
           ElMessage({
@@ -111,6 +113,9 @@ export default {
           return false;
         }
       });
+    },
+    resetForm() {
+      this.$refs["passwordConfirmation"].resetFields();
     },
   },
 };

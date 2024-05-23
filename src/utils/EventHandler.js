@@ -26,7 +26,7 @@ export function getEvent(start, end, title, content, type) {
     title: title,
     content: content,
     class: type.toLowerCase(),
-    type: type
+    category: type
   }
 }
 

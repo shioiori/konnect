@@ -4,7 +4,7 @@
       v-model="eventCategories"
       @change="$emit('filterEvent', eventCategories)"
     >
-      <el-checkbox label="Thời khoá biểu" value="Timetable" />
+      <el-checkbox label="Thời khoá biểu" value="Timetable" checked />
       <el-checkbox label="Google" value="Google" />
       <el-checkbox label="Người dùng" value="User" />
       <el-checkbox label="Chưa phân loại" value="Unclassified" />
@@ -31,7 +31,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   data() {
     return {
-      eventCategories: [],
+      eventCategories: ["Timetable", "Google", "User", "Unclassified"],
     };
   },
   props: {
@@ -43,9 +43,11 @@ export default {
   methods: {
     synchronizeTimetable() {
       if (this.timetable.isSynchronize) {
+        //bật
         this.confirmSynchronizeCalendar();
       } else {
-        this.synchronizeWithGoogleCalendar();
+        //tắt
+        this.synchronizeWithGoogleCalendar(false);
       }
     },
     confirmSynchronizeCalendar() {
@@ -57,20 +59,39 @@ export default {
           cancelButtonText: "Cancel",
           type: "warning",
         }
-      )
-        .then(() => {
-          gapi.client.load("calendar", "V3", this.addEventsToGoogleCalendar.bind(this));
-          this.synchronizeWithGoogleCalendar();
-        })
-        .catch((e) => {
+      ).then(() => {
+        try {
+          this.$emit("getEventsInDatabase");
+          this.emitter.emit("handleAuthorize");
+          this.synchronizeWithGoogleCalendar(true);
+          ElMessage({
+            message: "Bật đồng bộ hoá thành công",
+            type: "success",
+          });
+        } catch (e) {
+          console.error(e.message);
           this.timetable.isSynchronize = false;
-        });
+          ElMessage({
+            message: "Có lỗi xảy ra trong quá trình bật đồng bộ hoá",
+            type: "error",
+          });
+        }
+      });
     },
 
-    synchronizeWithGoogleCalendar() {
+    synchronizeWithGoogleCalendar(state) {
       axios
-        .post(import.meta.env.VITE_API + "/timetable/synchronize", getHeaderConfig())
+        .post(import.meta.env.VITE_API + "/timetable/synchronize", {}, getHeaderConfig())
+        .then(() => {
+          if (!state) {
+            ElMessage({
+              message: "Tắt đồng bộ hoá thành công",
+              type: "success",
+            });
+          }
+        })
         .catch((e) => {
+          console.log(e.message);
           ElMessage({
             message: e.message,
             type: "error",

@@ -32,6 +32,9 @@ export default {
   },
   mounted() {
     this.comment.createdDate = getRelativeTime(this.comment.createdDate);
+    if (!this.comment.user.avatar) {
+      this.comment.user.avatar = "../../src/assets/images/avatar_default.png";
+    }
   },
 };
 </script>

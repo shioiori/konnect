@@ -1,23 +1,22 @@
 <template>
-    <div>
-        <el-button type="primary" plain @click="confirmSynchronizeCalendar"
-          >Synchronize with Calendar</el-button
-        >
-    </div>
+  <div>
+    <el-button type="primary" plain @click="confirmSynchronizeCalendar"
+      >Synchronize with Calendar</el-button
+    >
+  </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
-      dialogVisible: false
-    }
+      dialogVisible: false,
+    };
   },
   methods: {
     confirmSynchronizeCalendar() {
       ElMessageBox.confirm(
-        "Thời khoá biểu sẽ được cập nhật vào Google Calendar của bạn. Tiếp tục?",
+        "Các thao tác như thêm sự kiện sẽ được cập nhật vào Google Calendar của bạn thay vì lưu trữ ở cơ sở dữ liệu của hệ thống. Tiếp tục?",
         "Warning",
         {
           confirmButtonText: "Yes",
@@ -26,19 +25,21 @@ export default {
         }
       )
         .then(() => {
-          gapi.client.load("calendar", "V3", this.addEventsToGoogleCalendar.bind(this));
-          this.synchronizeWithGoogleCalendar();
-          ElMessage({
-            message: "Đồng bộ hoá thành công",
-            type: "success",
-          });
+          try {
+            gapi.client.load("calendar", "V3", this.addEventsToGoogleCalendar.bind(this));
+            this.synchronizeWithGoogleCalendar();
+            ElMessage({
+              message: "Đồng bộ hoá thành công",
+              type: "success",
+            });
+          } catch (e) {
+            ElMessage({
+              message: e.message,
+              type: "error",
+            });
+          }
         })
-        .catch((e) => {
-          ElMessage({
-            message: e.message,
-            type: "error",
-          });
-        });
+        .catch((e) => {});
     },
 
     synchronizeWithGoogleCalendar() {
@@ -49,9 +50,9 @@ export default {
         });
     },
 
-    addEventsToGoogleCalendar(){
-        this.$emit('addEventsToGoogleCalendar');
-    }
-  }
-}
+    addEventsToGoogleCalendar() {
+      this.$emit("addEventsToGoogleCalendar");
+    },
+  },
+};
 </script>

@@ -11,7 +11,11 @@
         />
       </div>
       <div>
-        <timetable-bar :timetable="timetable" @filter-event="filterEvent" />
+        <timetable-bar
+          :timetable="timetable"
+          @filter-event="filterEvent"
+          @get-events-in-database="getEventsInDatabase"
+        />
       </div>
       <div>
         <vue-cal
@@ -83,10 +87,10 @@ export default {
         await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
       ).data;
       this.timetable = res;
-      if (this.timetable.isSynchronize) {
-        this.$refs.timetableButton.listEvents();
-        return;
-      }
+      // if (this.timetable.isSynchronize) {
+      //   //this.$refs.timetableButton.listEvents();
+      //   return;
+      // }
       this.currentDate = dateTimeToJSDate(res.from);
       this.events = [];
       this.timetable.events.forEach((event) => {
@@ -114,7 +118,6 @@ export default {
       console.log(this.showEvents);
     },
     synchronizeCalendar(ggEvents) {
-      console.log(ggEvents);
       if (!ggEvents) return;
       ggEvents.forEach((e) => {
         let ev = convertEventFromGoogleCalendar(e);
@@ -130,6 +133,7 @@ export default {
       this.$refs.timetableButton.setDefaultEventParam(event);
     },
     filterEvent(categories) {
+      console.log(categories);
       this.showEvents = this.events.filter((obj) => categories.includes(obj.category));
     },
   },

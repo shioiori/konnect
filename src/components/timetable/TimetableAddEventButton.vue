@@ -4,7 +4,7 @@
 
     <el-dialog v-model="dialogVisible" title="Add event" width="720">
       <div class="py-4">
-        <el-form :model="event" label-position="right" label-width="auto">
+        <el-form :model="event" label-position="right" label-width="auto" ref="eventForm">
           <el-form-item label="Tiêu đề" required>
             <el-input v-model="event.title" />
           </el-form-item>
@@ -94,6 +94,8 @@ export default {
               type: res.data.type,
             });
             this.$emit("refreshCalendar");
+            this.dialogVisible = false;
+            this.resetForm();
           })
           .catch((e) => {
             ElMessage({
@@ -102,6 +104,9 @@ export default {
             });
           });
       }
+    },
+    resetForm() {
+      this.$refs["eventForm"].resetFields();
     },
   },
 };

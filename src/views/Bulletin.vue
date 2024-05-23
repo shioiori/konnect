@@ -22,6 +22,7 @@ import BulletinPost from "../components/bulletin/BulletinPost.vue";
 import axios from "axios";
 import router from "../router/index.ts";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {
@@ -37,16 +38,19 @@ export default {
     this.getBulletinNews();
   },
   methods: {
-    async getBulletinNews() {
-      var res = (
-        await axios.get(import.meta.env.VITE_API + "/bulletin/1", getHeaderConfig())
-      ).data;
-      if (res.success) {
-        this.posts = res.posts;
-      }
-    },
-    onSidebarCollapse() {
-      this.isSidebarCollapse = !this.isSidebarCollapse;
+    getBulletinNews() {
+      axios
+        .get(import.meta.env.VITE_API + "/bulletin/1", getHeaderConfig())
+        .then((res) => {
+          console.log(res.data);
+          this.posts = res.data.posts;
+        })
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
+        });
     },
   },
 };

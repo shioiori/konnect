@@ -1,14 +1,10 @@
 <template>
   <div>
     <div>
-      <div class="justify-content-end d-flex">
+      <div class="justify-content-end d-flex manager-button">
         <button-manager-invite />
         <button-import-user @get-users="getUsers" />
-        <div>
-          <el-button type="primary" plain @click="updateAction('add')"
-            >Add user</el-button
-          >
-        </div>
+        <button-add-user @add-user="addUser" />
         <button-delete-group />
       </div>
     </div>
@@ -27,12 +23,16 @@
           <template #default="scope">
             <div class="d-flex">
               <button-change-role :user="scope.row" />
-              <button-edit-user
+              <!-- <button-edit-user
                 :user="scope.row"
                 :index="scope.$index"
                 @add-user="addUser"
+              /> -->
+              <button-delete-user
+                :user="scope.row"
+                :index="scope.$index"
+                @remove-user="removeUser"
               />
-              <button-delete-user :user="scope.row" :index="scope.$index" />
             </div>
           </template>
         </el-table-column>
@@ -50,7 +50,8 @@ import { getHeaderConfig } from "../utils/ApiHandler.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
 import ButtonChangeRole from "../components/manager/ButtonChangeRole.vue";
-import ButtonEditUser from "../components/manager/ButtonEditUser.vue";
+//import ButtonEditUser from "../components/manager/ButtonEditUser.vue";
+import ButtonAddUser from "../components/manager/ButtonAddUser.vue";
 import ButtonDeleteUser from "../components/manager/ButtonDeleteUser.vue";
 import ButtonImportUser from "../components/manager/ButtonImportUser.vue";
 import ButtonInviteUser from "../components/manager/ButtonInviteUser.vue";
@@ -61,7 +62,8 @@ export default {
     IconImport,
     IconButtonImport,
     ButtonChangeRole,
-    ButtonEditUser,
+    //ButtonEditUser,
+    ButtonAddUser,
     ButtonDeleteUser,
     ButtonImportUser,
     ButtonInviteUser,
@@ -70,7 +72,6 @@ export default {
   data() {
     return {
       users: [],
-      action: "add",
     };
   },
   mounted() {
@@ -84,14 +85,21 @@ export default {
           this.users = res.data.users;
         });
     },
-    updateAction(act) {
-      this.action = act;
+    updateAction() {
+      this.emitter.emit("changeAction", "add");
     },
     addUser(user) {
       this.users.push(user);
+    },
+    removeUser(index) {
+      this.users.splice(index, 1);
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+.manager-button button {
+  margin-left: 0.5rem;
+}
+</style>
