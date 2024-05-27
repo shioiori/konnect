@@ -22,26 +22,28 @@ export function gisLoaded() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: 'http://localhost:5173/timetable', // defined later
+    callback: 'http://localhost:5173/timetable' // defined later
   })
   gisInited = true
 }
 
 export function isUserInteractionEnable() {
-  return gapiInited && gisInited;
+  return gapiInited && gisInited
 }
 
 export function handleAuthClick(callback) {
-  
-  console.log('222')
-  if (!isUserInteractionEnable()) return false;
-  console.log('onload')
-  if (gapi.auth2.getAuthInstance() && gapi.auth2.getAuthInstance().isSignedIn.get()) return true;
-  console.log('wait')
+  if (!isUserInteractionEnable()) return false
+  if (gapi.auth2.getAuthInstance() && gapi.auth2.getAuthInstance().isSignedIn.get()) return true
   tokenClient.callback = async (resp) => {
     if (resp.error !== undefined) {
-      throw resp;
-      console.log('exception')
+      throw resp
+    } else {
+      console.log('callback')
+      if (typeof callback === 'function') {
+        console.log('callback')
+
+        callback()
+      }
     }
   }
   console.log('request token')
@@ -51,8 +53,7 @@ export function handleAuthClick(callback) {
     tokenClient.requestAccessToken({ prompt: '' })
   }
   console.log('popup')
-  callback();
-  return true;
+  return true
 }
 
 export function handleSignoutClick() {

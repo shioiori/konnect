@@ -1,20 +1,18 @@
 <template>
   <div>
-    <el-container>
-      <el-row :gutter="0">
-        <el-col :span="3">
-          <TheSidebar :user="user" />
-        </el-col>
-        <el-col :span="21">
-          <el-header style="padding: 0" class="navbar-container">
-            <TheNavbar :user="user" />
-          </el-header>
-          <el-main class="main-content">
-            <el-scrollbar> <RouterView :user="user" /> </el-scrollbar>
-          </el-main>
-        </el-col>
-      </el-row>
-    </el-container>
+    <el-row :gutter="0">
+      <el-col :span="3">
+        <TheSidebar :user="user" />
+      </el-col>
+      <el-col :span="21">
+        <el-header style="padding: 0" class="navbar-container">
+          <TheNavbar :user="user" />
+        </el-header>
+        <el-main class="main-content">
+          <el-scrollbar> <RouterView :user="user" /> </el-scrollbar>
+        </el-main>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -38,8 +36,10 @@ export default {
       .get(import.meta.env.VITE_API + "/user", getHeaderConfig())
       .then((res) => {
         this.user = res.data;
+        console.log(res.data);
       })
       .catch((err) => {
+        console.log(err.message);
         ElMessage({
           message: "Không tìm thấy thông tin đăng nhập của người dùng",
           type: "error",

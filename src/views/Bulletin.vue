@@ -40,7 +40,7 @@ export default {
   methods: {
     getBulletinNews() {
       axios
-        .get(import.meta.env.VITE_API + "/bulletin/1", getHeaderConfig())
+        .get(import.meta.env.VITE_API + "/bulletin?state=1", getHeaderConfig())
         .then((res) => {
           console.log(res.data);
           this.posts = res.data.posts;

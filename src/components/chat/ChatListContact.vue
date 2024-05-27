@@ -5,9 +5,16 @@
         <chat-list-contact-search @search-chat="getSearchChat" />
       </el-menu-item>
       <el-menu-item v-for="(chat, index) in chats" @click="openChat(chat)">
-        <el-icon><el-avatar :src="chat.avatar" /></el-icon>
-        <span>{{ chat.name }}</span>
-        <div v-if="chat.messages.length > 0">{{ chat.messages[0].text }}</div>
+        <el-icon
+          ><img
+            class="img-responsive rounded-circle"
+            :src="chat.avatar"
+            style="width: 40px; height: 40px"
+        /></el-icon>
+        <div>
+          <b>{{ chat.name }}</b>
+        </div>
+        <!-- <div v-if="chat.messages.length > 0">{{ chat.messages[0].text }}</div> -->
       </el-menu-item>
     </el-menu>
   </div>

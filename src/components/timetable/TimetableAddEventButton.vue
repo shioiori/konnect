@@ -78,7 +78,14 @@ export default {
     timetable(oldValue, newValue) {},
   },
   methods: {
+    addEventByClicked(event) {
+      this.event.start = event;
+      this.event.end = event;
+      //this.event.end.setTime(this.event.end.getDate() + 2 * 60 * 60 * 1000);
+      this.dialogVisible = true;
+    },
     addEvent() {
+      console.log(this.timetable.isSynchronize);
       if (this.timetable.isSynchronize) {
         this.$emit("addEventToGoogleCalendar", this.event);
       } else {

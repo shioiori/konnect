@@ -2,17 +2,16 @@
   <div class="container">
     <h1>Your group</h1>
     <div>
-      <div class="text-end my-2">
-        <el-button type="primary" plain>Add group</el-button>
+      <div class="my-2">
+        <group-add-button @get-group="getGroupByUser" />
       </div>
-      <el-row :gutter="20"
-        ><el-col :span="8">
-          <group-item
-            v-for="item in groups"
-            :group="item"
-            @click="loginWithGroup(item.id)"
-          /> </el-col
-      ></el-row>
+      <el-row :gutter="20">
+        <group-item
+          v-for="item in groups"
+          :group="item"
+          @click="loginWithGroup(item.id)"
+        />
+      </el-row>
     </div>
   </div>
 </template>
@@ -24,10 +23,12 @@ import router from "../router/index.ts";
 import { ElMessage } from "element-plus";
 import GroupButtonJoinByCode from "../components/selectGroup/GroupButtonJoinByCode.vue";
 import GroupItem from "../components/selectGroup/GroupItem.vue";
+import GroupAddButton from "../components/selectGroup/GroupAddButton.vue";
 export default {
   components: {
     GroupButtonJoinByCode,
     GroupItem,
+    GroupAddButton,
   },
   data() {
     return {

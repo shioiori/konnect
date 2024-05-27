@@ -38,6 +38,11 @@
                   ></router-link
                 ></el-dropdown-item
               >
+              <el-dropdown-item @click="chooseGroup"
+                ><el-text
+                  ><el-icon><Bicycle /></el-icon>Vào nhóm khác
+                </el-text></el-dropdown-item
+              >
               <el-dropdown-item @click="outGroup"
                 ><el-text type="danger"
                   ><el-icon> <Guide /> </el-icon>Rời nhóm</el-text
@@ -158,6 +163,9 @@ export default {
             type: "error",
           });
         });
+    },
+    chooseGroup() {
+      router.push("/group");
     },
   },
 };

@@ -3,7 +3,7 @@
     <div class="content">
       <div>
         <timetable-button
-          @refresh-calendar="getEventsInDatabase"
+          @refresh-calendar="getEventsInDatabase(1)"
           @synchronize-calendar="synchronizeCalendar"
           :events="events"
           :timetable="timetable"
@@ -82,7 +82,7 @@ export default {
     this.getEventsInDatabase();
   },
   methods: {
-    async getEventsInDatabase() {
+    async getEventsInDatabase(backtoDate) {
       var res = (
         await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
       ).data;
@@ -91,18 +91,20 @@ export default {
       //   //this.$refs.timetableButton.listEvents();
       //   return;
       // }
-      this.currentDate = dateTimeToJSDate(res.from);
+      if (!backtoDate) {
+        this.currentDate = dateTimeToJSDate(res.from);
+      } else {
+        this.currentDate = new Date();
+      }
       this.events = [];
       this.timetable.events.forEach((event) => {
-        console.log(event);
         var startDate = getFormattedDate(event.from, "-");
         var endDate = getFormattedDate(event.to, "-");
         var date = getStartDateInRange(startDate, endDate, event.day);
         if (event.isLoopPerDay) {
           while (new Date(date) <= new Date(endDate)) {
-            let timeRange = getTime(event.code);
-            let startDate = getDateOnly(date) + " " + timeRange.start;
-            let endDate = getDateOnly(date) + " " + timeRange.end;
+            let startDate = getDateOnly(date) + " " + event.periodStart;
+            let endDate = getDateOnly(date) + " " + event.periodEnd;
             this.events.push(
               getEvent(startDate, endDate, event.title, event.location, event.category)
             );
@@ -115,7 +117,6 @@ export default {
         }
       });
       this.showEvents = [...this.events];
-      console.log(this.showEvents);
     },
     synchronizeCalendar(ggEvents) {
       if (!ggEvents) return;
@@ -127,13 +128,10 @@ export default {
       this.currentDate = new Date();
     },
     openEventDialog(event) {
-      //wrong
-      console.log(event);
       this.$refs.timetableButton.dialogEventVisible = true;
-      this.$refs.timetableButton.setDefaultEventParam(event);
+      this.$refs.timetableButton.openEventDialog(event);
     },
     filterEvent(categories) {
-      console.log(categories);
       this.showEvents = this.events.filter((obj) => categories.includes(obj.category));
     },
   },
@@ -149,7 +147,8 @@ export default {
 }
 
 .shift1,
-.google {
+.google,
+.gg-event {
   background-color: #f0fff1;
   color: #81d58b;
 }

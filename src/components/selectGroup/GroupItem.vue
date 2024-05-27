@@ -1,11 +1,13 @@
 <template>
-  <el-card shadow="hover" @click="loginWithGroup" class="group-item">
-    <template #header>
-      <span ref="groupTitle">
-        {{ group.name }}
-      </span>
-    </template>
-  </el-card>
+  <el-col :span="8">
+    <el-card shadow="hover" @click="loginWithGroup" class="group-item">
+      <template #header>
+        <span ref="groupTitle">
+          {{ group.name }}
+        </span>
+      </template>
+    </el-card></el-col
+  >
 </template>
 
 <script>

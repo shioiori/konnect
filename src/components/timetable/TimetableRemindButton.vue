@@ -29,6 +29,9 @@
 </template>
 
 <script>
+import axios from "axios";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
+
 export default {
   data() {
     return {
