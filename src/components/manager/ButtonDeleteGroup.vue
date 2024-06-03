@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="danger" plain @click="deleteGroup">Delete group</el-button>
+    <el-button type="danger" plain @click="deleteGroup">Xoá nhóm</el-button>
   </div>
 </template>
 <script>

@@ -1,13 +1,16 @@
 <template>
   <div>
     <el-button type="primary" plain @click="dialogVisible = true"
-      >Invite people</el-button
+      >Mời thành viên</el-button
     >
-    <el-dialog v-model="dialogVisible" title="Invite people" width="720">
-      <div class="py-4">
-        Nhập username <el-input v-model="username" /> Nếu người dùng chưa có tài khoản,
-        gửi email tới người dùng <el-input v-model="email" />
-        <div class="d-flex justify-content-end">
+    <el-dialog v-model="dialogVisible" title="Mời thành viên" width="720">
+      <div>
+        <div class="my-2">Nhập tên đăng nhập <el-input v-model="username" /></div>
+        <div class="my-2">
+          Nếu người dùng chưa có tài khoản, gửi email tới người dùng
+          <el-input v-model="email" />
+        </div>
+        <div class="d-flex justify-content-end mt-4">
           <el-button type="primary" @click="invitePeople">Send</el-button>
           <el-button type="info" plain @click="dialogVisible = false">Close</el-button>
         </div>

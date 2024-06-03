@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user">
     <header class="header d-flex" id="header">
       <div class="header_toggle d-flex" @click="$emit('toggleSidebar')">
         <i class="bi bi-list"></i>
@@ -34,28 +34,38 @@
               <el-dropdown-item
                 ><router-link to="/user" style="color: #000; text-decoration: none"
                   ><el-text
-                    ><el-icon> <User /> </el-icon>Trang cá nhân</el-text
+                    ><el-icon>
+                      <User /> </el-icon
+                    >Trang cá nhân</el-text
                   ></router-link
                 ></el-dropdown-item
               >
               <el-dropdown-item @click="chooseGroup"
                 ><el-text
-                  ><el-icon><Bicycle /></el-icon>Vào nhóm khác
+                  ><el-icon>
+                    <Bicycle /> </el-icon
+                  >Vào nhóm khác
                 </el-text></el-dropdown-item
               >
               <el-dropdown-item @click="outGroup"
                 ><el-text type="danger"
-                  ><el-icon> <Guide /> </el-icon>Rời nhóm</el-text
+                  ><el-icon>
+                    <Guide /> </el-icon
+                  >Rời nhóm</el-text
                 ></el-dropdown-item
               >
               <el-dropdown-item @click="deleteAccount">
                 <el-text type="danger"
-                  ><el-icon> <Delete /> </el-icon>Xoá tài khoản</el-text
+                  ><el-icon>
+                    <Delete /> </el-icon
+                  >Xoá tài khoản</el-text
                 ></el-dropdown-item
               >
               <el-dropdown-item divided @click="logout"
                 ><el-text type="info"
-                  ><el-icon> <SwitchButton /> </el-icon>Đăng xuất</el-text
+                  ><el-icon>
+                    <SwitchButton /> </el-icon
+                  >Đăng xuất</el-text
                 ></el-dropdown-item
               >
             </el-dropdown-menu>
@@ -92,6 +102,11 @@ export default {
   props: {
     user: Object,
   },
+  watch: {
+    user(oldValue, newValue) {
+      console.log(this.user);
+    },
+  },
   created() {
     const route = useRoute();
     watch(
@@ -103,9 +118,6 @@ export default {
     );
   },
   methods: {
-    // toggleSidebar() {
-    //     this.emitter.emit('toggle-sidebar')
-    // }
     logout() {
       localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, "");
       router.push("/login");

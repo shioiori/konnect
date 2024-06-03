@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" plain @click="getDataFromGoogleCalendar"
-      >Update data from Calendar</el-button
+      >Kéo dữ liệu từ Google Calendar</el-button
     >
   </div>
 </template>

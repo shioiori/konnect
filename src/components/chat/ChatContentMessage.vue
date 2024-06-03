@@ -1,11 +1,34 @@
 <template>
-  <div v-if="message">
-    <div class="d-flex">
-      <el-card class="p-0" shadow="never">
-        {{ message.text }}
-      </el-card>
+  <div v-if="message && user" class="mb-1">
+    <div
+      :class="
+        'd-flex ' +
+        (user.userName != message.createdBy.userName ? '' : 'justify-content-end')
+      "
+    >
+      <div class="chat-avatar" v-if="user.userName != message.createdBy.userName">
+        <img
+          class="img-responsive rounded-circle"
+          :src="
+            message.createdBy.avatar
+              ? message.createdBy.avatar
+              : '../../src/assets/images/avatar_default.png'
+          "
+          style="width: 56px; height: 56px"
+        />
+      </div>
+      <div :class="user.userName != message.createdBy.userName ? '' : 'text-end'">
+        <div>
+          <span class="text-muted" v-if="user.userName != message.createdBy.userName">{{
+            message.createdBy.displayName
+          }}</span>
+        </div>
+        <div class="chat-message-content" shadow="never">
+          {{ message.text }}
+        </div>
+        <small class="text-muted">{{ message.createdDate }}</small>
+      </div>
     </div>
-    <small class="text-muted">{{ message.createdDate }}</small>
   </div>
 </template>
 
@@ -15,6 +38,12 @@ import { dateTimeToFormatDate, getRelativeChatTime } from "../../utils/DateConve
 export default {
   props: {
     message: Object,
+    user: Object,
+  },
+  watch: {
+    user(oldValue, newValue) {
+      console.log(this.user);
+    },
   },
   mounted() {
     let dateFormat = dateTimeToFormatDate(this.message.createdDate);
@@ -24,4 +53,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.chat-message-content {
+  border: 1px solid var(--Gray);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+}
+</style>

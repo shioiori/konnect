@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="img-container">
-      <el-avatar :src="avatar" :size="160" @click="$refs.avatar.click()">
-        user
-      </el-avatar>
+      <el-avatar :src="avatar" :size="160" @click="$refs.avatar.click()"> </el-avatar>
     </div>
     <div class="" hidden>
       <input type="file" ref="avatar" @change="handleFileChange($event)" />

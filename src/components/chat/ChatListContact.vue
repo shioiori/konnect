@@ -1,22 +1,33 @@
 <template>
   <div style="height: inherit">
-    <el-menu class="el-menu-vertical-demo" style="height: inherit">
-      <el-menu-item>
+    <el-list style="height: inherit">
+      <el-list-item>
         <chat-list-contact-search @search-chat="getSearchChat" />
-      </el-menu-item>
-      <el-menu-item v-for="(chat, index) in chats" @click="openChat(chat)">
-        <el-icon
-          ><img
-            class="img-responsive rounded-circle"
-            :src="chat.avatar"
-            style="width: 40px; height: 40px"
-        /></el-icon>
-        <div>
-          <b>{{ chat.name }}</b>
+      </el-list-item>
+      <el-list-item v-for="(chat, index) in chats" @click="openChat(chat)">
+        <div class="d-flex">
+          <div class="chat-avatar-img me-2">
+            <img
+              class="img-responsive rounded-circle"
+              :src="chat.avatar"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+          <div class="chat-info mt-2">
+            <b>{{ chat.name }}</b>
+            <div>
+              <span class="text-muted" v-if="chat.messages.length > 0">
+                <small>{{
+                  chat.messages[0].createdBy.displayName + ": " + chat.messages[0].text
+                }}</small>
+              </span>
+            </div>
+          </div>
         </div>
-        <!-- <div v-if="chat.messages.length > 0">{{ chat.messages[0].text }}</div> -->
-      </el-menu-item>
-    </el-menu>
+
+        <hr />
+      </el-list-item>
+    </el-list>
   </div>
 </template>
 
@@ -66,4 +77,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.chat-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-avatar-img {
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+}
+</style>

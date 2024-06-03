@@ -1,9 +1,7 @@
 <template>
   <div>
-    <el-button type="primary" plain @click="dialogVisible = true"
-      >Change password</el-button
-    >
-    <el-dialog v-model="dialogVisible" title="Thay dodoi" width="720">
+    <el-button type="primary" plain @click="dialogVisible = true">Đổi mật khẩu</el-button>
+    <el-dialog v-model="dialogVisible" title="Đổi mật khẩu" width="720">
       <div>
         <el-form
           label-position="right"
@@ -13,21 +11,21 @@
           status-icon
           :rules="rules"
         >
-          <el-form-item label="Mật khẩu cũ" prop="oldPassword">
+          <el-form-item label="Mật khẩu cũ" prop="oldPassword" required>
             <el-input
               v-model="passwordConfirmation.oldPassword"
               type="password"
               show-password
             />
           </el-form-item>
-          <el-form-item label="Mật khẩu mới" prop="newPassword">
+          <el-form-item label="Mật khẩu mới" prop="newPassword" required>
             <el-input
               v-model="passwordConfirmation.newPassword"
               type="password"
               show-password
             />
           </el-form-item>
-          <el-form-item label="Xác nhận mật khẩu" prop="newPasswordConfirm">
+          <el-form-item label="Xác nhận mật khẩu" prop="newPasswordConfirm" required>
             <el-input
               v-model="passwordConfirmation.newPasswordConfirm"
               type="password"

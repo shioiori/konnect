@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2 chat-search">
+  <div class="mt-3 mb-3 chat-search">
     <el-input
       v-model="search"
       placeholder="Find chat..."

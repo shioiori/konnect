@@ -60,22 +60,13 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        try {
-          this.$emit("getEventsInDatabase");
-          this.emitter.emit("handleAuthorize");
-          this.synchronizeWithGoogleCalendar(true);
-          ElMessage({
-            message: "Bật đồng bộ hoá thành công",
-            type: "success",
-          });
-        } catch (e) {
-          console.error(e.message);
-          this.timetable.isSynchronize = false;
-          ElMessage({
-            message: "Có lỗi xảy ra trong quá trình bật đồng bộ hoá",
-            type: "error",
-          });
-        }
+        this.$emit("getEventsInDatabase");
+        this.emitter.emit("handleAuthorize");
+        this.synchronizeWithGoogleCalendar(true);
+        ElMessage({
+          message: "Bật đồng bộ hoá thành công",
+          type: "success",
+        });
       });
     },
 

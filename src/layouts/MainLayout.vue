@@ -9,7 +9,9 @@
           <TheNavbar :user="user" />
         </el-header>
         <el-main class="main-content">
-          <el-scrollbar> <RouterView :user="user" /> </el-scrollbar>
+          <el-scrollbar>
+            <RouterView />
+          </el-scrollbar>
         </el-main>
       </el-col>
     </el-row>
@@ -46,8 +48,6 @@ export default {
         });
         router.push("/login");
       });
-
-    console.log(this.user);
   },
   data() {
     return {
@@ -63,16 +63,20 @@ export default {
   background-color: var(--el-color-primary-light-7);
   color: var(--el-text-color-primary);
 }
+
 .layout-container-demo .el-aside {
   color: var(--el-text-color-primary);
   background: var(--el-color-primary-light-8);
 }
+
 .layout-container-demo .el-menu {
   border-right: none;
 }
+
 .layout-container-demo .el-main {
   padding: 0;
 }
+
 .layout-container-demo .toolbar {
   display: inline-flex;
   align-items: center;
@@ -80,6 +84,7 @@ export default {
   height: 100%;
   right: 20px;
 }
+
 .navbar-container {
   height: 7vh;
 }

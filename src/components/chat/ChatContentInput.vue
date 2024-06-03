@@ -1,11 +1,17 @@
 <template>
-  <div class="p-2 chat-input">
+  <div class="pe-2 py-3 chat-input d-flex" style="border-top: 1px solid var(--Gray)">
     <el-input
       v-model="message"
       placeholder="Please input"
       @keydown.enter="sendMessage"
       maxlength="500"
     />
+    <div class="mx-2">
+      <i class="bi bi-image h3"></i>
+    </div>
+    <div>
+      <i class="bi bi-send h3"></i>
+    </div>
   </div>
 </template>
 
@@ -48,5 +54,6 @@ export default {
 .chat-input {
   position: absolute;
   bottom: 0;
+  width: 100%;
 }
 </style>

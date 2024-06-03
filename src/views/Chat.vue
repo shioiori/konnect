@@ -1,11 +1,15 @@
 <template>
-  <div class="chat" style="width: 100%">
+  <div class="chat mt-2" style="width: 100%">
     <el-row style="height: inherit">
-      <el-col :span="2" style="height: inherit"> <chat-list-user /> </el-col>
-      <el-col :span="6" style="height: inherit">
+      <el-col :span="1" style="height: inherit"> <chat-list-user :user="user" /> </el-col>
+      <el-col
+        :span="6"
+        style="height: inherit; border-right: 1px solid var(--Gray)"
+        class="pe-3 ms-4 me-3"
+      >
         <chat-list-contact :user="user" />
       </el-col>
-      <el-col :span="48">
+      <el-col :span="16">
         <chat-content :user="user" />
       </el-col>
     </el-row>
