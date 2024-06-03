@@ -1,11 +1,15 @@
 <template>
-  <div class="p-2" v-if="chat">
-    <div>
+  <div class="p-2" v-if="chat" style="position: relative; height: 100%">
+    <div class="mt-2 d-flex">
       <h4>{{ chat.name }}</h4>
+      <div style="margin-left: auto">
+        <chat-add-button :chat="chat" />
+      </div>
     </div>
-    <el-divider />
-    <div>
+    <hr />
+    <div class="px-2">
       <chat-content-message
+        :user="user"
         v-for="(message, index) in chat.messages"
         v-bind:message="message"
       />
@@ -17,12 +21,14 @@
 <script>
 import ChatContentInput from "./ChatContentInput.vue";
 import ChatContentMessage from "./ChatContentMessage.vue";
+import ChatAddButton from "./ChatAddButton.vue";
 import hub from "../../hubs/chathub.js";
 
 export default {
   components: {
     ChatContentInput,
     ChatContentMessage,
+    ChatAddButton,
   },
   data() {
     return {

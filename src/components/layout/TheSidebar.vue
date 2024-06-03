@@ -25,14 +25,12 @@
           <i class="bi bi-robot"></i>
           <template #title><router-link to="/ai">AI assistant</router-link></template>
         </el-menu-item>
-        <el-menu-item
-          class="menu-item"
-          index="5"
-          v-if="user != undefined && user.roleName != 'User'"
-        >
+        <el-menu-item class="menu-item" index="5" v-if="user">
           <i class="bi bi-gear"></i>
           <template #title
-            ><router-link to="/group-manager">Manager</router-link></template
+            ><router-link to="/group-manager">{{
+              user.roleName != "User" ? "Manager" : "Group"
+            }}</router-link></template
           >
         </el-menu-item>
         <!-- <el-menu-item class="menu-item">
@@ -131,9 +129,11 @@ export default {
 .col-1 .nav-link {
   text-align: center;
 }
+
 .sidebar-container .menu-item {
   padding-left: 2rem;
 }
+
 .menu-item a {
   text-decoration: none;
 }

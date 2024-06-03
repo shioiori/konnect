@@ -1,6 +1,11 @@
 <template>
   <div>
-    <el-button type="primary" plain @click="dialogVisible = true">Add group</el-button>
+    <div class="text-end">
+      <el-button type="primary" plain @click="dialogVisible = true"
+        >Tham gia nhóm</el-button
+      >
+      <el-button type="primary" plain @click="dialogVisible = true">Tạo nhóm</el-button>
+    </div>
     <el-dialog v-model="dialogVisible" title="Thêm nhóm mới" width="720">
       <div class="py-4">
         <el-form :model="group" label-position="left" label-width="auto">

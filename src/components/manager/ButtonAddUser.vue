@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-button type="primary" plain @click="dialogVisible = true">Add user</el-button>
+    <el-button type="primary" plain @click="dialogVisible = true"
+      >Thêm tài khoản vào nhóm</el-button
+    >
     <el-dialog v-model="dialogVisible" title="User" width="720">
       <div class="py-4">
         <el-form :model="user" label-position="right" label-width="auto" ref="userForm">
@@ -19,7 +21,7 @@
           <div class="text-end pb-3">
             <i class="text-muted"
               ><span class="text-danger">* </span>Lưu ý: Mật khẩu sẽ được đặt giống với
-              username</i
+              tên đăng nhập</i
             >
           </div>
           <div class="d-flex justify-content-end">

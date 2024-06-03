@@ -8,13 +8,13 @@
     <el-dialog v-model="dialogVisible" title="User" width="720">
       <div class="py-4">
         <el-form :model="editingUser" label-position="right" label-width="auto">
-          <el-form-item label="Username" prop="userName" v-if="action == 'add'">
+          <el-form-item label="Username" prop="userName" v-if="action == 'add'" required>
             <el-input v-model="editingUser.userName" />
           </el-form-item>
-          <el-form-item label="Name" prop="displayName">
+          <el-form-item label="Name" prop="displayName" required>
             <el-input v-model="editingUser.displayName" />
           </el-form-item>
-          <el-form-item label="Email" prop="email">
+          <el-form-item label="Email" prop="email" required>
             <el-input v-model="editingUser.email" />
           </el-form-item>
           <el-form-item label="Phone" prop="phoneNumber">

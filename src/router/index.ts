@@ -9,6 +9,7 @@ import Chat from '../views/Chat.vue'
 import UserInfomation from '../views/UserInfomation.vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import GroupManager from '../views/GroupManager.vue'
+import BulletinDetail from '../views/BulletinDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,11 +20,6 @@ const router = createRouter({
       component: MainLayout,
       redirect: '/',
       children: [
-        {
-          path: 'storage',
-          name: 'storage',
-          component: Storage
-        },
         {
           path: 'timetable',
           name: 'timetable',
@@ -36,8 +32,18 @@ const router = createRouter({
         },
         {
           path: '',
+          name: 'home',
+          component: Bulletin
+        },
+        {
+          path: 'bulletin',
           name: 'bulletin',
           component: Bulletin
+        },
+        {
+          path: 'bulletin/:id',
+          name: 'bulletin-detail',
+          component: BulletinDetail
         },
         {
           path: 'user',
@@ -65,7 +71,7 @@ const router = createRouter({
       path: '/group',
       name: 'choose-group',
       component: ChooseGroup
-    },
+    }
   ]
 })
 

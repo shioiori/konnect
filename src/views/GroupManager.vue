@@ -1,11 +1,13 @@
 <template>
   <div>
     <div>
-      <div class="justify-content-end d-flex manager-button">
-        <button-manager-invite />
-        <button-import-user @get-users="getUsers" />
-        <button-add-user @add-user="addUser" />
-        <button-delete-group />
+      <div class="justify-content-end d-flex manager-button mb-2">
+        <button-invite-user />
+        <div class="d-flex" v-if="currentUser && currentUser.roleName == 'Manager'">
+          <button-import-user @get-users="getUsers" />
+          <button-add-user @add-user="addUser" />
+          <button-delete-group />
+        </div>
       </div>
     </div>
     <div>
@@ -13,13 +15,18 @@
         <el-table-column prop="userName" label="Username" />
         <el-table-column prop="displayName" label="Display name" />
         <el-table-column prop="email" label="Email" />
-        <el-table-column prop="phone" label="Tel" />
+        <el-table-column prop="phoneNumber" label="Tel" />
         <el-table-column prop="roleName" label="Role">
           <template #default="scope">
             <el-tag type="warning" disable-transitions>{{ scope.row.roleName }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="Operations" width="120">
+        <el-table-column
+          fixed="right"
+          label="Operations"
+          width="120"
+          v-if="currentUser && currentUser.roleName == 'Manager'"
+        >
           <template #default="scope">
             <div class="d-flex">
               <button-change-role :user="scope.row" />
@@ -37,6 +44,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="d-flex justify-content-end mt-2">
+        <el-pagination background layout="prev, pager, next" :total="20" />
+      </div>
     </div>
   </div>
 </template>
@@ -72,12 +82,19 @@ export default {
   data() {
     return {
       users: [],
+      currentUser: undefined,
     };
   },
   mounted() {
+    this.getLoginUser();
     this.getUsers();
   },
   methods: {
+    getLoginUser() {
+      axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
+        this.currentUser = res.data;
+      });
+    },
     getUsers() {
       axios
         .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())

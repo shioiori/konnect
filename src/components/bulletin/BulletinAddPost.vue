@@ -58,7 +58,7 @@ export default {
         })
         .catch((e) => {
           ElMessage({
-            message: err.message,
+            message: e.message,
             type: "error",
           });
         });

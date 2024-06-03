@@ -1,16 +1,12 @@
 <template>
-  <div class="container">
-    <h1>Your group</h1>
+  <div class="container my-4">
+    <h1>Nhóm của bạn</h1>
     <div>
       <div class="my-2">
         <group-add-button @get-group="getGroupByUser" />
       </div>
       <el-row :gutter="20">
-        <group-item
-          v-for="item in groups"
-          :group="item"
-          @click="loginWithGroup(item.id)"
-        />
+        <group-item v-for="item in groups" :group="item" @click="loginWithGroup(item.id)" />
       </el-row>
     </div>
   </div>

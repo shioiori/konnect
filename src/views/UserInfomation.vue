@@ -1,17 +1,17 @@
 <template>
   <div class="user-infomation">
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <div><user-avatar :user="user" /></div
-      ></el-col>
-      <el-col :span="18">
-        <el-descriptions
-          class="margin-top"
-          title="Thông tin cá nhân"
-          :column="1"
-          size="default"
-          border
-        >
+    <div class="d-flex mb-2">
+      <div class="info-btn-container text-end d-flex" style="margin-left: auto">
+        <user-edit-info-button />
+        <user-change-password-button />
+      </div>
+    </div>
+    <el-row>
+      <el-col :span="4">
+        <div><user-avatar :user="user" /></div>
+      </el-col>
+      <el-col :span="20">
+        <el-descriptions class="margin-top" :column="1" size="default" border>
           <!-- <template #extra>
       <el-button type="primary">Operation</el-button>
     </template> -->
@@ -26,7 +26,7 @@
             </template>
             {{ user.userName }}
           </el-descriptions-item>
-          <el-descriptions-item>
+          <!-- <el-descriptions-item>
             <template #label>
               <div class="cell-item">
                 <el-icon :style="iconStyle">
@@ -39,7 +39,7 @@
               <span class="me-2">************</span>
               <user-change-password-button />
             </div>
-          </el-descriptions-item>
+          </el-descriptions-item> -->
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">
@@ -60,7 +60,7 @@
                 Telephone
               </div>
             </template>
-            {{ user.phoneNumber }}
+            {{ user.tel }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -73,7 +73,7 @@
             </template>
             <div class="d-flex">
               <span class="me-2">{{ user.email }}</span>
-              <user-mail-confirmation-button :isConfirm="emailConfirmed" />
+              <!-- <user-mail-confirmation-button :isConfirm="emailConfirmed" /> -->
             </div>
           </el-descriptions-item>
         </el-descriptions>
@@ -86,6 +86,7 @@
 import UserChangePasswordButton from "@/components/user/UserChangePasswordButton.vue";
 import UserMailConfirmationButton from "@/components/user/UserMailConfirmationButton.vue";
 import UserAvatar from "@/components/user/UserAvatar.vue";
+import UserEditInfoButton from "@/components/user/UserEditInfoButton.vue";
 
 import axios from "axios";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
@@ -96,6 +97,7 @@ export default {
     UserChangePasswordButton,
     UserMailConfirmationButton,
     UserAvatar,
+    UserEditInfoButton,
   },
   data() {
     return {
@@ -130,5 +132,9 @@ export default {
 .user-infomation span {
   display: flex;
   align-items: center;
+}
+
+.info-btn-container button {
+  margin-left: 0.5rem;
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-tooltip content="Change role" placement="top" effect="light">
+    <el-tooltip content="Thay đổi vai trò" placement="top" effect="light">
       <el-button link type="warning" @click="dialogVisible = true">
         <el-icon>
           <Switch />
         </el-icon>
       </el-button>
     </el-tooltip>
-    <el-dialog v-model="dialogVisible" title="Change role" width="720">
+    <el-dialog v-model="dialogVisible" title="Thay đổi vai trò" width="720">
       <div>
         <el-select v-model="role" placeholder="Select" style="width: 240px">
           <el-option

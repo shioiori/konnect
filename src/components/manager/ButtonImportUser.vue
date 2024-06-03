@@ -1,17 +1,19 @@
 <template>
   <div>
-    <el-button type="primary" plain @click="dialogVisible = true">Import user</el-button>
+    <el-button type="primary" plain @click="dialogVisible = true"
+      >Import danh sách thành viên</el-button
+    >
     <el-dialog v-model="dialogVisible" title="Import users" width="720">
       <div class="text-center py-4">
         <IconImport @click="$refs.file.click()" />
-        <h5>Select a file to import</h5>
+        <h5>Chọn file để tải lên</h5>
         <p>
-          Download template import
+          File được import cần tuân theo
           <el-link
             type="primary"
             href="../../assets/template/Import user template.xlsx"
             download
-            >here</el-link
+            >mẫu</el-link
           >
         </p>
         <div>

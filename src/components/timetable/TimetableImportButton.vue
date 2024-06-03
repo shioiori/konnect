@@ -1,20 +1,21 @@
 <template>
   <div>
     <el-button type="primary" plain @click="dialogVisible = true"
-      >Import timetable</el-button
+      >Import thời gian biểu</el-button
     >
     <el-dialog v-model="dialogVisible" title="Import timetable" width="720">
       <div class="text-center py-4">
         <IconImport @click="$refs.file.click()" />
-        <h5>Select a file to import</h5>
+        <h5>Chọn file tải lên</h5>
         <el-text>
-          Download thời khoá biểu từ qldt.utc.edu.vn hoặc sử dụng
+          Hệ thống chỉ nhận file thời khoá biểu download từ qldt.utc.edu.vn
+          <!-- hoặc sử dụng
           <el-link
             type="primary"
             href="../../../assets/template/Import timetable template.xlsx"
             download
             >template</el-link
-          >
+          > -->
         </el-text>
         <div>
           <input

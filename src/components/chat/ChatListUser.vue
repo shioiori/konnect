@@ -27,6 +27,12 @@ export default {
       addChatRequest: undefined,
     };
   },
+  props: {
+    user: Object,
+  },
+  watch: {
+    user(oldValue, newValue) {},
+  },
   mounted() {
     this.users = this.getUsers();
   },
@@ -35,12 +41,14 @@ export default {
       axios
         .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
         .then((res) => {
-          this.users = res.data.users;
+          this.users = res.data.users.filter(
+            (user) => user.userName != this.user.userName
+          );
         });
     },
     createChat(name) {
       axios
-        .get(import.meta.env.VITE_API + "/chat/user/data?name=" + name, getHeaderConfig())
+        .get(import.meta.env.VITE_API + "/chat/data?name=" + name, getHeaderConfig())
         .then((res) => {
           this.addChatRequest = res.data;
           axios
@@ -50,6 +58,7 @@ export default {
                 JSON.stringify(res.data.users)
             )
             .then((res) => {
+              console.log(res.data);
               if (!res.data) {
                 axios
                   .post(import.meta.env.VITE_CHAT_API + "/chat", this.addChatRequest)
@@ -58,6 +67,7 @@ export default {
                   });
               } else {
                 this.emitter.emit("insertChat");
+                this.emitter.emit("openChat", res.data);
               }
             });
         });

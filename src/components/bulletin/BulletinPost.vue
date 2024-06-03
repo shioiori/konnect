@@ -41,7 +41,7 @@
             <el-carousel height="720px">
               <el-carousel-item v-for="item in images" :key="item">
                 <div>
-                  <img :src="item" style="height: inherit" />
+                  <img :src="item" style="max-height: 720px" />
                 </div>
               </el-carousel-item>
             </el-carousel>

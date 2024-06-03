@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-button type="primary" plain @click="dialogVisible = true">Add event</el-button>
+    <el-button type="primary" plain @click="dialogVisible = true">Thêm sự kiện</el-button>
 
-    <el-dialog v-model="dialogVisible" title="Add event" width="720">
+    <el-dialog v-model="dialogVisible" title="Thêm sự kiện" width="720">
       <div class="py-4">
         <el-form :model="event" label-position="right" label-width="auto" ref="eventForm">
           <el-form-item label="Tiêu đề" required>

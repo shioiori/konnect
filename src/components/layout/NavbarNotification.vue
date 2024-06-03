@@ -2,12 +2,17 @@
   <el-dropdown>
     <div>
       <el-badge :is-dot="!isSeen" class="item" @click="updateStateNotification">
-        <el-icon><Bell /></el-icon>
+        <el-icon>
+          <Bell />
+        </el-icon>
       </el-badge>
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item v-for="(item, index) in notifications">
+        <el-dropdown-item
+          v-for="(item, index) in notifications"
+          @click="redirect(item.action, item.attach)"
+        >
           <div style="width: 100%">
             <div class="d-flex">
               <div v-html="getIcon(item.action)" />
@@ -34,6 +39,8 @@
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import { getRelativeTime } from "../../utils/DateConverter.js";
+import router from "../../router/index.ts";
+import { ElMessage } from "element-plus";
 
 export default {
   data() {
@@ -78,6 +85,8 @@ export default {
           return '<i class="bi bi-send-exclamation"></i>';
         case "AcceptPost":
           return '<i class="bi bi-send-check"></i>';
+        case "RejectPost":
+          return '<i class="bi bi-send-x"></i>';
         case "InviteToGroup":
           return '<i class="bi bi-person-plus"></i>';
         case "ChangeRole":
@@ -86,6 +95,27 @@ export default {
           return '<i class="bi bi-at"></i>';
         case "KickFromGroup":
           return '<i class="bi bi-person-slash"></i>';
+        default:
+          return;
+      }
+    },
+    redirect(action, attach) {
+      switch (action) {
+        case "PendingPost":
+          axios
+            .get(import.meta.env.VITE_API + "/bulletin/" + attach.id, getHeaderConfig())
+            .then((res) => {
+              console.log(res.data);
+              if (res.data.post.approved != -1) {
+                ElMessage({
+                  type: "warning",
+                  message: "Bài đăng này đã được kiểm duyệt",
+                });
+              } else {
+                router.push("/bulletin/" + attach.id);
+              }
+            });
+          return;
         default:
           return;
       }

@@ -26,8 +26,8 @@
           <i class="text-muted"
             ><small
               >Nếu muốn kết hợp với sự kiện từ Google Calendar nhưng tránh đồng bộ hoá,
-              chọn Update data from Calendar. Nếu bật đồng bộ hoá, sự kiện của bạn sẽ được
-              cập nhật vào tài khoản Google Calendar và không được lưu nội bộ.
+              chọn Kéo dữ liệu từ Google Calendar. Nếu bật đồng bộ hoá, sự kiện của bạn sẽ
+              được cập nhật vào tài khoản Google Calendar và không được lưu nội bộ.
             </small></i
           >
         </p>
