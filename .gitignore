@@ -1,4 +1,6 @@
-.env.d.ts
+env.d.ts
+.env.development
+*.env
 
 # Logs
 logs
@@ -30,3 +32,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+konnect.git/
