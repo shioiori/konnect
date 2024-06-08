@@ -9,7 +9,6 @@ const connection = new HubConnectionBuilder()
   .configureLogging(LogLevel.Information)
   .build()
 
-
 async function onConnectionAsync() {
   try {
     await connection.start()

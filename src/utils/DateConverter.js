@@ -3,22 +3,22 @@ export function getTime(shiftCode) {
     case 1:
       return {
         start: '7:00',
-        end: '9:30',
+        end: '9:30'
       }
     case 2:
       return {
         start: '9:30',
-        end: '12:00',
+        end: '12:00'
       }
     case 3:
       return {
         start: '13:00',
-        end: '15:30',
+        end: '15:30'
       }
     case 4:
       return {
         start: '15:30',
-        end: '18:00',
+        end: '18:00'
       }
   }
 }
@@ -133,26 +133,26 @@ function isSameMonth(date) {
   return date.getMonth() === now.getMonth() && isSameYear(date)
 }
 
-export function getRelativeChatTime(dateString){
-  const parts = dateString.split(' ');
-  const dateParts = parts[0].split('/');
-  const timePart = parts[1];
-  const inputDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
-  const today = new Date();
-  
-  const inputYear = inputDate.getFullYear();
-  const inputMonth = inputDate.getMonth();
-  const inputDay = inputDate.getDate();
-  
-  const todayYear = today.getFullYear();
-  const todayMonth = today.getMonth();
-  const todayDay = today.getDate();
+export function getRelativeChatTime(dateString) {
+  const parts = dateString.split(' ')
+  const dateParts = parts[0].split('/')
+  const timePart = parts[1]
+  const inputDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0])
+  const today = new Date()
+
+  const inputYear = inputDate.getFullYear()
+  const inputMonth = inputDate.getMonth()
+  const inputDay = inputDate.getDate()
+
+  const todayYear = today.getFullYear()
+  const todayMonth = today.getMonth()
+  const todayDay = today.getDate()
 
   if (inputYear === todayYear && inputMonth === todayMonth && inputDay === todayDay) {
-      return timePart;
+    return timePart
   } else if (inputYear === todayYear) {
-      return `${dateParts[0]}/${dateParts[1]}`;
+    return `${dateParts[0]}/${dateParts[1]}`
   } else {
-      return `${dateParts[2]}/${dateParts[1]}`;
+    return `${dateParts[2]}/${dateParts[1]}`
   }
 }
