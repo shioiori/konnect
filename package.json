@@ -27,6 +27,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "ckeditor5-custom-build": "file:src/assets/vendor/ckeditor5-41.3.1-sqxnpnhjj6fd",
+    "dotenv": "^16.4.5",
     "element-plus": "^2.7.2",
     "element-theme-chalk": "^2.15.14",
     "mitt": "^3.0.1",

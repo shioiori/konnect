@@ -29,7 +29,7 @@ export default {
             .delete(import.meta.env.VITE_API + "/group/out", getHeaderConfig())
             .then((res) => {
               ElMessage({
-                message: res.data.message,
+                message: "Rời nhóm thành công",
                 type: res.data.type,
               });
               localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, res.data.accessToken);

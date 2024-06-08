@@ -3,7 +3,7 @@
     <el-button type="primary" plain @click="dialogVisible = true"
       >Import danh sách thành viên</el-button
     >
-    <el-dialog v-model="dialogVisible" title="Import users" width="720">
+    <el-dialog v-model="dialogVisible" title="Import danh sách người dùng" width="720">
       <div class="text-center py-4">
         <IconImport @click="$refs.file.click()" />
         <h5>Chọn file để tải lên</h5>

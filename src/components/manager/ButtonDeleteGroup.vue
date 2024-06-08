@@ -12,14 +12,14 @@ import router from "../../router/index.ts";
 export default {
   methods: {
     deleteGroup() {
-      ElMessageBox.confirm("Nhóm của bạn sẽ biến mất vĩnh viễn? Tiếp tục", "Warning", {
+      ElMessageBox.confirm("Nhóm của bạn sẽ biến mất vĩnh viễn. Tiếp tục?", "Warning", {
         confirmButtonText: "Yes",
         cancelButtonText: "Cancel",
         type: "warning",
       })
         .then(() => {
           axios
-            .delete(import.meta.env.VITE_API + "/group/out", getHeaderConfig())
+            .delete(import.meta.env.VITE_API + "/group", getHeaderConfig())
             .then((res) => {
               ElMessage({
                 message: "Nhóm của bạn đã được xoá",

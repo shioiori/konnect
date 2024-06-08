@@ -36,12 +36,12 @@ const router = createRouter({
           component: Bulletin
         },
         {
-          path: 'bulletin',
+          path: 'bulletin/:id',
           name: 'bulletin',
           component: Bulletin
         },
         {
-          path: 'bulletin/:id',
+          path: 'bulletin/pending/:id',
           name: 'bulletin-detail',
           component: BulletinDetail
         },

@@ -6,7 +6,11 @@
         <group-add-button @get-group="getGroupByUser" />
       </div>
       <el-row :gutter="20">
-        <group-item v-for="item in groups" :group="item" @click="loginWithGroup(item.id)" />
+        <group-item
+          v-for="item in groups"
+          :group="item"
+          @click="loginWithGroup(item.id)"
+        />
       </el-row>
     </div>
   </div>
@@ -59,7 +63,7 @@ export default {
     },
     async getGroupByUser() {
       axios
-        .get(import.meta.env.VITE_API + "/group", getHeaderConfig())
+        .get(import.meta.env.VITE_API + "/group/all", getHeaderConfig())
         .then((res) => {
           this.groups = res.data.groups;
         })

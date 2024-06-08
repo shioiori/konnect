@@ -19,7 +19,6 @@ import hub from './hubs/chathub.js'
 
 const emitter = mitt()
 const app = createApp(App)
-
 app.config.globalProperties.emitter = emitter
 app.use(router)
 app.use(CKEditor)

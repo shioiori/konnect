@@ -112,9 +112,14 @@ export default {
                   message: "Bài đăng này đã được kiểm duyệt",
                 });
               } else {
-                router.push("/bulletin/" + attach.id);
+                router.push("/bulletin/pending/" + attach.id);
               }
             });
+          return;
+        case "NewPost":
+        case "AcceptPost":
+        case "RejectPost":
+          router.push("/bulletin/" + attach.id);
           return;
         default:
           return;

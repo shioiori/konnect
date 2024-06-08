@@ -17,7 +17,7 @@
       </div>
       <hr />
       <div>
-        <div>
+        <div v-if="state == -1">
           <h5>Duyệt tin</h5>
           <div>
             <span>Tin nhắn đính kèm <i class="text-muted">(tuỳ chọn)</i></span>
@@ -45,6 +45,7 @@ export default {
     return {
       post: undefined,
       message: "",
+      state: -1,
     };
   },
   mounted() {
@@ -71,6 +72,7 @@ export default {
           if (!this.post.user.avatar) {
             this.post.user.avatar = "../../src/assets/images/avatar_default.png";
           }
+          this.state = this.post.approved;
         })
         .catch((e) => {
           ElMessage({

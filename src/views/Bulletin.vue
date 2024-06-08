@@ -34,16 +34,40 @@ export default {
       posts: [],
     };
   },
-  mounted() {
+  watch: {
+    "$route.params.id": "checkRoute",
+  },
+  created() {
     this.getBulletinNews();
   },
   methods: {
+    checkRoute() {
+      if (!this.$route.params.id) {
+        this.getBulletinNews();
+      } else {
+        this.getPost(this.$route.params.id);
+      }
+    },
     getBulletinNews() {
       axios
         .get(import.meta.env.VITE_API + "/bulletin?state=1", getHeaderConfig())
         .then((res) => {
           console.log(res.data);
           this.posts = res.data.posts;
+        })
+        .catch((e) => {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
+        });
+    },
+    getPost(id) {
+      axios
+        .get(import.meta.env.VITE_API + "/bulletin/" + id, getHeaderConfig())
+        .then((res) => {
+          this.posts = [];
+          this.posts.push(res.data.post);
         })
         .catch((e) => {
           ElMessage({

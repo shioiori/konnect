@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div>
-      <div class="justify-content-end d-flex manager-button mb-2">
-        <button-invite-user />
+    <div class="d-flex">
+      <div class="justify-content-start">
+        <group-add-button action="edit" />
+      </div>
+      <div class="justify-content-end d-flex manager-button mb-2" style="flex: 1">
+        <button-invite-user v-if="group && group.allowInvite" />
         <div class="d-flex" v-if="currentUser && currentUser.roleName == 'Manager'">
           <button-import-user @get-users="getUsers" />
           <button-add-user @add-user="addUser" />
@@ -45,7 +48,16 @@
         </el-table-column>
       </el-table>
       <div class="d-flex justify-content-end mt-2">
-        <el-pagination background layout="prev, pager, next" :total="20" />
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :current-page="pageNumber"
+          :page-size="pageSize"
+          @current-change="onCurrentPageChange"
+          @prev-click="onPrevClick"
+          @next-click="onNextClick"
+        />
       </div>
     </div>
   </div>
@@ -66,6 +78,7 @@ import ButtonDeleteUser from "../components/manager/ButtonDeleteUser.vue";
 import ButtonImportUser from "../components/manager/ButtonImportUser.vue";
 import ButtonInviteUser from "../components/manager/ButtonInviteUser.vue";
 import ButtonDeleteGroup from "../components/manager/ButtonDeleteGroup.vue";
+import GroupAddButton from "../components/selectGroup/GroupAddButton.vue";
 
 export default {
   components: {
@@ -78,16 +91,22 @@ export default {
     ButtonImportUser,
     ButtonInviteUser,
     ButtonDeleteGroup,
+    GroupAddButton,
   },
   data() {
     return {
       users: [],
       currentUser: undefined,
+      pageNumber: 1,
+      pageSize: 12,
+      total: 0,
+      group: undefined,
     };
   },
   mounted() {
     this.getLoginUser();
     this.getUsers();
+    this.getGroup();
   },
   methods: {
     getLoginUser() {
@@ -96,11 +115,13 @@ export default {
       });
     },
     getUsers() {
-      axios
-        .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
-        .then((res) => {
-          this.users = res.data.users;
-        });
+      var url = import.meta.env.VITE_API + "/user/group?";
+      url += "pageSize=" + this.pageSize;
+      url += "&pageNumber=" + this.pageNumber;
+      axios.get(url, getHeaderConfig()).then((res) => {
+        this.users = res.data.users;
+        this.total = res.data.total;
+      });
     },
     updateAction() {
       this.emitter.emit("changeAction", "add");
@@ -110,6 +131,24 @@ export default {
     },
     removeUser(index) {
       this.users.splice(index, 1);
+    },
+    onCurrentPageChange(page) {
+      this.pageNumber = page;
+      this.getUsers();
+    },
+    onNextClick() {
+      let pageCount = Math.ceil(this.total / this.pageSize);
+      if (this.pageNumber + 1 > pageCount) return;
+      this.pageNumber += 1;
+    },
+    onPrevClick() {
+      if (this.pageNumber - 1 <= 0) return;
+      this.pageNumber -= 1;
+    },
+    getGroup() {
+      axios.get(import.meta.env.VITE_API + "/group", getHeaderConfig()).then((res) => {
+        this.group = res.data.group;
+      });
     },
   },
 };

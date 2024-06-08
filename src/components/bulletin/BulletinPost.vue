@@ -1,5 +1,5 @@
 <template>
-  <div class="my-3" v-if="post">
+  <div class="my-3" v-if="post && post.user">
     <el-card shadow="hover" @click="openDialog">
       <div class="d-flex">
         <div class="post-avatar" v-if="post.user">

@@ -47,7 +47,7 @@
                   >Vào nhóm khác
                 </el-text></el-dropdown-item
               >
-              <el-dropdown-item @click="outGroup"
+              <el-dropdown-item @click="outGroup" v-if="group && group.allowOut"
                 ><el-text type="danger"
                   ><el-icon>
                     <Guide /> </el-icon
@@ -97,6 +97,7 @@ export default {
       ArrowRight,
       RouterLink,
       breadcrumb: [],
+      group: undefined,
     };
   },
   props: {
@@ -118,6 +119,11 @@ export default {
     );
   },
   methods: {
+    getGroup() {
+      axios.get(import.meta.env.VITE_API + "/group", getHeaderConfig()).then((res) => {
+        this.group = res.data.group;
+      });
+    },
     logout() {
       localStorage.setItem(import.meta.env.VITE_TOKEN_NAME, "");
       router.push("/login");
