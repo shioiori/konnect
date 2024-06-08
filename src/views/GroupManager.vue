@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex">
-      <div class="justify-content-start">
+      <div class="justify-content-start" v-if="group && group.allowInvite">
         <group-add-button action="edit" />
       </div>
       <div class="justify-content-end d-flex manager-button mb-2" style="flex: 1">
