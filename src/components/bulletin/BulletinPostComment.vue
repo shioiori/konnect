@@ -13,7 +13,7 @@
           <div>
             <h6 class="my-0">{{ comment.user.displayName }}</h6>
           </div>
-          <div>{{ comment.content }}</div>
+          <div v-html="comment.content"></div>
         </div>
         <div class="post-time">
           <small class="text-muted">{{ comment.createdDate }}</small>
@@ -49,5 +49,11 @@ export default {
 
 .comment {
   margin: 0.5rem 0;
+}
+
+.cmt-mention {
+  text-decoration: none;
+  color: var(--el-color-primary);
+  font-weight: 600;
 }
 </style>

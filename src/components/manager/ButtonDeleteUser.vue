@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-button link type="danger" @click="removeUser">
-      <el-icon> <Delete /> </el-icon
+      <el-icon>
+        <Delete /> </el-icon
     ></el-button>
   </div>
 </template>
@@ -29,7 +30,7 @@ export default {
         console.log(this.user);
         axios
           .delete(
-            import.meta.env.VITE_API + "/user/" + this.user.userName + "/kick",
+            import.meta.env.VITE_API + "/group/kick/" + this.user.userName,
             getHeaderConfig()
           )
           .then((res) => {

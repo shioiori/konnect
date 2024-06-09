@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="content">
-      <div>
+      <div v-if="!this.$route.params.id">
         <bulletin-add-post @refresh-bulletin="getBulletinNews" />
       </div>
       <div>
@@ -49,10 +49,10 @@ export default {
       }
     },
     getBulletinNews() {
+      console.log(2);
       axios
         .get(import.meta.env.VITE_API + "/bulletin?state=1", getHeaderConfig())
         .then((res) => {
-          console.log(res.data);
           this.posts = res.data.posts;
         })
         .catch((e) => {

@@ -1,5 +1,5 @@
 <template>
-  <section class="vh-100" v-loading.fullscreen.lock="fullscreenLoading">
+  <section class="vh-100">
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -95,19 +95,23 @@
 <script>
 import axios from "axios";
 import router from "../router/index.ts";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 
 export default {
   data() {
     return {
       username: null,
       password: null,
-      fullScreenLoading: false,
+      service: {
+        lock: true,
+        text: "Loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      },
     };
   },
   methods: {
     async login() {
-      this.fullScreenLoading = true;
+      const loading = ElLoading.service(this.service);
       axios
         .post(import.meta.env.VITE_API + "/login", {
           username: this.username,
@@ -130,7 +134,7 @@ export default {
           });
         })
         .finally(() => {
-          this.fullScreenLoading = false;
+          loading.close();
         });
     },
     forgotPassword() {
@@ -144,7 +148,7 @@ export default {
           inputErrorMessage: "Xin hãy nhập email",
         }
       ).then(({ value }) => {
-        this.fullScreenLoading = true;
+        const loading = ElLoading.service(this.service);
         axios
           .post(import.meta.env.VITE_API + "/password/forgot?email=" + value, {})
           .then((res) => {
@@ -160,7 +164,7 @@ export default {
             });
           })
           .finally(() => {
-            this.fullScreenLoading = false;
+            loading.close();
           });
       });
     },

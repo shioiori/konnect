@@ -1,7 +1,7 @@
 <template>
   <el-dropdown>
     <div>
-      <el-badge :is-dot="!isSeen" class="item" @click="updateStateNotification">
+      <el-badge :is-dot="!isSeen" class="item">
         <el-icon>
           <Bell />
         </el-icon>
@@ -11,25 +11,34 @@
       <el-dropdown-menu>
         <el-dropdown-item
           v-for="(item, index) in notifications"
-          @click="redirect(item.action, item.attach)"
+          @click="handlerNotificationClicked(index, item)"
         >
           <div style="width: 100%">
-            <div class="d-flex">
+            <div class="d-flex" :class="item.isSeen ? '' : 'noti-unseen'">
               <div v-html="getIcon(item.action)" />
-              {{ item.content }}
+              <div v-html="item.content" />
             </div>
             <span class="text-muted">{{ getRelativeTime(item.createdDate) }}</span>
             <hr class="mt-2 mb-0" />
           </div>
         </el-dropdown-item>
-        <el-dropdown-item
-          ><el-link
-            type="primary"
-            @click="dialogVisible = true"
-            v-if="notifications.length > 0"
-            >Xem thêm</el-link
-          ></el-dropdown-item
-        >
+        <el-dropdown-item>
+          <div class="d-flex justify-content-between" style="flex-grow: 1">
+            <el-link
+              type="primary"
+              @click="dialogVisible = true"
+              v-if="notifications.length > 0"
+              >Xem thêm</el-link
+            >
+            <el-link
+              class="text-end"
+              type="primary"
+              @click="updateStateNotification"
+              v-if="notifications.length > 0"
+              >Đánh dấu tất cả đã đọc</el-link
+            >
+          </div>
+        </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -73,6 +82,18 @@ export default {
     updateStateNotification() {
       axios.post(import.meta.env.VITE_API + "/notification/seen", {}, getHeaderConfig());
       this.isSeen = true;
+    },
+    handlerNotificationClicked(index, noti) {
+      this.updateOneNotification(index, noti.id);
+      this.redirect(noti.action, noti.attach);
+    },
+    updateOneNotification(index, id) {
+      axios.post(
+        import.meta.env.VITE_API + "/notification/seen?id" + id,
+        {},
+        getHeaderConfig()
+      );
+      this.notifications[index].isSeen = true;
     },
     getIcon(type) {
       switch (type) {
@@ -135,4 +156,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.noti-unseen {
+  font-weight: 600;
+}
+
+.comment-mention {
+  text-decoration: none;
+  color: var(--el-color-primary);
+  font-weight: 600;
+}
+</style>

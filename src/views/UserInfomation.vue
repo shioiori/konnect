@@ -2,13 +2,19 @@
   <div class="user-infomation">
     <div class="d-flex mb-2">
       <div class="info-btn-container text-end d-flex" style="margin-left: auto">
-        <user-edit-info-button />
+        <button-add-user
+          :editUser="user"
+          action="edit"
+          title="Chỉnh sửa thông tin"
+          buttonText="Chỉnh sửa thông tin"
+          @edit-user="editUser"
+        />
         <user-change-password-button />
       </div>
     </div>
     <el-row>
       <el-col :span="4">
-        <div><user-avatar :user="user" /></div>
+        <div><user-avatar :user="user" @update-avatar="updateAvatar" /></div>
       </el-col>
       <el-col :span="20">
         <el-descriptions class="margin-top" :column="1" size="default" border>
@@ -60,7 +66,7 @@
                 Telephone
               </div>
             </template>
-            {{ user.tel }}
+            {{ user.phoneNumber }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -86,7 +92,7 @@
 import UserChangePasswordButton from "@/components/user/UserChangePasswordButton.vue";
 import UserMailConfirmationButton from "@/components/user/UserMailConfirmationButton.vue";
 import UserAvatar from "@/components/user/UserAvatar.vue";
-import UserEditInfoButton from "@/components/user/UserEditInfoButton.vue";
+import ButtonAddUser from "@/components/manager/ButtonAddUser.vue";
 
 import axios from "axios";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
@@ -97,7 +103,7 @@ export default {
     UserChangePasswordButton,
     UserMailConfirmationButton,
     UserAvatar,
-    UserEditInfoButton,
+    ButtonAddUser,
   },
   data() {
     return {
@@ -123,6 +129,12 @@ export default {
           this.emailConfirmed = res.data;
           console.log(res.data);
         });
+    },
+    editUser(user) {
+      this.user = user;
+    },
+    updateAvatar(url) {
+      this.user.avatar = url;
     },
   },
 };

@@ -26,9 +26,7 @@ import IconAddUser from "../icons/bulletin/IconAddUser.vue";
 import IconButtonSend from "../icons/bulletin/IconButtonSend.vue";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
-import { ElMessage, ElMessageBox } from "element-plus";
-
-import CKEditor from "@ckeditor/ckeditor5-vue";
+import { ElMessage, ElLoading } from "element-plus";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 
 export default {
@@ -39,7 +37,8 @@ export default {
     Editor,
   },
   methods: {
-    async uploadNews() {
+    uploadNews() {
+      const loading = ElLoading.service(this.service);
       axios
         .post(
           import.meta.env.VITE_API + "/bulletin",
@@ -49,18 +48,21 @@ export default {
           getHeaderConfig()
         )
         .then((res) => {
-          this.$emit("refreshBulletin");
           this.editorData = "";
           ElMessage({
-            message: "Thêm file thành công",
+            message: "Thêm tin thành công",
             type: "success",
           });
+          this.$emit("refreshBulletin");
         })
         .catch((e) => {
           ElMessage({
             message: e.message,
             type: "error",
           });
+        })
+        .finally(() => {
+          loading.close();
         });
     },
     addImage() {},
@@ -75,6 +77,11 @@ export default {
       editorData: "",
       editorConfig: {
         placeholder: "Have something new? Send it to all~",
+      },
+      service: {
+        lock: true,
+        text: "Loading",
+        background: "rgba(0, 0, 0, 0.7)",
       },
     };
   },

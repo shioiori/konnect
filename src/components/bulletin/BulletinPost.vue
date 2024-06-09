@@ -78,7 +78,7 @@
                 v-bind:user="user"
               />
             </div>
-            <bulletin-post-reply :user="post.user" @add-comment="addComment" />
+            <bulletin-post-reply @add-comment="addComment" />
           </div>
         </div>
       </div>
@@ -110,11 +110,15 @@ export default {
     post: Object,
   },
   mounted() {
-    console.log(this.post);
     this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
     if (!this.post.user.avatar) {
       this.post.user.avatar = "../../src/assets/images/avatar_default.png";
     }
+  },
+  watch: {
+    post(oldvalue, newvalue) {
+      this.post.createdDate = dateTimeToFormatDate(this.post.createdDate);
+    },
   },
   methods: {
     openDialog() {
@@ -141,8 +145,6 @@ export default {
           getHeaderConfig()
         )
         .then((res) => {
-          console.log(res.data);
-          console.log(this.post.comments[0]);
           this.post.comments.push(res.data.comment);
         });
     },

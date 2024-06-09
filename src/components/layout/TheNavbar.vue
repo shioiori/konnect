@@ -25,9 +25,7 @@
         <b class="mx-2" style="margin: auto" v-if="user">{{ user.displayName }}</b>
         <el-dropdown>
           <span class="el-dropdown-link">
-            <el-avatar
-              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-            />
+            <el-avatar :src="user.avatar" />
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -105,7 +103,9 @@ export default {
   },
   watch: {
     user(oldValue, newValue) {
-      console.log(this.user);
+      if (this.user && !this.user.avatar) {
+        this.user.avatar = "../../src/assets/images/avatar_default.png";
+      }
     },
   },
   created() {

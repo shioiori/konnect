@@ -8,7 +8,12 @@
         <button-invite-user v-if="group && group.allowInvite" />
         <div class="d-flex" v-if="currentUser && currentUser.roleName == 'Manager'">
           <button-import-user @get-users="getUsers" />
-          <button-add-user @add-user="addUser" />
+          <button-add-user
+            @add-user="addUser"
+            action="add"
+            buttonText="Thêm tài khoản vào nhóm"
+            title="Thêm tài khoản vào nhóm"
+          />
           <button-delete-group />
         </div>
       </div>
@@ -112,6 +117,8 @@ export default {
     getLoginUser() {
       axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
         this.currentUser = res.data;
+
+        console.log(this.currentUser);
       });
     },
     getUsers() {

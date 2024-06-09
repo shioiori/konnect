@@ -1,9 +1,9 @@
 <template>
   <div class="reply">
     <div>
-      <div class="d-flex">
+      <div class="d-flex" v-if="user">
         <img
-          :src="avatar"
+          :src="user.avatar"
           class="img-responsive rounded-circle"
           style="width: 40px; height: 40px; margin-right: 0.5rem"
         />
@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       comment: "",
-      avatar: "",
+      user: {},
       users: [],
       options: {
         trigger: "@",
@@ -54,27 +54,29 @@ export default {
       },
     };
   },
-  props: {
-    user: Object,
-  },
   mounted() {
-    this.avatar =
-      this.user != undefined
-        ? this.user.avatar
-        : "../../../src/assets/images/avatar_default.png";
+    this.getUser();
     this.getUsers();
     this.options.values = this.users;
     this.options.menuContainer = this.$refs.menuContainer;
   },
+
+  watch: {
+    user(oldValue, newValue) {
+      if (this.user && !this.user.avatar) {
+        this.user.avatar = "../../src/assets/images/avatar_default.png";
+      }
+    },
+  },
   methods: {
     addComment() {
-      if (this.checkString(this.comment)) return;
       this.$emit("addComment", this.comment);
       this.comment = "";
     },
-    checkString(str) {
-      const regex = /^@(\S+|\S+\s\S+\s?\S*)$/;
-      return regex.test(str);
+    getUser() {
+      axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
+        this.user = res.data;
+      });
     },
     async getUsers() {
       const url = `${import.meta.env.VITE_API}/user/group`;
@@ -105,6 +107,12 @@ export default {
 
 .tribute-container {
   position: relative;
+  height: auto;
+  max-height: 300px;
+  max-width: 11rem;
+  left: calc(40px - 0.25rem);
+  border: 1px solid var(--LightGray);
+  border-radius: 5px;
 }
 
 .tribute-container ul {
@@ -142,5 +150,24 @@ export default {
 
 .tribute-container .menu-highlighted {
   font-weight: bold;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  /* Width of the scrollbar */
+  height: 3px;
+  /* Height of the scrollbar for horizontal scrolling */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--Gray);
+  /* Color of the scrollbar thumb */
+  border-radius: 10px;
+  /* Rounded corners */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* Color of the scrollbar track */
 }
 </style>
