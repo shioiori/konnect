@@ -3,7 +3,7 @@
     <div class="content">
       <div>
         <timetable-button
-          @refresh-calendar="getEventsInDatabase(1)"
+          @refresh-calendar="getEventsInDatabase"
           @synchronize-calendar="synchronizeCalendar"
           :events="events"
           :timetable="timetable"
@@ -22,11 +22,21 @@
           :selected-date="currentDate"
           :time-from="0 * 60"
           :time-to="23 * 60"
-          :disable-views="['years']"
+          :disable-views="['day', 'years']"
           :events="showEvents"
-          editable-events
-          @cell-dblclick="openEventDialog($event)"
+          :editable-events="{
+            title: false,
+            drag: true,
+            resize: false,
+            delete: false,
+            create: false,
+          }"
+          :on-event-dblclick="openEventDialog"
+          @event-drop="onEventDrop"
+          locale="vi"
         >
+          <!-- @cell-click="openEventDialog($event)"
+           -->
         </vue-cal>
       </div>
     </div>
@@ -105,15 +115,11 @@ export default {
           while (new Date(date) <= new Date(endDate)) {
             let startDate = getDateOnly(date) + " " + event.periodStart;
             let endDate = getDateOnly(date) + " " + event.periodEnd;
-            this.events.push(
-              getEvent(startDate, endDate, event.title, event.location, event.category)
-            );
+            this.events.push(getEvent(event, startDate, endDate));
             date.setDate(date.getDate() + 7);
           }
         } else {
-          this.events.push(
-            getEvent(startDate, endDate, event.title, event.location, event.category)
-          );
+          this.events.push(getEvent(event, startDate, endDate));
         }
       });
       this.showEvents = [...this.events];
@@ -127,12 +133,14 @@ export default {
       this.showEvents = [...this.events];
       this.currentDate = new Date();
     },
-    openEventDialog(event) {
-      this.$refs.timetableButton.dialogEventVisible = true;
-      this.$refs.timetableButton.openEventDialog(event);
+    openEventDialog(event, e) {
+      this.$refs.timetableButton.openEventDialog(event, e);
     },
     filterEvent(categories) {
       this.showEvents = this.events.filter((obj) => categories.includes(obj.category));
+    },
+    onEventDrop(obj) {
+      this.$refs.timetableButton.updateDragEvent(obj);
     },
   },
 };
@@ -166,8 +174,16 @@ export default {
 }
 
 .shift4,
-.unclassify {
+.unclassified {
   background-color: #ffeee2;
   color: #ee6868;
+}
+
+.vuecal__menu {
+  background-color: var(--el-color-primary-light-5);
+}
+
+.vuecal__title-bar {
+  background-color: var(--el-color-primary-light-9);
 }
 </style>

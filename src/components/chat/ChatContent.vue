@@ -7,14 +7,14 @@
       </div>
     </div>
     <hr />
-    <div class="px-2">
+    <div class="px-2 chat-content-container" ref="chatContainer">
       <chat-content-message
         :user="user"
         v-for="(message, index) in chat.messages"
         v-bind:message="message"
       />
     </div>
-    <chat-content-input :chat="chat" @receive-message="receiveMessage" />
+    <chat-content-input :chat="chat" :user="user" @receive-message="receiveMessage" />
   </div>
 </template>
 
@@ -23,6 +23,7 @@ import ChatContentInput from "./ChatContentInput.vue";
 import ChatContentMessage from "./ChatContentMessage.vue";
 import ChatAddButton from "./ChatAddButton.vue";
 import hub from "../../hubs/chathub.js";
+import { ref, nextTick } from "vue";
 
 export default {
   components: {
@@ -47,23 +48,40 @@ export default {
     receiveMessage(message) {
       this.chat.messages.push(message);
     },
+    scrollToBottom() {
+      console.log(this.$refs.chatContainer);
+      if (this.$refs.chatContainer) {
+        console.log(this.$refs.chatContainer.scrollHeight);
+        this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
+      }
+    },
   },
-  mounted() {
-    this.emitter.on("openChat", (newChat) => {
+  created() {
+    this.emitter.on("openChat", async (newChat) => {
       if (this.chat) {
         hub.RemoveFromChat(this.chat.id, this.user.userId);
       }
       this.chat = newChat;
 
       console.log(newChat);
-      hub.AddToChat(this.chat.id);
+      await hub.AddToChat(this.chat.id);
+
+      this.scrollToBottom();
     });
-    hub.emitter.on("ReceiveMessage", (message) => {
+    hub.emitter.on("receiveMessage", (message) => {
       console.log(message);
       this.chat.messages.push(message);
+      nextTick(() => {
+        this.scrollToBottom();
+      });
     });
   },
 };
 </script>
 
-<style></style>
+<style>
+.chat-content-container {
+  overflow: auto;
+  max-height: 31rem;
+}
+</style>

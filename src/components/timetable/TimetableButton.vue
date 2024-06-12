@@ -66,8 +66,6 @@ export default {
   },
   watch: {
     timetable(oldValue, newValue) {
-      console.log(oldValue);
-      console.log(newValue);
       if (oldValue && oldValue.isSynchronize) {
         this.handleAuthorize(this.listEvents);
       }
@@ -83,8 +81,12 @@ export default {
     this.loadGapiScript();
   },
   methods: {
-    openEventDialog(event) {
-      this.$refs.addEventButton.addEventByClicked(event);
+    openEventDialog(event, e) {
+      //this.$refs.addEventButton.addEventByClicked(event);
+      this.$refs.addEventButton.openEventDialog(event, e);
+    },
+    updateDragEvent(obj) {
+      this.$refs.addEventButton.updateDragEvent(obj);
     },
     handleAuthorize(callback) {
       //if (this.authorize) return;

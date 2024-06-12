@@ -13,6 +13,7 @@
 import { ElLoading, ElMessage } from "element-plus";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
+import { uploadImageToImgur } from "../../utils/ImageHandler.js";
 
 export default {
   data() {
@@ -30,36 +31,24 @@ export default {
     }
   },
   methods: {
-    uploadFile() {
+    async uploadFile() {
       const loading = ElLoading.service({
         lock: true,
         text: "Loading",
         background: "rgba(0, 0, 0, 0.7)",
       });
       if (this.fileUpload) {
-        const formData = new FormData();
-        formData.append("image", this.fileUpload);
-        console.log(`Client-ID ${import.meta.env.VITE_IMGUR_CLIENT_ID}`);
-        axios
-          .post("https://api.imgur.com/3/image", formData, {
-            headers: {
-              Authorization: `Client-ID ${import.meta.env.VITE_IMGUR_CLIENT_ID}`,
-            },
-          })
-          .then((response) => {
-            this.avatar = response.data.data.link;
-            this.updateAvatar();
-          })
-          .catch((error) => {
-            ElMessage({
-              type: "error",
-              message: error.message,
-            });
-            this.avatar = "";
-          })
-          .finally(() => {
-            loading.close();
+        try {
+          const formData = new FormData();
+          formData.append("image", this.fileUpload);
+          this.avatar = await uploadImageToImgur(formData);
+        } catch (e) {
+          ElMessage({
+            type: "error",
+            message: "Có lỗi trong quá trình upload ảnh",
           });
+        }
+        loading.close();
       } else {
         ElMessage({
           type: "error",

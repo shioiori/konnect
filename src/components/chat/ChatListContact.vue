@@ -61,7 +61,7 @@ export default {
       axios
         .get(
           import.meta.env.VITE_CHAT_API +
-            `/chat?groupId=${this.currentData.groupId}&userId=${this.currentData.userId}&name=${searchName}`
+            `/chat?groupId=${this.currentData.groupId}&userId=${this.currentData.id}&name=${searchName}`
         )
         .then((res) => {
           this.chats = res.data;

@@ -24,9 +24,9 @@
           }}</span>
         </div>
         <div class="chat-message-content" shadow="never">
-          {{ message.text }}
+          <div v-html="message.text" />
         </div>
-        <small class="text-muted">{{ message.createdDate }}</small>
+        <small class="text-muted">{{ formatDate }}</small>
       </div>
     </div>
   </div>
@@ -45,11 +45,13 @@ export default {
       console.log(this.user);
     },
   },
-  mounted() {
-    let dateFormat = dateTimeToFormatDate(this.message.createdDate);
-    this.message.createdDate = getRelativeChatTime(dateFormat);
-  },
   methods: {},
+  computed: {
+    formatDate() {
+      let dateFormat = dateTimeToFormatDate(this.message.createdDate);
+      return getRelativeChatTime(dateFormat);
+    },
+  },
 };
 </script>
 

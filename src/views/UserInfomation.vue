@@ -113,7 +113,7 @@ export default {
   },
   mounted() {
     this.getCurrentUser();
-    this.checkEmailConfirmed();
+    //this.checkEmailConfirmed();
   },
   methods: {
     getCurrentUser() {

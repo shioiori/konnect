@@ -27,22 +27,23 @@ async function SendAll(message) {
 }
 
 async function SendMessage(chatId, message) {
-  console.log(chatId)
-  console.log(message)
-
   connection.invoke('SendMessage', chatId, JSON.stringify(message)).catch(function (err) {
     return console.error(err.toString())
   })
 }
 
-async function AddToChat(chat_id) {
-  connection.invoke('AddToChat', chat_id).catch(function (err) {
+const receiveMessage = connection.on('ReceiveMessage', (message) => {
+  emitter.emit('receiveMessage', JSON.parse(message))
+})
+
+async function AddToChat(chatId) {
+  connection.invoke('AddToChat', chatId).catch(function (err) {
     return console.error(err.toString())
   })
 }
 
-async function RemoveFromChat(chat_id, user_id) {
-  connection.invoke('RemoveFromChat', chat_id, user_id).catch(function (err) {
+async function RemoveFromChat(chatId) {
+  connection.invoke('RemoveFromChat', chatId).catch(function (err) {
     return console.error(err.toString())
   })
 }
@@ -55,5 +56,6 @@ export default {
   AddToChat,
   RemoveFromChat,
   emitter,
+  receiveMessage,
   connection
 }

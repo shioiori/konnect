@@ -31,16 +31,17 @@ export default {
     user: Object,
   },
   watch: {
-    user(oldValue, newValue) {},
-  },
-  mounted() {
-    this.users = this.getUsers();
+    user(oldValue, newValue) {
+      this.users = this.getUsers();
+    },
   },
   methods: {
     getUsers() {
+      if (!this.user) return;
       axios
         .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
         .then((res) => {
+          console.log(res.data.users[0]);
           this.users = res.data.users.filter(
             (user) => user.userName != this.user.userName
           );

@@ -59,6 +59,27 @@ export function dateTimeToJSDate(date) {
   return date.split('T')[0]
 }
 
+export function JSDateToCSharpDate(date) {
+  let pad = function (num) {
+    return (num < 10 ? '0' : '') + num
+  }
+
+  let year = date.getFullYear()
+  let month = pad(date.getMonth() + 1)
+  let day = pad(date.getDate())
+  let hours = pad(date.getHours())
+  let minutes = pad(date.getMinutes())
+  let seconds = pad(date.getSeconds())
+
+  let offset = -date.getTimezoneOffset()
+  let offsetSign = offset >= 0 ? '+' : '-'
+  offset = Math.abs(offset)
+  let offsetHours = pad(Math.floor(offset / 60))
+  let offsetMinutes = pad(offset % 60)
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`
+}
+
 // format dd/mm/yyyy hh:mm
 export function dateTimeToFormatDate(dateTimeString) {
   const date = new Date(dateTimeString)

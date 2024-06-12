@@ -11,18 +11,25 @@ export default defineConfig({
     vue({
       template: {
         compilerOptions: {
-          isCustomElement: tagName => {
+          isCustomElement: (tagName) => {
             return tagName === 'vue-advanced-chat' || tagName === 'emoji-picker'
           }
         }
       }
     }),
     vueJsx(),
-    VueDevTools(),
+    VueDevTools()
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    hmr: {
+      host: 'konnect.com'
+    }
+  }
 })

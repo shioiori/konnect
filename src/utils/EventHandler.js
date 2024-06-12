@@ -19,14 +19,12 @@ function convertDate(inputDatetime) {
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
-export function getEvent(start, end, title, content, type) {
+export function getEvent(event, start, end) {
   return {
+    ...event,
     start: start,
     end: end,
-    title: title,
-    content: content,
-    class: type.toLowerCase(),
-    category: type
+    class: event.category.toLowerCase()
   }
 }
 
