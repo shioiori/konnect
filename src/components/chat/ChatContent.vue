@@ -3,11 +3,11 @@
     <div class="mt-2 d-flex">
       <h4>{{ chat.name }}</h4>
       <div style="margin-left: auto">
-        <chat-add-button :chat="chat" />
+        <chat-add-button :chat="chat" @notify-user-joined="notifyUserJoined" />
       </div>
     </div>
     <hr />
-    <div class="px-2 chat-content-container" ref="chatContainer">
+    <div class="pe-3 chat-content-container" ref="chatContainer">
       <chat-content-message
         :user="user"
         v-for="(message, index) in chat.messages"
@@ -24,7 +24,8 @@ import ChatContentMessage from "./ChatContentMessage.vue";
 import ChatAddButton from "./ChatAddButton.vue";
 import hub from "../../hubs/chathub.js";
 import { ref, nextTick } from "vue";
-
+import axios from "axios";
+import { ElMessage } from "element-plus";
 export default {
   components: {
     ChatContentInput,
@@ -40,20 +41,27 @@ export default {
     user: Object,
   },
   watch: {
-    user(oldValue, newValue) {
-      console.log(newValue);
-    },
+    user(oldValue, newValue) {},
   },
   methods: {
     receiveMessage(message) {
       this.chat.messages.push(message);
     },
     scrollToBottom() {
-      console.log(this.$refs.chatContainer);
       if (this.$refs.chatContainer) {
-        console.log(this.$refs.chatContainer.scrollHeight);
         this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
       }
+    },
+    notifyUserJoined(listName) {
+      this.chat.messages.push({
+        type: "notify",
+        content: listName + " đã tham gia cuộc trò chuyện",
+      });
+    },
+    getChat(id) {
+      axios.get(import.meta.env.VITE_CHAT_API + "/chat/" + id).then((res) => {
+        this.chat = res.data;
+      });
     },
   },
   created() {
@@ -61,15 +69,11 @@ export default {
       if (this.chat) {
         hub.RemoveFromChat(this.chat.id, this.user.userId);
       }
-      this.chat = newChat;
-
-      console.log(newChat);
-      await hub.AddToChat(this.chat.id);
-
+      this.chat = this.getChat(newChat.id);
+      await hub.AddToChat(newChat.id);
       this.scrollToBottom();
     });
     hub.emitter.on("receiveMessage", (message) => {
-      console.log(message);
       this.chat.messages.push(message);
       nextTick(() => {
         this.scrollToBottom();

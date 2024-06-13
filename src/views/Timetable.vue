@@ -3,8 +3,12 @@
     <div class="content">
       <div>
         <timetable-button
-          @refresh-calendar="getEventsInDatabase"
+          @refresh-calendar="refreshCalendar"
           @synchronize-calendar="synchronizeCalendar"
+          @undo-event-drag="undoEventDrag"
+          @remove-event-synchronize="removeEventSynchronize"
+          @add-event-synchronize="addEventSynchronize"
+          @migrate-data="changeMigrateDataState"
           :events="events"
           :timetable="timetable"
           ref="timetableButton"
@@ -62,6 +66,7 @@ import {
 } from "../utils/EventHandler.js";
 import TimetableButton from "../components/timetable/TimetableButton.vue";
 import TimetableBar from "../components/timetable/TimetableBar.vue";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {
@@ -86,52 +91,69 @@ export default {
       ],
       showEvents: [],
       timetable: undefined,
+      migrateData: false,
     };
   },
   mounted() {
-    this.getEventsInDatabase();
+    this.refreshCalendar();
   },
   methods: {
-    async getEventsInDatabase(backtoDate) {
+    changeMigrateDataState() {
+      this.migrateData = true;
+    },
+    async refreshCalendar(backtoDate) {
       var res = (
         await axios.get(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
       ).data;
       this.timetable = res;
-      // if (this.timetable.isSynchronize) {
-      //   //this.$refs.timetableButton.listEvents();
-      //   return;
-      // }
-      if (!backtoDate) {
-        this.currentDate = dateTimeToJSDate(res.from);
+      if (this.timetable.isSynchronize) {
+        this.$refs.timetableButton.listEvents();
+        return;
+      }
+      if (!backtoDate && this.timetable.events.length > 0) {
+        this.currentDate = new Date(res.from);
       } else {
         this.currentDate = new Date();
       }
       this.events = [];
       this.timetable.events.forEach((event) => {
-        var startDate = getFormattedDate(event.from, "-");
-        var endDate = getFormattedDate(event.to, "-");
-        var date = getStartDateInRange(startDate, endDate, event.day);
         if (event.isLoopPerDay) {
-          while (new Date(date) <= new Date(endDate)) {
+          var date = getStartDateInRange(event.from, event.to, event.day);
+          while (new Date(date) <= new Date(event.to)) {
             let startDate = getDateOnly(date) + " " + event.periodStart;
             let endDate = getDateOnly(date) + " " + event.periodEnd;
             this.events.push(getEvent(event, startDate, endDate));
             date.setDate(date.getDate() + 7);
           }
         } else {
-          this.events.push(getEvent(event, startDate, endDate));
+          this.events.push(getEvent(event));
         }
       });
-      this.showEvents = [...this.events];
+      this.showEvents = this.events;
     },
     synchronizeCalendar(ggEvents) {
       if (!ggEvents) return;
+      console.log(this.migrateData);
+      if (!this.migrateData) this.events = [];
+      else this.migrateData = false;
       ggEvents.forEach((e) => {
         let ev = convertEventFromGoogleCalendar(e);
-        this.events.push({ ...ev, category: "Google" });
+        this.events.push(ev);
       });
-      this.showEvents = [...this.events];
+      this.showEvents = this.events;
       this.currentDate = new Date();
+    },
+    removeEventSynchronize(id) {
+      let idx = this.events.findIndex((obj) => obj.id === id);
+      this.events.splice(idx, 1);
+    },
+    addEventSynchronize(event) {
+      let ev = convertEventFromGoogleCalendar(event);
+      this.events.push(ev);
+      ElMessage({
+        type: "success",
+        message: "Thêm sự kiện thành công",
+      });
     },
     openEventDialog(event, e) {
       this.$refs.timetableButton.openEventDialog(event, e);
@@ -141,6 +163,11 @@ export default {
     },
     onEventDrop(obj) {
       this.$refs.timetableButton.updateDragEvent(obj);
+    },
+    undoEventDrag(dragEvent) {
+      delete dragEvent.originalEvent.eid;
+      let idx = this.events.findIndex((obj) => obj.id === dragEvent.event.id);
+      this.events[idx] = getEvent(dragEvent.originalEvent);
     },
   },
 };
@@ -185,5 +212,9 @@ export default {
 
 .vuecal__title-bar {
   background-color: var(--el-color-primary-light-9);
+}
+
+.vuecal__event-title {
+  padding-top: 0.5rem;
 }
 </style>

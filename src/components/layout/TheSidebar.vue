@@ -96,12 +96,6 @@ export default {
   props: {
     user: Object,
   },
-  mounted() {
-    // this.emitter.on('toggle-sidebar', () => {
-    //   this.isOpen = !this.isOpen
-    // })
-    console.log(this.user);
-  },
   methods: {
     toggleSidebar() {
       this.isOpen = !this.isOpen;

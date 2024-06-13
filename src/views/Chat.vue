@@ -44,7 +44,6 @@ export default {
     getUser() {
       axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
         this.user = res.data;
-        console.log(res.data);
       });
     },
   },

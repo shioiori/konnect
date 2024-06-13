@@ -24,7 +24,10 @@ export function getTime(shiftCode) {
 }
 
 export function getDateOnly(date) {
-  return date.getFullYear() + '-' + date.getMonth() + '-' + date.getUTCDate()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 export function getTimeOnly(date) {
@@ -92,14 +95,20 @@ export function dateTimeToFormatDate(dateTimeString) {
 }
 
 export function getStartDateInRange(from, to, day) {
-  var date = new Date(from)
-  var startDay = new Date(from).getDate() + 2
-  if (startDay <= day) {
-    date.setDate(date.getDate() + day - startDay)
-  } else {
-    date.setDate(date.getDate() + 6 - startDay + day)
+  let start = new Date(from)
+  let end = new Date(to)
+  if (day < 2 || day > 8) {
+    throw new Error('Ngày trong phạm vi từ 2 đến 8')
   }
-  return date
+  day = day === 8 ? 0 : day - 1
+
+  while (start <= end) {
+    if (start.getDay() === day) {
+      return start
+    }
+    start.setDate(start.getDate() + 1)
+  }
+  return null
 }
 
 // time convert

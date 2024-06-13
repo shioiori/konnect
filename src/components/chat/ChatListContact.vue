@@ -18,7 +18,9 @@
             <div>
               <span class="text-muted" v-if="chat.messages.length > 0">
                 <small>{{
-                  chat.messages[0].createdBy.displayName + ": " + chat.messages[0].text
+                  chat.messages[chat.messages.length - 1].createdBy.displayName +
+                  ": " +
+                  chat.messages[chat.messages.length - 1].text
                 }}</small>
               </span>
             </div>
@@ -35,7 +37,8 @@
 import ChatListContactSearch from "./ChatListContactSearch.vue";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
-
+import { getLoadingService } from "../../utils/LoadingService.js";
+import { ElMessage, ElLoading } from "element-plus";
 export default {
   components: {
     ChatListContactSearch,
@@ -57,6 +60,7 @@ export default {
       this.emitter.emit("openChat", chat);
     },
     getSearchChat(searchName) {
+      const loading = ElLoading.service(getLoadingService());
       if (searchName == undefined) searchName = "";
       axios
         .get(
@@ -65,6 +69,7 @@ export default {
         )
         .then((res) => {
           this.chats = res.data;
+          loading.close();
         });
     },
     getUser() {

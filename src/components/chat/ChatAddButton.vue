@@ -13,7 +13,7 @@
         >
           <el-option
             v-for="item in users"
-            :key="item.userName"
+            :key="item.userName + '-' + item.displayName"
             :label="item.displayName"
             :value="item.userName"
           />
@@ -64,9 +64,14 @@ export default {
     },
     addUsersToGroup() {
       var url = import.meta.env.VITE_API + "/chat/user/data?";
+      var listName = "";
       this.joinners.forEach((userName) => {
         url += "userName=" + userName + "&";
+        var user = this.users.find((x) => x.userName == userName);
+        listName += user.displayName + ", ";
       });
+      if (listName.length > 0) listName = listName.substring(0, listName.length - 2);
+      this.users = this.users.filter((user) => !this.joinners.includes(user.userName));
       url = url.slice(0, -1);
       axios.get(url, getHeaderConfig()).then((res) => {
         let userDatas = res.data;
@@ -82,6 +87,7 @@ export default {
               message: "Thêm người dùng thành công",
             });
             this.dialogVisible = false;
+            this.$emit("notifyUserJoined", listName);
             this.joinners = [];
             this.getUsers();
           });

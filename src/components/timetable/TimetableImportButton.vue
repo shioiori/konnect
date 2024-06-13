@@ -42,9 +42,10 @@
 import IconImport from "../icons/import/IconImport.vue";
 import IconButtonImport from "../icons/import/IconButtonImport.vue";
 
-import { ElMessage } from "element-plus";
+import { ElMessage, ElLoading } from "element-plus";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
+import { getLoadingService } from "../../utils/LoadingService.js";
 
 export default {
   components: {
@@ -57,10 +58,17 @@ export default {
       fileUpload: undefined,
     };
   },
+  props: {
+    timetable: Object,
+  },
+  watch: {
+    timetable(oldValue, newValue) {},
+  },
   methods: {
     importTimetable() {
       var formData = new FormData();
       formData.append("image", this.fileUpload);
+      const loading = ElLoading.service(getLoadingService());
       axios
         .post(
           import.meta.env.VITE_API + "/import/timetable",
@@ -70,6 +78,16 @@ export default {
           getHeaderConfig("multipart/form-data")
         )
         .then((res) => {
+          if (this.timetable.isSynchronize) {
+            if (res.data.success) {
+              this.$emit("listEvents", res.data.events);
+            } else {
+              ElMessage({
+                message: ex.message,
+                type: "error",
+              });
+            }
+          }
           ElMessage({
             message: "Import success.",
             type: "success",
@@ -81,6 +99,9 @@ export default {
             message: e.message,
             type: "error",
           });
+        })
+        .finally(() => {
+          loading.close();
         });
     },
 

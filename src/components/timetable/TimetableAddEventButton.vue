@@ -1,14 +1,6 @@
 <template>
   <div>
-    <el-button
-      type="primary"
-      plain
-      @click="
-        dialogVisible = true;
-        action = 'add';
-      "
-      >{{ buttonContent }}</el-button
-    >
+    <el-button type="primary" plain @click="openAddDialog">{{ buttonContent }}</el-button>
 
     <el-dialog v-model="dialogVisible" :title="dialogContent" width="720">
       <div class="py-4">
@@ -48,10 +40,26 @@
           <el-form-item label="Địa điểm">
             <el-input v-model="event.location" type="textarea" />
           </el-form-item>
+          <el-form-item label="Đường dẫn" v-if="event.link">
+            <el-link :href="event.link" type="primary" target="_blank">link</el-link>
+          </el-form-item>
           <div class="d-flex justify-content-end">
             <el-form-item>
-              <el-button type="primary" @click="addEvent"> Save </el-button>
-              <el-button type="danger" @click="deleteEvent" v-if="action == 'edit'">
+              <el-button
+                type="primary"
+                @click="addEvent"
+                v-if="event.category != 'Google' && event.category != 'Timetable'"
+              >
+                Save
+              </el-button>
+              <el-button
+                type="danger"
+                @click="deleteEvent"
+                v-if="
+                  (action == 'edit' && event.category != 'Timetable') ||
+                  event.category == 'Google'
+                "
+              >
                 Delete
               </el-button>
               <el-button
@@ -85,13 +93,14 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      event: reactive({
+      formEvent: reactive({
         title: "",
         description: "",
         start: new Date(),
         end: new Date(),
         location: "",
       }),
+      event: {},
       action: "add",
       buttonContent: "Thêm sự kiện",
       dialogContent: "Thêm sự kiện",
@@ -99,6 +108,9 @@ export default {
   },
   props: {
     timetable: Object,
+  },
+  created() {
+    this.event = { ...this.formEvent };
   },
   watch: {
     timetable(oldValue, newValue) {},
@@ -116,12 +128,20 @@ export default {
       this.event = event;
       this.dialogVisible = true;
       this.dialogContent = "Chỉnh sửa sự kiện";
+      console.log(this.event);
+    },
+    openAddDialog() {
+      this.action = "add";
+      this.event = { ...this.formEvent };
+      this.dialogVisible = true;
     },
     updateDragEvent(obj) {
-      this.event = obj.event;
-      this.event.isLoopPerDay = false;
-      this.event.category = "Unclassified";
-      this.updateEvent();
+      try {
+        this.event = obj.event;
+        this.updateEvent();
+      } catch (ex) {
+        this.$emit("undoEventDrag", obj);
+      }
     },
     addEventByClicked(event) {
       this.event.start = event;
@@ -130,12 +150,16 @@ export default {
       this.dialogVisible = true;
     },
     addEvent() {
+      console.log(this.action);
       if (this.action != "add") {
         this.updateEvent();
         return;
       }
       if (this.timetable.isSynchronize) {
         this.$emit("addEventToGoogleCalendar", this.event);
+        this.dialogVisible = false;
+        this.resetForm();
+        return;
       } else {
         axios
           .post(
@@ -166,13 +190,13 @@ export default {
       } catch (e) {}
     },
     updateEvent() {
-      console.log(this.event);
-      if (this.event.category == "Google") {
+      console.log(this.event.category);
+      if (this.event.category == "Google" || this.event.category == "Timetable") {
         ElMessage({
-          message: "Chưa hỗ trợ cập nhật sự kiện trong Google",
+          message: "Chưa hỗ trợ kéo thả sự kiện " + this.event.category,
           type: "error",
         });
-        return;
+        throw new Error();
       }
       this.event.from = this.event.start;
       this.event.to = this.event.end;
@@ -200,10 +224,9 @@ export default {
     },
     deleteEvent() {
       if (this.event.category == "Google") {
-        ElMessage({
-          message: "Chưa hỗ trợ xoá sự kiện Google",
-          type: "error",
-        });
+        this.$emit("removeEventSynchronize", this.event.id);
+        this.dialogVisible = false;
+        this.resetForm();
         return;
       }
       ElMessageBox.confirm("Bạn có chắc muốn xoá sự kiện?", "Warning", {

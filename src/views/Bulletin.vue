@@ -49,7 +49,6 @@ export default {
       }
     },
     getBulletinNews() {
-      console.log(2);
       axios
         .get(import.meta.env.VITE_API + "/bulletin?state=1", getHeaderConfig())
         .then((res) => {

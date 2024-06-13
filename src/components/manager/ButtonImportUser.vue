@@ -35,8 +35,9 @@
 import IconImport from "../icons/import/IconImport.vue";
 import IconButtonImport from "../icons/import/IconButtonImport.vue";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElLoading } from "element-plus";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
+import { getLoadingService } from "../../utils/LoadingService.js";
 
 export default {
   components: {
@@ -53,6 +54,7 @@ export default {
     importUserToGroup() {
       var formData = new FormData();
       formData.append("image", this.fileUpload);
+      const loading = ElLoading.service(getLoadingService());
       axios
         .post(
           import.meta.env.VITE_API + "/import/user",
@@ -75,6 +77,9 @@ export default {
             message: e.message,
             type: "error",
           });
+        })
+        .finally(() => {
+          loading.close();
         });
     },
     handleFileChange(event) {

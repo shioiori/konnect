@@ -32,7 +32,7 @@ export function isUserInteractionEnable() {
 }
 
 export function handleAuthClick(callback) {
-  if (!isUserInteractionEnable()) return false
+  // if (!isUserInteractionEnable()) return false
   if (gapi.auth2.getAuthInstance() && gapi.auth2.getAuthInstance().isSignedIn.get()) return true
   tokenClient.callback = async (resp) => {
     if (resp.error !== undefined) {

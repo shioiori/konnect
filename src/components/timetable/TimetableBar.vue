@@ -18,7 +18,7 @@
         inline-prompt
         active-text="Bật"
         inactive-text="Tắt"
-        @click="synchronizeTimetable"
+        @click="synchronizeWithGoogleCalendar"
       />
     </div>
   </div>
@@ -41,45 +41,16 @@ export default {
     timetable(newValue, oldValue) {},
   },
   methods: {
-    synchronizeTimetable() {
-      if (this.timetable.isSynchronize) {
-        //bật
-        this.confirmSynchronizeCalendar();
-      } else {
-        //tắt
-        this.synchronizeWithGoogleCalendar(false);
-      }
-    },
-    confirmSynchronizeCalendar() {
-      ElMessageBox.confirm(
-        "Thời khoá biểu sẽ được cập nhật vào Google Calendar của bạn. Tiếp tục?",
-        "Warning",
-        {
-          confirmButtonText: "Yes",
-          cancelButtonText: "Cancel",
-          type: "warning",
-        }
-      ).then(() => {
-        this.$emit("getEventsInDatabase");
-        this.emitter.emit("handleAuthorize");
-        this.synchronizeWithGoogleCalendar(true);
-        ElMessage({
-          message: "Bật đồng bộ hoá thành công",
-          type: "success",
-        });
-      });
-    },
-
-    synchronizeWithGoogleCalendar(state) {
+    synchronizeWithGoogleCalendar() {
       axios
         .post(import.meta.env.VITE_API + "/timetable/synchronize", {}, getHeaderConfig())
         .then(() => {
-          if (!state) {
-            ElMessage({
-              message: "Tắt đồng bộ hoá thành công",
-              type: "success",
-            });
-          }
+          let state = this.timetable.isSynchronize ? "Bật" : "Tắt";
+          ElMessage({
+            message: state + " đồng bộ hoá thành công",
+            type: "success",
+          });
+          this.emitter.emit("synchronizeTimetable", this.timetable.isSynchronize);
         })
         .catch((e) => {
           console.log(e.message);

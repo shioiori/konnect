@@ -115,6 +115,7 @@ export default {
             message: res.data.message,
             type: res.data.type,
           });
+          this.$emit("refreshGroup");
           this.dialogVisible = false;
           this.$emit("getGroup");
         });

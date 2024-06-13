@@ -1,12 +1,13 @@
 <template>
   <div v-if="message && user" class="mb-1">
     <div
+      v-if="message.type != 'notify'"
       :class="
         'd-flex ' +
         (user.userName != message.createdBy.userName ? '' : 'justify-content-end')
       "
     >
-      <div class="chat-avatar" v-if="user.userName != message.createdBy.userName">
+      <div class="chat-avatar me-2" v-if="user.userName != message.createdBy.userName">
         <img
           class="img-responsive rounded-circle"
           :src="
@@ -19,15 +20,18 @@
       </div>
       <div :class="user.userName != message.createdBy.userName ? '' : 'text-end'">
         <div>
-          <span class="text-muted" v-if="user.userName != message.createdBy.userName">{{
-            message.createdBy.displayName
-          }}</span>
+          <span class="text-muted" v-if="user.userName != message.createdBy.userName"
+            >{{ console.log(message.createdBy) }}{{ message.createdBy.displayName }}</span
+          >
         </div>
         <div class="chat-message-content" shadow="never">
           <div v-html="message.text" />
         </div>
         <small class="text-muted">{{ formatDate }}</small>
       </div>
+    </div>
+    <div v-if="message.type == 'notify'" class="text-muted text-center">
+      {{ message.content }}
     </div>
   </div>
 </template>

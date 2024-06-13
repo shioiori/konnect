@@ -60,7 +60,7 @@ export default {
     };
   },
   created() {
-    setInterval(this.getNotifications(true), 1000 * 60);
+    setInterval(this.getNotifications(true), 1000 * 30);
   },
   methods: {
     getNotifications(isPagination) {

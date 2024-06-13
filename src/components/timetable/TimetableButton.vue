@@ -6,11 +6,17 @@
         <timetable-add-event-button
           ref="addEventButton"
           :timetable="timetable"
-          @add-event-to-google-calendar="addEventToGoogleCalendar"
+          @add-event-to-google-calendar="addEventSynchronize"
           @refresh-calendar="refreshCalendar"
+          @undo-event-drag="undoEventDrag"
+          @remove-event-synchronize="removeEventSynchronize"
         />
         <!-- <timetable-add-loop-event-button /> -->
-        <timetable-import-button @refresh-calendar="refreshCalendar" />
+        <timetable-import-button
+          @refresh-calendar="refreshCalendar"
+          :timetable="timetable"
+          @list-events="listEvents"
+        />
         <timetable-update-data-from-calendar-button
           ref="updateDataFromGoogleCalendarButton"
           @list-events="listEvents"
@@ -77,6 +83,9 @@ export default {
       authorize: false,
     };
   },
+  created() {
+    this.registerListenSynchornize();
+  },
   mounted() {
     this.loadGapiScript();
   },
@@ -89,10 +98,9 @@ export default {
       this.$refs.addEventButton.updateDragEvent(obj);
     },
     handleAuthorize(callback) {
-      //if (this.authorize) return;
       setTimeout(() => {
         this.authorize = true;
-        handleAuthClick(callback);
+        var x = handleAuthClick(callback);
       }, 1000);
     },
     loadGapiScript() {
@@ -106,49 +114,66 @@ export default {
     refreshCalendar() {
       this.$emit("refreshCalendar");
     },
+    undoEventDrag(dragEvent) {
+      this.$emit("undoEventDrag", dragEvent);
+    },
     addEventsToGoogleCalendar(error) {
-      console.log(this.events);
       try {
         this.events.forEach((appEvent) => {
           this.addEventToGoogleCalendar(appEvent);
         });
+        ElMessage({
+          type: "success",
+          message: "Thêm sự kiện thành công",
+        });
       } catch (e) {
         if (error) {
-          console.log(error);
-          console.log(e);
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
           return;
         }
-        this.addEventsToGoogleCalendar(e);
+        var reload = () => this.addEventsToGoogleCalendar(e);
+        this.handleAuthorize(reload);
       }
     },
-    addEventToGoogleCalendar(appEvent, error) {
+    addEventToGoogleCalendar(appEvent, error, insertMultiple) {
       try {
         let event = convertEventToGoogleCalendar(
           appEvent.start,
           appEvent.end,
           appEvent.title,
           appEvent.content,
+          appEvent.description,
           this.timetable.remindTime
         );
-        console.log(event);
         const request = gapi.client.calendar.events.insert({
           calendarId: "primary",
           resource: event,
         });
-        request.execute(function (event) {
-          console.log("Event created: " + event.htmlLink);
+        request.execute((event) => {
+          if (!insertMultiple) this.$emit("addEventSynchronize", event);
         });
       } catch (e) {
         if (error) {
-          console.log(error);
-          console.log(e);
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
           return;
         } else {
           gapi.client.load("calendar", "V3", this.addEventToGoogleCalendar(appEvent, e));
         }
       }
     },
-    async listEvents(error) {
+    addEventSynchronize(event) {
+      this.addEventToGoogleCalendar(event, null, false);
+    },
+    async listEvents(error, isIntergrate) {
+      if (isIntergrate) {
+        this.$emit("migrateData");
+      }
       if (!this.authorize) {
         ElMessage({
           type: "error",
@@ -178,9 +203,48 @@ export default {
             type: "error",
           });
         } else {
+          this.authorize = false;
           gapi.client.load("calendar", "V3", this.listEvents(err));
         }
       }
+    },
+    removeEventSynchronize(id, error) {
+      try {
+        const request = gapi.client.calendar.events.delete({
+          calendarId: "primary",
+          eventId: id,
+        });
+        request.execute(function (event) {});
+        this.$emit("removeEventSynchronize", id);
+        ElMessage({
+          type: "success",
+          message: "Xoá thành công",
+        });
+      } catch (e) {
+        if (error) {
+          ElMessage({
+            type: "error",
+            message: e.message,
+          });
+          return;
+        } else {
+          gapi.client.load("calendar", "V3", this.deleteEvent(id, e));
+        }
+      }
+    },
+    registerListenSynchornize() {
+      this.emitter.on("synchronizeTimetable", (state) => {
+        this.timetable.isSynchronize = state;
+        if (!state) {
+          this.refreshCalendar();
+          return;
+        }
+        if (this.authorize) {
+          this.listEvents();
+        } else {
+          this.handleAuthorize(this.listEvents);
+        }
+      });
     },
   },
 };

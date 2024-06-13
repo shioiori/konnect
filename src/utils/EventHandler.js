@@ -1,11 +1,13 @@
 export function convertEventFromGoogleCalendar(event) {
   return {
+    ...event,
     start: convertDate(event.start.dateTime),
     end: convertDate(event.end.dateTime),
     title: event.summary,
     content: event.location,
     class: 'gg-event',
-    category: 'Google'
+    category: 'Google',
+    link: event.htmlLink
   }
 }
 
@@ -19,16 +21,23 @@ function convertDate(inputDatetime) {
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
-export function getEvent(event, start, end) {
-  return {
+export function getEvent(event, startDate, endDate) {
+  if (startDate === undefined) {
+    startDate = event.from
+  }
+  if (endDate === undefined) {
+    endDate = event.to
+  }
+  const ev = {
     ...event,
-    start: start,
-    end: end,
+    start: startDate,
+    end: endDate,
     class: event.category.toLowerCase()
   }
+  return ev
 }
 
-export function convertEventToGoogleCalendar(start, end, title, content, remind) {
+export function convertEventToGoogleCalendar(start, end, title, content, description, remind) {
   let reminder
   if (remind != -1 || remind != undefined) {
     reminder = {
@@ -60,17 +69,19 @@ export function convertEventToGoogleCalendar(start, end, title, content, remind)
     },
     summary: title,
     location: content,
+    description: description,
     reminders: reminder
   }
 }
 
 function convertJSDateToGoogleCalendarDate(jSDate) {
   var date = new Date(jSDate)
-  var offsetMinutes = date.getTimezoneOffset()
-  var offsetHours = Math.abs(offsetMinutes / 60)
-  if (offsetHours.toString().length == 1) {
-    offsetHours = '0' + offsetHours
-  }
-  var offsetSign = offsetMinutes < 0 ? '+' : '-'
-  return date.toISOString().slice(0, -5) + offsetSign + offsetHours + ':00'
+  // var offsetMinutes = date.getTimezoneOffset()
+  // var offsetHours = Math.abs(offsetMinutes / 60)
+  // if (offsetHours.toString().length == 1) {
+  //   offsetHours = '0' + offsetHours
+  // }
+  // var offsetSign = offsetMinutes < 0 ? '+' : '-'
+  // return date.toISOString().slice(0, -5) + offsetSign + offsetHours + ':00'
+  return date.toISOString()
 }

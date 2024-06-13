@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     getDataFromGoogleCalendar() {
-      this.$emit("listEvents");
+      this.$emit("listEvents", null, true);
     },
   },
 };
