@@ -4,50 +4,36 @@
       <el-list-item>
         <chat-list-contact-search @search-chat="getSearchChat" />
       </el-list-item>
-      <el-list-item v-for="(chat, index) in chats" @click="openChat(chat)">
-        <div class="d-flex">
-          <div class="chat-avatar-img me-2">
-            <img
-              class="img-responsive rounded-circle"
-              :src="chat.avatar"
-              style="width: 40px; height: 40px"
-            />
-          </div>
-          <div class="chat-info mt-2">
-            <b>{{ chat.name }}</b>
-            <div>
-              <span class="text-muted" v-if="chat.messages.length > 0">
-                <small>{{
-                  chat.messages[chat.messages.length - 1].createdBy.displayName +
-                  ": " +
-                  chat.messages[chat.messages.length - 1].text
-                }}</small>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <hr />
-      </el-list-item>
+      <chat-list-contact-item
+        v-for="(chat, index) in chats"
+        @click="openChat(chat)"
+        :chat="chat"
+      />
     </el-list>
   </div>
 </template>
 
 <script>
 import ChatListContactSearch from "./ChatListContactSearch.vue";
+import ChatListContactItem from "./ChatListContactItem.vue";
 import axios from "axios";
 import { getHeaderConfig } from "../../utils/ApiHandler.js";
 import { getLoadingService } from "../../utils/LoadingService.js";
+import { removeHTMLTags } from "../../utils/StringHandler.js";
 import { ElMessage, ElLoading } from "element-plus";
 export default {
   components: {
     ChatListContactSearch,
+    ChatListContactItem,
   },
   data() {
     return {
       chats: [],
       currentData: undefined,
     };
+  },
+  created() {
+    this.registerlistenLastMessage();
   },
   mounted() {
     this.getUser();
@@ -76,6 +62,14 @@ export default {
       axios.get(import.meta.env.VITE_API + "/user", getHeaderConfig()).then((res) => {
         this.currentData = res.data;
         this.getSearchChat();
+      });
+    },
+    registerlistenLastMessage() {
+      this.emitter.on("updateLastMessage", (data) => {
+        console.log(data);
+        var updateChat = this.chats.find((x) => x.id == data.chatId);
+        updateChat.lastMessage =
+          this.currentData.displayName + ": " + removeHTMLTags(data.message.text);
       });
     },
   },

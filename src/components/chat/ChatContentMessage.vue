@@ -20,9 +20,9 @@
       </div>
       <div :class="user.userName != message.createdBy.userName ? '' : 'text-end'">
         <div>
-          <span class="text-muted" v-if="user.userName != message.createdBy.userName"
-            >{{ console.log(message.createdBy) }}{{ message.createdBy.displayName }}</span
-          >
+          <span class="text-muted" v-if="user.userName != message.createdBy.userName">{{
+            message.createdBy.displayName
+          }}</span>
         </div>
         <div class="chat-message-content" shadow="never">
           <div v-html="message.text" />
@@ -45,9 +45,7 @@ export default {
     user: Object,
   },
   watch: {
-    user(oldValue, newValue) {
-      console.log(this.user);
-    },
+    user(oldValue, newValue) {},
   },
   methods: {},
   computed: {

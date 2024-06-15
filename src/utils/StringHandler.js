@@ -4,3 +4,7 @@ export function linkify(inputText) {
     return `<a class='msg-content--link' href=${url} target='_blank'>${url}</a>`
   })
 }
+
+export function removeHTMLTags(str) {
+  return str.replace(/<\/?[^>]+(>|$)/g, '')
+}

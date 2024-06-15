@@ -49,6 +49,7 @@ export default {
     },
     scrollToBottom() {
       if (this.$refs.chatContainer) {
+        console.log(123);
         this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
       }
     },
@@ -70,11 +71,13 @@ export default {
         hub.RemoveFromChat(this.chat.id, this.user.userId);
       }
       this.chat = this.getChat(newChat.id);
-      await hub.AddToChat(newChat.id);
+
       this.scrollToBottom();
+      await hub.AddToChat(newChat.id);
     });
     hub.emitter.on("receiveMessage", (message) => {
       this.chat.messages.push(message);
+      this.emitter.emit("updateLastMessage", { chatId: this.chat.id, message: message });
       nextTick(() => {
         this.scrollToBottom();
       });

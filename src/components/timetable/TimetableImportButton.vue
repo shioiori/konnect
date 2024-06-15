@@ -89,9 +89,10 @@ export default {
             }
           }
           ElMessage({
-            message: "Import success.",
-            type: "success",
+            message: res.data.message,
+            type: res.data.type,
           });
+          this.dialogVisible = false;
           this.$emit("refreshCalendar");
         })
         .catch((e) => {

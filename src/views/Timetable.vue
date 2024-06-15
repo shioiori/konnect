@@ -111,7 +111,7 @@ export default {
         return;
       }
       if (!backtoDate && this.timetable.events.length > 0) {
-        this.currentDate = new Date(res.from);
+        //       this.currentDate = new Date(res.from);
       } else {
         this.currentDate = new Date();
       }

@@ -60,10 +60,11 @@ export default {
     };
   },
   created() {
-    setInterval(this.getNotifications(true), 1000 * 30);
+    setInterval(() => this.getNotifications(true), 1000 * 30);
   },
   methods: {
     getNotifications(isPagination) {
+      console.log("noti");
       axios
         .get(
           import.meta.env.VITE_API + "/notification?isPagination=" + isPagination,
