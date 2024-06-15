@@ -26,12 +26,16 @@ import axios from "axios";
 import router from "../router/index.ts";
 import { getHeaderConfig } from "../utils/ApiHandler.js";
 import { ElMessage } from "element-plus";
+import { useConfigStore } from "@/stores/config";
 
 export default {
   components: {
     TheNavbar,
     TheSidebar,
     RouterView,
+  },
+  mounted() {
+    this.configStore.fetchConfig();
   },
   created() {
     axios
@@ -51,6 +55,7 @@ export default {
   data() {
     return {
       user: undefined,
+      configStore: useConfigStore(),
     };
   },
 };

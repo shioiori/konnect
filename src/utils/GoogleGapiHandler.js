@@ -1,28 +1,27 @@
+import { useConfigStore } from '@/stores/config'
+
 let tokenClient
 let gapiInited = false
 let gisInited = false
-const API_KEY = 'AIzaSyBPShQcWXAEbDr_4MmlDGvO5ISCIFL-cLM'
-const CLIENT_ID = '925112903740-3ecuv4hd59pnshb94ce6vavs5q6tb9pf.apps.googleusercontent.com'
-const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
-const SCOPES = 'https://www.googleapis.com/auth/calendar'
 
 export function gapiLoaded() {
   gapi.load('client', initializeGapiClient)
 }
 
 async function initializeGapiClient() {
+  const configStore = useConfigStore()
   await gapi.client.init({
-    apiKey: API_KEY,
-    discoveryDocs: [DISCOVERY_DOC]
+    apiKey: configStore.getGoogleApiKey,
+    discoveryDocs: [configStore.getGoogleDiscoveryDoc]
   })
   gapiInited = true
 }
 
 export function gisLoaded() {
+  const configStore = useConfigStore()
   tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: 'http://localhost:5173/timetable' // defined later
+    client_id: configStore.getGoogleClientId,
+    scope: configStore.getGoogleScopes
   })
   gisInited = true
 }
