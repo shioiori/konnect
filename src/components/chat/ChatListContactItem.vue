@@ -37,10 +37,13 @@ export default {
       this.chat.messages.length > 0 &&
       this.chat.lastMessage == undefined
     ) {
-      this.chat.lastMessage =
-        this.chat.createdBy.displayName +
-        ": " +
-        removeHTMLTags(this.chat.messages[this.chat.messages.length - 1].text);
+      var lastMessage = this.chat.messages[this.chat.messages.length - 1];
+      if (lastMessage.isImage) {
+        this.chat.lastMessage = this.chat.createdBy.displayName + ": [Ảnh]";
+      } else {
+        this.chat.lastMessage =
+          this.chat.createdBy.displayName + ": " + removeHTMLTags(lastMessage.text);
+      }
     }
   },
 };

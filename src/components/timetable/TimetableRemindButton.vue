@@ -41,6 +41,13 @@ export default {
   props: {
     timetable: Object,
   },
+  watch: {
+    timetable(oldValue, newValue) {
+      if (this.timetable) {
+        this.remindTime = this.timetable.remindTime;
+      }
+    },
+  },
   methods: {
     updateRemindTime() {
       if (this.remindTime <= 0) {
@@ -66,7 +73,7 @@ export default {
             message: e.message,
           });
         });
-      this.dialogRemindVisible = false;
+      this.dialogVisible = false;
     },
 
     turnOffRemindTime() {

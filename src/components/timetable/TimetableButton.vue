@@ -25,7 +25,11 @@
           @add-events-to-google-calendar="addEventsToGoogleCalendar"
         /> -->
         <timetable-remind-button :timetable="timetable" />
-        <timetable-delete-button @refresh-calendar="refreshCalendar" />
+        <timetable-delete-button
+          :timetable="timetable"
+          @refresh-calendar="refreshCalendar"
+          @remove-all-events-synchronized="removeAllEventsSynchronized"
+        />
       </div>
       <div class="mt-2 offset-4">
         <p class="text-end">
@@ -76,6 +80,7 @@ export default {
         this.handleAuthorize(this.listEvents);
       }
     },
+    events(oldValue, newValue) {},
   },
   data() {
     return {
@@ -208,7 +213,17 @@ export default {
         }
       }
     },
-    removeEventSynchronize(id, error) {
+    removeAllEventsSynchronized() {
+      this.events.forEach((event) => {
+        this.removeEventSynchronize(event.id, false);
+      });
+      this.refreshCalendar();
+      ElMessage({
+        type: "success",
+        message: "Đã xoá bỏ toàn bộ sự kiện trong Google Calendar",
+      });
+    },
+    removeEventSynchronize(id, alert, error) {
       try {
         const request = gapi.client.calendar.events.delete({
           calendarId: "primary",
@@ -216,10 +231,11 @@ export default {
         });
         request.execute(function (event) {});
         this.$emit("removeEventSynchronize", id);
-        ElMessage({
-          type: "success",
-          message: "Xoá thành công",
-        });
+        if (alert)
+          ElMessage({
+            type: "success",
+            message: "Xoá thành công",
+          });
       } catch (e) {
         if (error) {
           ElMessage({
@@ -228,7 +244,7 @@ export default {
           });
           return;
         } else {
-          gapi.client.load("calendar", "V3", this.deleteEvent(id, e));
+          gapi.client.load("calendar", "V3", this.deleteEvent(id, alert, e));
         }
       }
     },

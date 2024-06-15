@@ -23,10 +23,10 @@ function convertDate(inputDatetime) {
 
 export function getEvent(event, startDate, endDate) {
   if (startDate === undefined) {
-    startDate = event.from
+    startDate = event.from ? event.from : convertDate(event.start)
   }
   if (endDate === undefined) {
-    endDate = event.to
+    endDate = event.to ? event.to : convertDate(event.end)
   }
   const ev = {
     ...event,

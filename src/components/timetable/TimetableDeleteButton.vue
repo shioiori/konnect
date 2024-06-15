@@ -5,11 +5,21 @@
 </template>
 
 <script>
+import { ElMessage, ElMessageBox } from "element-plus";
+import axios from "axios";
+import { getHeaderConfig } from "../../utils/ApiHandler.js";
+
 export default {
+  props: {
+    timetable: Object,
+  },
+  watch: {
+    timetable(oldValue, newValue) {},
+  },
   methods: {
     deleteTimetable() {
       ElMessageBox.confirm(
-        "Thời khoá biểu của bạn sẽ bị xoá vĩnh viễn. Tiếp tục?",
+        "Tất cả sự kiện trong thời gian biểu của bạn sẽ bị vĩnh viễn. Tiếp tục?",
         "Warning",
         {
           confirmButtonText: "Yes",
@@ -17,12 +27,16 @@ export default {
           type: "warning",
         }
       ).then(() => {
+        if (this.timetable.isSynchronize) {
+          this.$emit("removeAllEventsSynchronized");
+          return;
+        }
         axios
           .delete(import.meta.env.VITE_API + "/timetable", getHeaderConfig())
-          .then(() => {
+          .then((res) => {
             ElMessage({
-              type: "success",
-              message: "Delete completed",
+              type: res.data.type,
+              message: res.data.message,
             });
             this.$emit("refreshCalendar");
           })

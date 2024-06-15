@@ -11,7 +11,7 @@
       <input type="file" @change="handleFileUpload" ref="avatar" hidden />
     </div>
     <div>
-      <i class="bi bi-send h3"></i>
+      <i class="bi bi-send h3" @click="sendMessage"></i>
     </div>
   </div>
 </template>

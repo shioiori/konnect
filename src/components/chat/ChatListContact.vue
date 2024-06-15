@@ -34,6 +34,7 @@ export default {
   },
   created() {
     this.registerlistenLastMessage();
+    this.registerlistenChangeChatName();
   },
   mounted() {
     this.getUser();
@@ -65,11 +66,22 @@ export default {
       });
     },
     registerlistenLastMessage() {
+      // data is {chatId: $id, message: $message }
       this.emitter.on("updateLastMessage", (data) => {
-        console.log(data);
         var updateChat = this.chats.find((x) => x.id == data.chatId);
-        updateChat.lastMessage =
-          this.currentData.displayName + ": " + removeHTMLTags(data.message.text);
+        console.log(data.message);
+        if (data.message.isImage) {
+          updateChat.lastMessage = updateChat.createdBy.displayName + ": [Ảnh]";
+        } else {
+          updateChat.lastMessage =
+            updateChat.createdBy.displayName + ": " + removeHTMLTags(data.message.text);
+        }
+      });
+    },
+    registerlistenChangeChatName() {
+      this.emitter.on("changeChatName", (chat) => {
+        var updateChat = this.chats.find((x) => x.id == chat.id);
+        updateChat.name = chat.name;
       });
     },
   },

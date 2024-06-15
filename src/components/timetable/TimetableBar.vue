@@ -7,7 +7,7 @@
       <el-checkbox label="Thời khoá biểu" value="Timetable" checked />
       <el-checkbox label="Google" value="Google" />
       <el-checkbox label="Người dùng" value="User" />
-      <el-checkbox label="Chưa phân loại" value="Unclassified" />
+      <!-- <el-checkbox label="Chưa phân loại" value="Unclassified" /> -->
     </el-checkbox-group>
     <div class="text-end" style="flex-grow: 1">
       <el-text tag="b">Trạng thái đồng bộ hoá&nbsp;</el-text>

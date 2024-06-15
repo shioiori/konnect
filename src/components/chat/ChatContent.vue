@@ -1,7 +1,7 @@
 <template>
   <div class="p-2" v-if="chat" style="position: relative; height: 100%">
     <div class="mt-2 d-flex">
-      <h4>{{ chat.name }}</h4>
+      <chat-content-header :chat="chat" />
       <div style="margin-left: auto">
         <chat-add-button :chat="chat" @notify-user-joined="notifyUserJoined" />
       </div>
@@ -22,6 +22,7 @@
 import ChatContentInput from "./ChatContentInput.vue";
 import ChatContentMessage from "./ChatContentMessage.vue";
 import ChatAddButton from "./ChatAddButton.vue";
+import ChatContentHeader from "./ChatContentHeader.vue";
 import hub from "../../hubs/chathub.js";
 import { ref, nextTick } from "vue";
 import axios from "axios";
@@ -31,6 +32,7 @@ export default {
     ChatContentInput,
     ChatContentMessage,
     ChatAddButton,
+    ChatContentHeader,
   },
   data() {
     return {

@@ -118,7 +118,9 @@ export default {
       if (this.action == "add") {
         this.dialogContent = "Thêm sự kiện";
       } else {
-        this.dialogContent = "Chỉnh sửa sự kiện";
+        if (this.event.category == "Google" || this.event.category == "Timetable") {
+          this.dialogContent = "Sự kiện";
+        } else this.dialogContent = "Chỉnh sửa sự kiện";
       }
     },
   },
@@ -190,10 +192,17 @@ export default {
       } catch (e) {}
     },
     updateEvent() {
-      console.log(this.event.category);
-      if (this.event.category == "Google" || this.event.category == "Timetable") {
+      if (this.event.category == "Google") {
         ElMessage({
-          message: "Chưa hỗ trợ kéo thả sự kiện " + this.event.category,
+          message: "Chưa hỗ trợ kéo thả sự kiện Google",
+          type: "error",
+        });
+        throw new Error();
+      }
+      if (this.event.category == "Timetable") {
+        ElMessage({
+          message:
+            "Bạn không thể kéo thả sự kiện loại Thời khoá biểu vì đây là sự kiện mang tính lặp lại",
           type: "error",
         });
         throw new Error();
@@ -224,7 +233,7 @@ export default {
     },
     deleteEvent() {
       if (this.event.category == "Google") {
-        this.$emit("removeEventSynchronize", this.event.id);
+        this.$emit("removeEventSynchronize", this.event.id, true);
         this.dialogVisible = false;
         this.resetForm();
         return;
