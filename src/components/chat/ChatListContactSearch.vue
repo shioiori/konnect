@@ -19,7 +19,6 @@ export default {
   methods: {
     searchChat() {
       this.$emit("searchChat", this.search);
-      this.search = "";
     },
   },
 };

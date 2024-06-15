@@ -1,6 +1,10 @@
 <template>
   <div style="height: inherit">
-    <el-menu class="el-menu-vertical-demo" collapse style="height: inherit">
+    <el-menu
+      class="el-menu-vertical-demo"
+      collapse
+      style="height: inherit; overflow: auto"
+    >
       <el-menu-item v-for="(user, index) in users" class="px-3">
         <el-tooltip :content="user.displayName" placement="right" effect="light">
           <img
@@ -39,9 +43,10 @@ export default {
     getUsers() {
       if (!this.user) return;
       axios
-        .get(import.meta.env.VITE_API + "/user/group", getHeaderConfig())
+        .get(import.meta.env.VITE_API + "/user/group?isPaging=false", getHeaderConfig())
         .then((res) => {
-          console.log(res.data.users[0]);
+          // console.log(res.data);
+          // this.users = res.data.users;
           this.users = res.data.users.filter(
             (user) => user.userName != this.user.userName
           );

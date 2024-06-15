@@ -1,15 +1,16 @@
 <template>
   <div style="height: inherit">
-    <el-list style="height: inherit">
-      <el-list-item>
-        <chat-list-contact-search @search-chat="getSearchChat" />
-      </el-list-item>
-      <chat-list-contact-item
-        v-for="(chat, index) in chats"
-        @click="openChat(chat)"
-        :chat="chat"
-      />
-    </el-list>
+    <chat-list-contact-search @search-chat="getSearchChat" />
+
+    <div style="overflow: auto; height: 35rem; padding-right: 0.5rem">
+      <el-list style="height: inherit">
+        <chat-list-contact-item
+          v-for="(chat, index) in chats"
+          @click="openChat(chat)"
+          :chat="chat"
+        />
+      </el-list>
+    </div>
   </div>
 </template>
 
@@ -56,6 +57,17 @@ export default {
         )
         .then((res) => {
           this.chats = res.data;
+          this.chats.forEach((chat) => {
+            if (chat.messages.length > 0) {
+              var lastMessage = chat.messages[chat.messages.length - 1];
+              if (/^true$/i.test(lastMessage.isImage)) {
+                chat.lastMessage = chat.createdBy.displayName + ": [Ảnh]";
+              } else {
+                chat.lastMessage =
+                  chat.createdBy.displayName + ": " + removeHTMLTags(lastMessage.text);
+              }
+            }
+          });
           loading.close();
         });
     },
@@ -70,7 +82,7 @@ export default {
       this.emitter.on("updateLastMessage", (data) => {
         var updateChat = this.chats.find((x) => x.id == data.chatId);
         console.log(data.message);
-        if (data.message.isImage) {
+        if (/^true$/i.test(data.message.isImage)) {
           updateChat.lastMessage = updateChat.createdBy.displayName + ": [Ảnh]";
         } else {
           updateChat.lastMessage =

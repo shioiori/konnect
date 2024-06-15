@@ -6,7 +6,7 @@
         <chat-add-button :chat="chat" @notify-user-joined="notifyUserJoined" />
       </div>
     </div>
-    <hr />
+    <hr class="mt-2 mb-3" />
     <div class="pe-3 chat-content-container" ref="chatContainer">
       <chat-content-message
         :user="user"
@@ -37,6 +37,7 @@ export default {
   data() {
     return {
       chat: undefined,
+      chatContainer: undefined,
     };
   },
   props: {
@@ -51,7 +52,6 @@ export default {
     },
     scrollToBottom() {
       if (this.$refs.chatContainer) {
-        console.log(123);
         this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
       }
     },
@@ -61,25 +61,26 @@ export default {
         content: listName + " đã tham gia cuộc trò chuyện",
       });
     },
-    getChat(id) {
-      axios.get(import.meta.env.VITE_CHAT_API + "/chat/" + id).then((res) => {
-        this.chat = res.data;
-      });
+    async getChat(id) {
+      var res = await axios.get(import.meta.env.VITE_CHAT_API + "/chat/" + id);
+      this.chat = res.data;
     },
   },
   created() {
+    hub.emitter.on("receiveMessage", (message) => {
+      this.chat.messages.push(message);
+      this.emitter.emit("updateLastMessage", { chatId: this.chat.id, message: message });
+      nextTick(() => {
+        this.scrollToBottom();
+      });
+    });
+
     this.emitter.on("openChat", async (newChat) => {
       if (this.chat) {
         hub.RemoveFromChat(this.chat.id, this.user.userId);
       }
-      this.chat = this.getChat(newChat.id);
-
-      this.scrollToBottom();
+      await this.getChat(newChat.id);
       await hub.AddToChat(newChat.id);
-    });
-    hub.emitter.on("receiveMessage", (message) => {
-      this.chat.messages.push(message);
-      this.emitter.emit("updateLastMessage", { chatId: this.chat.id, message: message });
       nextTick(() => {
         this.scrollToBottom();
       });
