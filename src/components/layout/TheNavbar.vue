@@ -8,13 +8,9 @@
             :separator-icon="ArrowRight"
             style="vertical-align: middle; display: flex"
           >
-            <el-breadcrumb-item v-for="(path, index) in breadcrumb" :to="path">{{
-              path == ""
-                ? index == 0
-                  ? "Homepage"
-                  : "Bulletin"
-                : path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ")
-            }}</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item, index) in breadcrumb">
+              {{ item.name }}</el-breadcrumb-item
+            >
           </el-breadcrumb>
         </div>
       </div>
@@ -113,7 +109,20 @@ export default {
     watch(
       route,
       (to) => {
-        this.breadcrumb = location.pathname.split("/");
+        this.breadcrumb = [];
+        var paths = location.pathname.split("/");
+        paths.forEach((path) => {
+          let name = path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ");
+          if (path == "" || path == "bulletin") {
+            if (this.breadcrumb.length == 0) name = "Home";
+            else return;
+          }
+          this.breadcrumb.push({
+            path: path,
+            name: name,
+          });
+        });
+        console.log(this.breadcrumb);
       },
       { flush: "pre", immediate: true, deep: true }
     );

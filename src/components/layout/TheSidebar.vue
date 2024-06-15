@@ -3,7 +3,9 @@
     <el-container style="height: 100vh">
       <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
         <el-menu-item class="menu-item" index="0">
-          <img style="width: 100%" src="../../assets/logo.png" />
+          <router-link to="/"
+            ><img style="width: 100%; vertical-align: middle" src="../../assets/logo.png"
+          /></router-link>
         </el-menu-item>
         <el-menu-item class="menu-item" index="1">
           <i class="bi bi-newspaper"></i>
