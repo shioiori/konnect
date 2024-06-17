@@ -10,7 +10,7 @@
           <img
             class="img-responsive rounded-circle"
             :src="
-              user.avatar ? user.avatar : '../../src/assets/images/avatar_default.png'
+              user.avatar ? user.avatar : '@/assets/images/avatar_default.png'
             "
             style="width: 100%"
             @click="createChat(user.userName)"

@@ -11,7 +11,7 @@
           File được import cần tuân theo
           <el-link
             type="primary"
-            href="../../assets/template/Import user template.xlsx"
+            href="/assets/templates/user_template.xlsx"
             download
             >mẫu</el-link
           >

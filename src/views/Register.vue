@@ -67,7 +67,7 @@
           <div class="mt-2 text-end">
             <el-text tag="b">
               Có tài khoản?
-              <el-link type="primary" href="/login">Đăng nhập</el-link>
+              <router-link to="/login"><el-link type="primary">Đăng nhập</el-link></router-link>
             </el-text>
           </div>
         </div>
@@ -87,6 +87,7 @@ import axios from "axios";
 import router from "../router/index.ts";
 import { ElMessage } from "element-plus";
 import { reactive } from "vue";
+import { RouterLink } from "vue-router";
 
 export default {
   data() {

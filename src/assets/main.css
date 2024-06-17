@@ -8,3 +8,7 @@
   --Gray: #ccced1;
   --LightGray: #f0f0f0;
 }
+
+.el-link__inner{
+  padding-bottom: .25rem;
+}

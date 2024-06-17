@@ -75,7 +75,7 @@
             <div class="mt-2 pt-1 mb-0">
               <el-text tag="b">
                 Chưa có tài khoản?
-                <el-link href="/register" type="primary">Đăng ký</el-link>
+                <router-link to="/register"><el-link type="primary">Đăng ký</el-link></router-link>
               </el-text>
             </div>
           </form>
@@ -96,6 +96,7 @@
 import axios from "axios";
 import router from "../router/index.ts";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
+import { RouterLink } from "vue-router";
 
 export default {
   data() {
